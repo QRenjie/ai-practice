@@ -59,7 +59,6 @@ const AIResponse: React.FC<AIResponseProps> = ({ text, copyToClipboard, reapplyC
 
   // Existing code for handling multiple code blocks
   const handleReapply = () => {
-    console.log("Reapplying code...");
     reapplyCode();
   };
 

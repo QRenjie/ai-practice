@@ -14,7 +14,7 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("用 html + css + js 做一个贪吃蛇小游戏,并支持重新开始和键盘事件的功能,并且用同一个文件");
+  const [input, setInput] = useState("用 html + css + js 做一个贪吃蛇小游戏, 增加一个重新开始的按钮,将html,css,js都输入到一个html文件");
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState<{ role: string; content: string }[]>([]);
 
@@ -58,7 +58,18 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.trim()) {
+    await sendMessage();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  const sendMessage = async () => {
+    if (input.trim() && !isLoading) {
       const userMessage = { role: "user", content: input };
       setMessages([...messages, { text: input, sender: "user", type: "text" }]);
       setChatHistory([...chatHistory, userMessage]);
@@ -66,7 +77,6 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
 
       try {
         const aiResponse = await callOpenAI(input, chatHistory);
-
         const botMessage = { role: "assistant", content: aiResponse };
         setMessages((prev) => [
           ...prev,
@@ -112,22 +122,22 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex flex-col h-full bg-white bg-opacity-80 backdrop-blur-md rounded-lg shadow-lg">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"
-              }`}
+            className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[70%] ${message.sender === "user"
-                ? "bg-blue-100 rounded-l-lg rounded-br-lg"
-                : ""
-                }`}
+              className={`max-w-[70%] ${
+                message.sender === "user"
+                  ? "bg-blue-500 text-white rounded-l-2xl rounded-br-2xl"
+                  : "bg-gray-200 rounded-r-2xl rounded-bl-2xl"
+              }`}
             >
               {message.sender === "user" ? (
-                <div className="p-3 rounded-lg">
+                <div className="p-4 rounded-lg">
                   <p className="whitespace-pre-wrap break-words">{message.text}</p>
                 </div>
               ) : (
@@ -137,12 +147,13 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
           </div>
         ))}
       </div>
-      <form onSubmit={handleSubmit} className="p-4 bg-white border-t">
+      <form onSubmit={handleSubmit} className="p-6 bg-white bg-opacity-50 backdrop-blur-sm border-t rounded-b-lg">
         <div className="flex flex-col">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="w-full border rounded p-2 mb-2 resize-none"
+            onKeyDown={handleKeyDown}
+            className="w-full border-2 border-gray-300 rounded-lg p-3 mb-3 resize-none focus:outline-none focus:border-blue-500 transition duration-300"
             placeholder="输入你的问题或按回车提交默认问题"
             disabled={isLoading}
             rows={3}
@@ -150,18 +161,20 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
+              className="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 disabled:bg-blue-300 transition duration-300 transform hover:scale-105"
               disabled={isLoading}
             >
-              Send
+              {isLoading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  处理中...
+                </div>
+              ) : (
+                "发送"
+              )}
             </button>
           </div>
         </div>
-        {isLoading && (
-          <div className="mt-2 flex justify-center">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
-          </div>
-        )}
       </form>
     </div>
   );
