@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import AIResponse from './AIResponse';
+import { CodeExtractorImpl } from '../utils/CodeExtractor';
 
 interface Message {
   text: string;
   sender: "user" | "bot";
-  type: "text" | "code";
+  type: "text" | "code" | "markdown";
 }
 
 interface ChatProps {
@@ -13,12 +14,10 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("用 html + css + js 做一个贪吃蛇小游戏,并支持重新开始和键盘事件的功能");
+  const [input, setInput] = useState("用 html + css + js 做一个贪吃蛇小游戏,并支持重新开始和键盘事件的功能，并且用同一个文件");
   const [isLoading, setIsLoading] = useState(false);
 
-  async function callOpenAI(
-    message: string
-  ): Promise<{ text: string; type: "text" | "code" }[]> {
+  async function callOpenAI(message: string): Promise<string> {
     try {
       const response = await fetch(
         "http://openai-proxy.brain.loocaa.com/v1/chat/completions",
@@ -49,21 +48,10 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
         throw new Error("Unexpected response structure from OpenAI API");
       }
 
-      const content = data.choices[0].message.content;
-
-      const parts = content.split("```");
-      return parts.map((part: string, index: number) => ({
-        text: part.trim(),
-        type: index % 2 === 1 ? "code" : "text",
-      }));
+      return data.choices[0].message.content;
     } catch (error) {
       console.error("Error in callOpenAI:", error);
-      return [
-        {
-          text: "An error occurred while processing your request.",
-          type: "text",
-        },
-      ];
+      return "An error occurred while processing your request.";
     }
   }
 
@@ -75,59 +63,16 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
 
       try {
         const aiResponse = await callOpenAI(input);
-        const combinedResponse = aiResponse
-          .map((part) =>
-            part.type === "code" ? `\`\`\`\n${part.text}\n\`\`\`` : part.text
-          )
-          .join("\n\n");
 
         setMessages((prev) => [
           ...prev,
-          { text: combinedResponse, sender: "bot", type: "text" },
+          { text: aiResponse, sender: "bot", type: "markdown" },
         ]);
 
-        // Extract HTML, CSS, and JavaScript code
-        let htmlCode = "";
-        let cssCode = "";
-        let jsCode = "";
+        const extractor = new CodeExtractorImpl();
+        const { htmlCode, cssCode, jsCode } = extractor.extract(aiResponse);
 
-        aiResponse.forEach((part) => {
-          if (part.type === "code") {
-            const lines = part.text.split('\n');
-            const language = lines[0].trim().toLowerCase();
-            const code = lines.slice(1).join('\n');
-
-            if (language === 'html') {
-              htmlCode += code;
-            } else if (language === 'css') {
-              cssCode += code;
-            } else if (language === 'javascript') {
-              jsCode += code;
-            }
-          }
-        });
-
-        // Clean the code (remove potential extra whitespace)
-        const cleanCode = (code: string) => code.trim();
-        const cleanHtmlCode = cleanCode(htmlCode);
-        const cleanCssCode = cleanCode(cssCode);
-        const cleanJsCode = cleanCode(jsCode);
-
-        // Combine the code into a single HTML document
-        const fullHtmlContent = `
-          <!DOCTYPE html>
-          <html lang="en">
-            <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>${cleanCssCode}</style>
-            </head>
-            <body>
-              ${cleanHtmlCode}
-              <script>${cleanJsCode}</script>
-            </body>
-          </html>
-        `;
+        const fullHtmlContent = extractor.generateHtmlContent(htmlCode, cssCode, jsCode);
 
         onUpdatePreview(fullHtmlContent);
       } catch (error) {
@@ -155,29 +100,34 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
     );
   };
 
+  const handleReapplyCode = (text: string) => {
+    const extractor = new CodeExtractorImpl();
+    const { htmlCode, cssCode, jsCode } = extractor.extract(text);
+    const fullHtmlContent = extractor.generateHtmlContent(htmlCode, cssCode, jsCode);
+    onUpdatePreview(fullHtmlContent);
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex ${
-              message.sender === "user" ? "justify-end" : "justify-start"
-            }`}
+            className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"
+              }`}
           >
             <div
-              className={`max-w-[70%] ${
-                message.sender === "user"
-                  ? "bg-blue-100 rounded-l-lg rounded-br-lg"
-                  : ""
-              }`}
+              className={`max-w-[70%] ${message.sender === "user"
+                ? "bg-blue-100 rounded-l-lg rounded-br-lg"
+                : ""
+                }`}
             >
               {message.sender === "user" ? (
                 <div className="p-3 rounded-lg">
                   <p className="whitespace-pre-wrap break-words">{message.text}</p>
                 </div>
               ) : (
-                <AIResponse text={message.text} copyToClipboard={copyToClipboard} />
+                <AIResponse text={message.text} copyToClipboard={copyToClipboard} reapplyCode={() => handleReapplyCode(message.text)} />
               )}
             </div>
           </div>
