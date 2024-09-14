@@ -14,7 +14,7 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("用 html + css + js 做一个贪吃蛇小游戏, 增加一个重新开始的按钮,将html,css,js都输入到一个html文件");
+  const [input, setInput] = useState("用 html + css + js 做一个贪吃蛇小游戏, 增加一个重新开始的按钮,将html,css,js都输入到一个html文件,如果游戏结束不要使用alert,而是使用一个按钮,点击按钮后重新开始游戏");
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState<{ role: string; content: string }[]>([]);
 
