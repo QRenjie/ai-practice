@@ -8,6 +8,7 @@ export default function Home() {
   const [previewKey, setPreviewKey] = useState(0);
 
   const handleUpdatePreview = (content: string) => {
+    console.log("Updating preview with content:", content);
     setPreviewContent(content);
     setPreviewKey(prevKey => prevKey + 1);
   };
@@ -27,7 +28,8 @@ export default function Home() {
           srcDoc={previewContent}
           className="w-full h-[calc(100vh-8rem)] border"
           title="Preview"
-          sandbox="allow-scripts"
+          sandbox="allow-scripts allow-modals"
+          onLoad={() => console.log("iframe content loaded")}
         />
       </div>
     </div>

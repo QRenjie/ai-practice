@@ -14,10 +14,11 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("用 html + css + js 做一个贪吃蛇小游戏,并支持重新开始和键盘事件的功能，并且用同一个文件");
+  const [input, setInput] = useState("用 html + css + js 做一个贪吃蛇小游戏,并支持重新开始和键盘事件的功能,并且用同一个文件");
   const [isLoading, setIsLoading] = useState(false);
+  const [chatHistory, setChatHistory] = useState<{ role: string; content: string }[]>([]);
 
-  async function callOpenAI(message: string): Promise<string> {
+  async function callOpenAI(message: string, history: { role: string; content: string }[]): Promise<string> {
     try {
       const response = await fetch(
         "http://openai-proxy.brain.loocaa.com/v1/chat/completions",
@@ -29,7 +30,7 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
           },
           body: JSON.stringify({
             model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: message }],
+            messages: [...history, { role: "user", content: message }],
           }),
         }
       );
@@ -58,20 +59,23 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
+      const userMessage = { role: "user", content: input };
       setMessages([...messages, { text: input, sender: "user", type: "text" }]);
+      setChatHistory([...chatHistory, userMessage]);
       setIsLoading(true);
 
       try {
-        const aiResponse = await callOpenAI(input);
+        const aiResponse = await callOpenAI(input, chatHistory);
 
+        const botMessage = { role: "assistant", content: aiResponse };
         setMessages((prev) => [
           ...prev,
           { text: aiResponse, sender: "bot", type: "markdown" },
         ]);
+        setChatHistory((prev) => [...prev, botMessage]);
 
         const extractor = new CodeExtractorImpl();
         const { htmlCode, cssCode, jsCode } = extractor.extract(aiResponse);
-
         const fullHtmlContent = extractor.generateHtmlContent(htmlCode, cssCode, jsCode);
 
         onUpdatePreview(fullHtmlContent);
