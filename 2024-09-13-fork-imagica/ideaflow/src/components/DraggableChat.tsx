@@ -72,12 +72,14 @@ export default function DraggableChat({ onUpdatePreview }: DraggableChatProps) {
         setPosition({ x: position.x, y: position.y });
       }}
       minWidth={minWidth}
-      minHeight={isMinimized ? 40 : minHeight}
+      minHeight={40}
       maxWidth={maxSize.width}
       maxHeight={maxSize.height}
       bounds="parent"
       dragHandleClassName="draggable-handle"
-      className="shadow-2xl rounded-lg overflow-hidden bg-gradient-to-br from-purple-500 to-indigo-600"
+      className={`shadow-2xl rounded-lg overflow-hidden bg-gradient-to-br from-purple-500 to-indigo-600 ${
+        isMinimized ? 'h-10' : ''
+      }`}
     >
       <div className="flex flex-col h-full bg-white bg-opacity-10 backdrop-blur-sm">
         <div className="draggable-handle cursor-move bg-black bg-opacity-30 p-2 rounded-t-lg flex justify-between items-center">
@@ -121,11 +123,9 @@ export default function DraggableChat({ onUpdatePreview }: DraggableChatProps) {
             </button>
           </div>
         </div>
-        {!isMinimized && (
-          <div className="flex-grow overflow-auto">
-            <Chat onUpdatePreview={onUpdatePreview} />
-          </div>
-        )}
+        <div className={`flex-grow overflow-auto ${isMinimized ? 'hidden' : ''}`}>
+          <Chat onUpdatePreview={onUpdatePreview} />
+        </div>
       </div>
     </Rnd>
   );
