@@ -27,6 +27,8 @@ const MessageItem = memo<{ message: Message; chatController: ChatController }>((
   </div>
 ));
 
+MessageItem.displayName = 'MessageItem';
+
 const MessageList = forwardRef<HTMLDivElement, MessageListProps>(({ messages, chatController }, ref) => {
   const bottomRef = useRef<HTMLDivElement>(null);
 

@@ -30,6 +30,8 @@ const ChatInput: React.FC<ChatInputProps> = React.memo(({
   </div>
 ));
 
+ChatInput.displayName = 'ChatInput';
+
 const SubmitButton: React.FC<{ isLoading: boolean }> = React.memo(({ isLoading }) => (
   <button
     type="submit"
@@ -47,5 +49,7 @@ const SubmitButton: React.FC<{ isLoading: boolean }> = React.memo(({ isLoading }
     )}
   </button>
 ));
+
+SubmitButton.displayName = 'SubmitButton';
 
 export default ChatInput;
