@@ -45,14 +45,18 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
   }, [handleSubmit]);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <MessageList ref={messageListRef} messages={messages} chatController={chatController} />
-      <ChatInput 
-        inputRef={inputRef}
-        isLoading={isLoading}
-        onSubmit={handleSubmit}
-        onKeyPress={handleKeyPress}
-      />
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-y-auto p-4">
+        <MessageList ref={messageListRef} messages={messages} chatController={chatController} />
+      </div>
+      <div className="border-t p-4">
+        <ChatInput 
+          inputRef={inputRef}
+          isLoading={isLoading}
+          onSubmit={handleSubmit}
+          onKeyPress={handleKeyPress}
+        />
+      </div>
     </div>
   );
 };

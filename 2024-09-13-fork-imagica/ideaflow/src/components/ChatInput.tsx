@@ -13,14 +13,14 @@ const ChatInput: React.FC<ChatInputProps> = React.memo(({
   onSubmit,
   onKeyPress
 }) => (
-  <div className="bg-white mt-2">
-    <form onSubmit={onSubmit} className="flex items-center max-w-4xl mx-auto">
+  <div className="bg-white">
+    <form onSubmit={onSubmit} className="flex items-center">
       <input
         ref={inputRef}
         type="text"
         name="chatInput"
         onKeyPress={onKeyPress}
-        className="flex-grow p-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-teal-500 transition-all duration-300"
+        className="flex-grow p-3 text-gray-800 placeholder-gray-500 bg-gray-100 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
         placeholder="输入你的问题或按回车提交"
         disabled={isLoading}
         defaultValue="用 html + css + js 做一个贪吃蛇小游戏,并支持重新开始和键盘事件的功能,并且用同一个文件"
