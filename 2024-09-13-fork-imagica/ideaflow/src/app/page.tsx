@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Chat from "../components/Chat";
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
   const handleUpdatePreview = (content: string) => {
     console.log("Updating preview with content:", content);
     setPreviewContent(content);
-    setPreviewKey(prevKey => prevKey + 1);
+    setPreviewKey((prevKey) => prevKey + 1);
   };
 
   return (
