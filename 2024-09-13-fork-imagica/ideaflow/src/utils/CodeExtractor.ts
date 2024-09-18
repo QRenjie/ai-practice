@@ -12,6 +12,7 @@ export class CodeExtractorImpl implements CodeExtractor {
     }
 
     private extractFullHtml(content: string) {
+        console.log("Extracting full HTML:", content);
         let htmlCode = content;
         let cssCode = "";
         let jsCode = "";
@@ -21,12 +22,13 @@ export class CodeExtractorImpl implements CodeExtractor {
 
         if (styleMatch) {
             cssCode = styleMatch[1];
-            htmlCode = htmlCode.replace(styleMatch[0], '');
         }
         if (scriptMatch) {
             jsCode = scriptMatch[1];
-            htmlCode = htmlCode.replace(scriptMatch[0], '');
         }
+
+        console.log("Extracted CSS:", cssCode);
+        console.log("Extracted JS:", jsCode);
 
         return { htmlCode, cssCode, jsCode };
     }
@@ -53,8 +55,17 @@ export class CodeExtractorImpl implements CodeExtractor {
     }
 
     generateHtmlContent(htmlCode: string, cssCode: string, jsCode: string): string {
+        console.log("Generating HTML content with:", { htmlCode, cssCode, jsCode });
         if (htmlCode.trim().startsWith('<html') || htmlCode.trim().startsWith('<!DOCTYPE html')) {
-            return htmlCode;
+            // 如果是完整的 HTML，我们需要确保 CSS 和 JS 被正确插入
+            let fullHtml = htmlCode;
+            if (cssCode && !fullHtml.includes('<style>')) {
+                fullHtml = fullHtml.replace('</head>', `<style>${cssCode}</style></head>`);
+            }
+            if (jsCode && !fullHtml.includes('<script>')) {
+                fullHtml = fullHtml.replace('</body>', `<script>${jsCode}</script></body>`);
+            }
+            return fullHtml;
         } else {
             return `
                 <!DOCTYPE html>
