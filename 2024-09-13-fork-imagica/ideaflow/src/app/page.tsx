@@ -38,11 +38,16 @@ const defaultIframeContent = `
 export default function Home() {
   const [previewContent, setPreviewContent] = useState<string>(""); // Updated type definition
   const [previewKey, setPreviewKey] = useState(0); // 添加 previewKey 状态
+  const [pythonCode, setPythonCode] = useState<string>("");
 
-  const handleUpdatePreview = useCallback((content: string) => {
-    console.log("Updating preview with content:", content);
-    setPreviewContent(content);
-    setPreviewKey((prevKey) => prevKey + 1); // 更新 previewKey
+  const handleUpdatePreview = useCallback(({ type, content }: { type: 'html' | 'python', content: string }) => {
+    console.log(`Updating preview with ${type} content:`, content);
+    if (type === 'python') {
+      setPythonCode(content);
+    } else {
+      setPreviewContent(content);
+      setPreviewKey((prevKey) => prevKey + 1);
+    }
   }, []);
 
   const layers = useMemo(() => [
@@ -64,7 +69,7 @@ export default function Home() {
     {
       id: "codeExecutor",
       title: "代码执行器",
-      content: <CodeExecutor />,
+      content: <CodeExecutor initialCode={pythonCode} initialLanguage="python" />,
       size: { width: 500, height: 600 },
     },
     {
@@ -73,7 +78,7 @@ export default function Home() {
       content: <Chat onUpdatePreview={handleUpdatePreview} />,
       size: { width: 480, height: 600 },
     },
-  ], [previewKey, previewContent, handleUpdatePreview]);
+  ], [previewKey, previewContent, handleUpdatePreview, pythonCode]);
 
   return (
     <div className="h-screen bg-gray-100 relative" data-testid="Home">

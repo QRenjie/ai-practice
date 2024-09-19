@@ -10,7 +10,7 @@ import ChatInput from "./ChatInput";
 import MessageList from "./MessageList";
 
 interface ChatProps {
-  onUpdatePreview: (content: string) => void;
+  onUpdatePreview: (data: { type: 'html' | 'python', content: string }) => void;
 }
 
 const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
@@ -26,14 +26,14 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
         setMessages,
         setChatHistory,
         setIsLoading,
-        onUpdatePreview,
+        (data: { type: 'html' | 'python', content: string }) => onUpdatePreview(data),
         inputRef
       ),
     [onUpdatePreview]
   );
 
   useEffect(() => {
-    chatController.updatePreviewCallback(onUpdatePreview);
+    chatController.updatePreviewCallback((data: { type: 'html' | 'python', content: string }) => onUpdatePreview(data));
   }, [onUpdatePreview, chatController]);
 
   useEffect(() => {

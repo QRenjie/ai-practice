@@ -23,7 +23,7 @@ const ChatInput: React.FC<ChatInputProps> = React.memo(({
         className="flex-grow p-3 text-gray-800 placeholder-gray-500 bg-gray-100 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
         placeholder="输入你的问题或按回车提交"
         disabled={isLoading}
-        defaultValue="用 html + css + js 做一个贪吃蛇小游戏,并支持重新开始和键盘事件的功能,并且用同一个文件"
+        defaultValue="帮我写一段python简单的数学加法例子"
       />
       <SubmitButton isLoading={isLoading} />
     </form>

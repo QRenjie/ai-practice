@@ -86,10 +86,8 @@ export class ChatController {
       const aiResponse = await this.callOpenAI(message, await this.getChatHistory());
       const formattedResponse = this.formatAIResponse(aiResponse);
 
-      // 添加一个初始的空消息，但现在包含id
       this.setMessages(prev => [...prev, { id: uuidv4(), text: '', sender: "bot", type: "markdown" }]);
 
-      // 模拟流式响应显示
       await this.simulateStreamResponse(formattedResponse);
 
       const botMessage: ChatHistory = { role: "assistant", content: formattedResponse };
@@ -97,9 +95,18 @@ export class ChatController {
 
       const extractor = new CodeExtractorImpl();
       const { htmlCode, cssCode, jsCode } = extractor.extract(formattedResponse);
-      const fullHtmlContent = extractor.generateHtmlContent(htmlCode, cssCode, jsCode);
 
-      this.onUpdatePreview(fullHtmlContent);
+      if (formattedResponse.includes('```python')) {
+        // 处理 Python 代码
+        const pythonCodeMatch = formattedResponse.match(/```python\n([\s\S]*?)\n```/);
+        if (pythonCodeMatch) {
+          this.onUpdatePreview(pythonCodeMatch[1]);
+        }
+      } else if (htmlCode || cssCode || jsCode) {
+        // 处理 HTML/CSS/JS 代码
+        const fullHtmlContent = extractor.generateHtmlContent(htmlCode, cssCode, jsCode);
+        this.onUpdatePreview(fullHtmlContent);
+      }
     } catch (error) {
       console.error("错误:", error);
       this.setMessages(prev => [...prev, { id: uuidv4(), text: "抱歉，发生了错误。", sender: "bot", type: "text" }]);

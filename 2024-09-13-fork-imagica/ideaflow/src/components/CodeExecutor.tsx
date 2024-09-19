@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const CodeExecutor: React.FC = () => {
-  const [code, setCode] = useState('');
-  const [language, setLanguage] = useState('javascript');
+interface CodeExecutorProps {
+  initialCode?: string;
+  initialLanguage?: 'javascript' | 'python';
+}
+
+const CodeExecutor: React.FC<CodeExecutorProps> = ({ initialCode = '', initialLanguage = 'javascript' }) => {
+  const [code, setCode] = useState(initialCode);
+  const [language, setLanguage] = useState(initialLanguage);
   const [result, setResult] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setCode(initialCode);
+    setLanguage(initialLanguage);
+  }, [initialCode, initialLanguage]);
 
   const executeCode = async () => {
     setIsLoading(true);
@@ -25,7 +35,7 @@ const CodeExecutor: React.FC = () => {
     <div className="p-4">
       <select
         value={language}
-        onChange={(e) => setLanguage(e.target.value)}
+        onChange={(e) => setLanguage(e.target.value as 'javascript' | 'python')}
         className="mb-2 p-2 border rounded"
       >
         <option value="javascript">JavaScript</option>
