@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useCallback } from "react";
-import { Rnd } from "react-rnd";
+import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
 import LayerHeader from "./LayerHeader";
 import "./Layer.css"; // 引入 CSS 文件
 import ActiveLayerContext from "../context/ActiveLayerContext"; // 更新导入路径
@@ -24,7 +24,6 @@ const Layer: React.FC<LayerProps> = ({
   initialSize = { width: 480, height: 600 },
   initialPosition = { x: 20, y: 20 },
   minWidth = 320,
-  minHeight = 400,
   title = "Layer",
 }) => {
   const {
@@ -51,11 +50,11 @@ const Layer: React.FC<LayerProps> = ({
     setActiveLayer(layerId);
   }, [setActiveLayer, layerId]);
 
-  const handleDragStop = useCallback((e: any, d: any) => {
+  const handleDragStop:RndDragCallback = useCallback((_, d) => {
     setPosition({ x: d.x, y: d.y });
   }, [setPosition]);
 
-  const handleResize = useCallback((e: any, direction: any, ref: any, delta: any, position: any) => {
+  const handleResize:RndResizeCallback = useCallback((_, __, ref, ___, position) => {
     setSize({
       width: ref.offsetWidth,
       height: ref.offsetHeight,

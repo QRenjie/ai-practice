@@ -1,12 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  // swcMinify: true,
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        vm2: false,
+      };
+    }
+    return config;
+  },
   async rewrites() {
     return [
       {
-        source: '/api/execute',
-        destination: 'http://localhost:3001/execute',
+        source: '/api/:path*',
+        destination: '/api/:path*',
       },
     ];
   },

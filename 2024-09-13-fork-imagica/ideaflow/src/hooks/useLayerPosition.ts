@@ -6,15 +6,19 @@ const useLayerPosition = (initialSize: { width: number; height: number }, initia
   const [isMaximized, setIsMaximized] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [maxSize, setMaxSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const [maxSize, setMaxSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    const handleResize = () => {
+    if (typeof window !== "undefined") {
       setMaxSize({ width: window.innerWidth, height: window.innerHeight });
-    };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+      const handleResize = () => {
+        setMaxSize({ width: window.innerWidth, height: window.innerHeight });
+      };
+
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
   }, []);
 
   const handleMaximize = useCallback(() => {
