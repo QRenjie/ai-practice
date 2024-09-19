@@ -5,12 +5,12 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { ChatController, Message, ChatHistory } from "../services/chatService";
+import { ChatController, Message, ChatHistory, OnUpdatePreviewCallback } from "../services/chatService";
 import ChatInput from "./ChatInput";
 import MessageList from "./MessageList";
 
 interface ChatProps {
-  onUpdatePreview: (data: { type: 'html' | 'python', content: string }) => void;
+  onUpdatePreview: OnUpdatePreviewCallback;
 }
 
 const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
@@ -26,7 +26,7 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
         setMessages,
         setChatHistory,
         setIsLoading,
-        (data: { type: 'html' | 'python', content: string }) => onUpdatePreview(data),
+        onUpdatePreview,
         inputRef
       ),
     [onUpdatePreview]

@@ -1,6 +1,6 @@
-import React from 'react';
-import { CodeExtractorImpl } from '../utils/CodeExtractor';
-import { v4 as uuidv4 } from 'uuid';  // 需要安装 uuid 包
+import React from "react";
+import { CodeExtractorImpl } from "../utils/CodeExtractor";
+import { v4 as uuidv4 } from "uuid"; // 需要安装 uuid 包
 
 export interface Message {
   id: string; // 现在id是必需的
@@ -14,6 +14,9 @@ export interface ChatHistory {
   content: string;
 }
 
+export type ApplyData = { type: "html" | "python"; content: string };
+export type OnUpdatePreviewCallback = (data: ApplyData) => void;
+
 export class ChatController {
   private inputRef: React.RefObject<HTMLInputElement>;
 
@@ -21,13 +24,16 @@ export class ChatController {
     private setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
     private setChatHistory: React.Dispatch<React.SetStateAction<ChatHistory[]>>,
     private setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    private onUpdatePreview: (content: string) => void,
+    private onUpdatePreview: OnUpdatePreviewCallback,
     inputRef: React.RefObject<HTMLInputElement>
   ) {
     this.inputRef = inputRef;
   }
 
-  private async callOpenAI(message: string, history: ChatHistory[]): Promise<string> {
+  private async callOpenAI(
+    message: string,
+    history: ChatHistory[]
+  ): Promise<string> {
     const response = await fetch(
       "http://openai-proxy.brain.loocaa.com/v1/chat/completions",
       {
@@ -60,10 +66,12 @@ export class ChatController {
     const trimmedResponse = response.trim();
 
     // 检查是否整个响应都是一个HTML字符串
-    if (trimmedResponse.startsWith('<') &&
-      trimmedResponse.endsWith('>') &&
-      !trimmedResponse.includes('\n') &&
-      !trimmedResponse.includes('```')) {
+    if (
+      trimmedResponse.startsWith("<") &&
+      trimmedResponse.endsWith(">") &&
+      !trimmedResponse.includes("\n") &&
+      !trimmedResponse.includes("```")
+    ) {
       // 如果是单行HTML且不包含Markdown代码块，则将其包装在HTML代码块中
       return `\`\`\`html\n${trimmedResponse}\n\`\`\``;
     }
@@ -79,37 +87,64 @@ export class ChatController {
 
     this.setIsLoading(true);
     const userMessage: ChatHistory = { role: "user", content: message };
-    this.setMessages(prev => [...prev, { id: uuidv4(), text: message, sender: "user", type: "text" }]);
-    this.setChatHistory(prev => [...prev, userMessage]);
+    this.setMessages((prev) => [
+      ...prev,
+      { id: uuidv4(), text: message, sender: "user", type: "text" },
+    ]);
+    this.setChatHistory((prev) => [...prev, userMessage]);
 
     try {
-      const aiResponse = await this.callOpenAI(message, await this.getChatHistory());
+      const aiResponse = await this.callOpenAI(
+        message,
+        await this.getChatHistory()
+      );
       const formattedResponse = this.formatAIResponse(aiResponse);
 
-      this.setMessages(prev => [...prev, { id: uuidv4(), text: '', sender: "bot", type: "markdown" }]);
+      this.setMessages((prev) => [
+        ...prev,
+        { id: uuidv4(), text: "", sender: "bot", type: "markdown" },
+      ]);
 
       await this.simulateStreamResponse(formattedResponse);
 
-      const botMessage: ChatHistory = { role: "assistant", content: formattedResponse };
-      this.setChatHistory(prev => [...prev, userMessage, botMessage]);
+      const botMessage: ChatHistory = {
+        role: "assistant",
+        content: formattedResponse,
+      };
+      this.setChatHistory((prev) => [...prev, userMessage, botMessage]);
 
       const extractor = new CodeExtractorImpl();
-      const { htmlCode, cssCode, jsCode } = extractor.extract(formattedResponse);
+      const { htmlCode, cssCode, jsCode } =
+        extractor.extract(formattedResponse);
 
-      if (formattedResponse.includes('```python')) {
+      if (formattedResponse.includes("```python")) {
         // 处理 Python 代码
-        const pythonCodeMatch = formattedResponse.match(/```python\n([\s\S]*?)\n```/);
+        const pythonCodeMatch = formattedResponse.match(
+          /```python\n([\s\S]*?)\n```/
+        );
         if (pythonCodeMatch) {
-          this.onUpdatePreview(pythonCodeMatch[1]);
+          this.onUpdatePreview({ type: "python", content: pythonCodeMatch[1] });
         }
       } else if (htmlCode || cssCode || jsCode) {
         // 处理 HTML/CSS/JS 代码
-        const fullHtmlContent = extractor.generateHtmlContent(htmlCode, cssCode, jsCode);
-        this.onUpdatePreview(fullHtmlContent);
+        const fullHtmlContent = extractor.generateHtmlContent(
+          htmlCode,
+          cssCode,
+          jsCode
+        );
+        this.onUpdatePreview({ type: "html", content: fullHtmlContent });
       }
     } catch (error) {
       console.error("错误:", error);
-      this.setMessages(prev => [...prev, { id: uuidv4(), text: "抱歉，发生了错误。", sender: "bot", type: "text" }]);
+      this.setMessages((prev) => [
+        ...prev,
+        {
+          id: uuidv4(),
+          text: "抱歉，发生了错误。",
+          sender: "bot",
+          type: "text",
+        },
+      ]);
     } finally {
       this.setIsLoading(false);
       this.clearInput();
@@ -117,21 +152,21 @@ export class ChatController {
   }
 
   private getInputValue(): string {
-    return this.inputRef.current?.value || '';
+    return this.inputRef.current?.value || "";
   }
 
   private clearInput(): void {
     if (this.inputRef.current) {
-      this.inputRef.current.value = '';
+      this.inputRef.current.value = "";
     }
   }
 
   public handleKeyPress = (e: React.KeyboardEvent<Element>): void => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       this.handleSubmit(e as React.KeyboardEvent<Element>);
     }
-  }
+  };
 
   public copyToClipboard = async (text: string): Promise<void> => {
     try {
@@ -140,43 +175,47 @@ export class ChatController {
     } catch (err) {
       console.error("无法复制文本: ", err);
     }
-  }
+  };
 
   public handleReapplyCode = (code: string): void => {
     const extractor = new CodeExtractorImpl();
     const { htmlCode, cssCode, jsCode } = extractor.extract(code);
-    const fullHtmlContent = extractor.generateHtmlContent(htmlCode, cssCode, jsCode);
-    this.onUpdatePreview(fullHtmlContent);
-  }
+    const fullHtmlContent = extractor.generateHtmlContent(
+      htmlCode,
+      cssCode,
+      jsCode
+    );
+    this.onUpdatePreview({ type: "html", content: fullHtmlContent });
+  };
 
   private getChatHistory = async (): Promise<ChatHistory[]> => {
-    return new Promise(resolve => {
-      this.setChatHistory(history => {
+    return new Promise((resolve) => {
+      this.setChatHistory((history) => {
         resolve(history);
         return history;
       });
     });
-  }
+  };
 
-  public updatePreviewCallback(newCallback: (content: string) => void): void {
+  public updatePreviewCallback(newCallback: OnUpdatePreviewCallback): void {
     this.onUpdatePreview = newCallback;
   }
 
   private async simulateStreamResponse(content: string): Promise<void> {
     const chunkSize = Math.floor(Math.random() * 11) + 10; // 10-20之间的随机数
-    let displayedContent = '';
-    const messageId = uuidv4();  // 为整个流式响应生成一个唯一id
+    let displayedContent = "";
+    const messageId = uuidv4(); // 为整个流式响应生成一个唯一id
 
     for (let i = 0; i < content.length; i += chunkSize) {
       const chunk = content.slice(i, i + chunkSize);
       displayedContent += chunk;
-      await new Promise(resolve => setTimeout(resolve, 50));
-      this.setMessages(prev => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      this.setMessages((prev) => {
         const newMessages = [...prev];
         newMessages[newMessages.length - 1] = {
           ...newMessages[newMessages.length - 1],
-          id: messageId,  // 使用同一个id
-          text: displayedContent
+          id: messageId, // 使用同一个id
+          text: displayedContent,
         };
         return newMessages;
       });

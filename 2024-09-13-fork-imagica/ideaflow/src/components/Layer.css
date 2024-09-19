@@ -16,7 +16,9 @@
 
 .layer {
     position: relative;
-    /* 其他样式 */
+    border-radius: 12px; /* macOS 风格的圆角 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* macOS 风格的阴影 */
+    background-color: #f0f0f0; /* macOS 风格的背景色 */
 }
 
 .layer.active {

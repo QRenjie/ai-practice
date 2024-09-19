@@ -64,24 +64,24 @@ export default function Home() {
           onLoad={() => console.log("iframe content loaded")}
         />
       ),
-      size: { width: 600, height: 400 },
+      size: { width: 600, height: 600 },
     },
     {
       id: "codeExecutor",
       title: "代码执行器",
       content: <CodeExecutor initialCode={pythonCode} initialLanguage="python" />,
-      size: { width: 500, height: 600 },
+      size: { width: 500, height: 450 },
     },
     {
       id: "aiChat",
       title: "AI 助手",
       content: <Chat onUpdatePreview={handleUpdatePreview} />,
-      size: { width: 480, height: 600 },
+      size: { width: 480, height: 500 },
     },
   ], [previewKey, previewContent, handleUpdatePreview, pythonCode]);
 
   return (
-    <div className="h-screen bg-gray-100 relative" data-testid="Home">
+    <div className="h-screen bg-gradient-to-r from-blue-100 to-blue-300 relative" data-testid="Home">
       <LayerContainer layers={layers} />
     </div>
   );

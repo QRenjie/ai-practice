@@ -74,7 +74,7 @@ const Layer: React.FC<LayerProps> = ({
       maxHeight={maxSize.height}
       bounds="parent"
       dragHandleClassName="draggable-handle"
-      className={`shadow-2xl rounded-lg overflow-hidden bg-gradient-to-br from-purple-500 to-indigo-600 ${
+      className={`shadow-2xl rounded-lg overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 ${
         isMinimized ? "h-10" : ""
       } ${isAnimating ? "layer-animating" : ""} layer-resizable ${activeLayer === layerId ? 'active' : ''}`} // 添加动画类和可调整大小类
       data-testid="Layer"

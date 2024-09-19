@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import os from 'os';
 
 const execAsync = promisify(exec);
 
@@ -45,8 +46,9 @@ async function executeJavaScript(code: string, VM: typeof import('vm2').VM): Pro
 }
 
 async function executePython(code: string): Promise<string> {
+  const pythonCommand = os.platform() === 'win32' ? 'py' : 'python';
   try {
-    const { stdout, stderr } = await execAsync(`py -c "${code.replace(/"/g, '\\"')}"`);
+    const { stdout, stderr } = await execAsync(`${pythonCommand} -c "${code.replace(/"/g, '\\"')}"`);
     if (stderr) {
       throw new Error(stderr);
     }

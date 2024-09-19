@@ -12,7 +12,7 @@ interface LayerHeaderProps {
 const IconButton: React.FC<{ onClick: () => void; children: React.ReactNode }> = ({ onClick, children }) => (
   <button
     onClick={onClick}
-    className="text-white hover:bg-white hover:bg-opacity-20 rounded p-1 transition-colors duration-200"
+    className="text-gray-700 hover:bg-gray-300 rounded p-1 transition-colors duration-200"
   >
     {children}
   </button>
@@ -36,10 +36,10 @@ const LayerHeader: React.FC<LayerHeaderProps> = ({
 
   return (
     <div
-      className="draggable-handle cursor-move bg-black bg-opacity-30 p-2 rounded-t-lg flex justify-between items-center"
+      className="draggable-handle cursor-move bg-gray-100 p-2 rounded-t-lg flex justify-between items-center"
       onDoubleClick={handleDoubleClick}
     >
-      <span className="text-white font-semibold">{title}</span>
+      <span className="text-gray-700 font-semibold">{title}</span>
       <div className="flex space-x-2">
         <IconButton onClick={onFit}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
