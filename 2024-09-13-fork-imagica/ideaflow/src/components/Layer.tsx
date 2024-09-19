@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useCallback, useContext, useRef } from "react";
+import React, { useContext, useRef, useCallback } from "react";
 import { Rnd } from "react-rnd";
 import LayerHeader from "./LayerHeader";
 import "./Layer.css"; // 引入 CSS 文件
-
-// 创建一个上下文来管理 activeLayer
-const ActiveLayerContext = React.createContext({
-  activeLayer: null,
-  setActiveLayer: (id: string) => {},
-});
+import ActiveLayerContext from "../context/ActiveLayerContext"; // 更新导入路径
+import useLayerPosition from "../hooks/useLayerPosition"; // 使用自定义钩子
 
 // 静态计数器
 let layerCounter = 0;
@@ -31,12 +27,19 @@ const Layer: React.FC<LayerProps> = ({
   minHeight = 400,
   title = "Layer",
 }) => {
-  const [size, setSize] = useState(initialSize);
-  const [position, setPosition] = useState(initialPosition);
-  const [isMaximized, setIsMaximized] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [maxSize, setMaxSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const {
+    size,
+    position,
+    isMaximized,
+    isMinimized,
+    isAnimating,
+    maxSize,
+    setSize,
+    setPosition,
+    handleMaximize,
+    handleMinimize,
+    handleFit,
+  } = useLayerPosition(initialSize, initialPosition);
 
   const { activeLayer, setActiveLayer } = useContext(ActiveLayerContext);
 
@@ -44,69 +47,28 @@ const Layer: React.FC<LayerProps> = ({
   const layerIdRef = useRef(id || `layer-${layerCounter++}`);
   const layerId = layerIdRef.current;
 
-  useEffect(() => {
-    const handleResize = () => {
-      setMaxSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const handleMaximize = useCallback(() => {
-    setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 300); // 动画持续时间
-
-    if (isMaximized) {
-      setSize(initialSize);
-      setPosition(initialPosition);
-    } else {
-      setSize({ width: maxSize.width, height: maxSize.height });
-      setPosition({ x: 0, y: 0 });
-    }
-    setIsMaximized(!isMaximized);
-    setIsMinimized(false);
-  }, [isMaximized, initialSize, initialPosition, maxSize]);
-
-  const handleMinimize = useCallback(() => {
-    setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 300); // 动画持续时间
-
-    if (isMinimized) {
-      setSize(initialSize);
-    } else {
-      setSize({ width: initialSize.width, height: 40 });
-    }
-    setIsMinimized(!isMinimized);
-    setIsMaximized(false);
-  }, [isMinimized, initialSize]);
-
-  const handleFit = useCallback(() => {
-    setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 300); // 动画持续时间
-
-    setSize(initialSize);
-    setPosition(initialPosition);
-    setIsMaximized(false);
-    setIsMinimized(false);
-  }, [initialSize, initialPosition]);
-
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     setActiveLayer(layerId);
-  };
+  }, [setActiveLayer, layerId]);
+
+  const handleDragStop = useCallback((e: any, d: any) => {
+    setPosition({ x: d.x, y: d.y });
+  }, [setPosition]);
+
+  const handleResize = useCallback((e: any, direction: any, ref: any, delta: any, position: any) => {
+    setSize({
+      width: ref.offsetWidth,
+      height: ref.offsetHeight,
+    });
+    setPosition({ x: position.x, y: position.y });
+  }, [setSize, setPosition]);
 
   return (
     <Rnd
       size={size}
       position={position}
-      onDragStop={(e, d) => setPosition({ x: d.x, y: d.y })}
-      onResize={(e, direction, ref, delta, position) => {
-        setSize({
-          width: ref.offsetWidth,
-          height: ref.offsetHeight,
-        });
-        setPosition({ x: position.x, y: position.y });
-      }}
+      onDragStop={handleDragStop}
+      onResize={handleResize}
       minWidth={minWidth}
       minHeight={40}
       maxWidth={maxSize.width}
@@ -140,4 +102,3 @@ const Layer: React.FC<LayerProps> = ({
 Layer.displayName = "Layer"; // 添加 displayName
 
 export default React.memo(Layer);
-export { ActiveLayerContext }; // 导出上下文

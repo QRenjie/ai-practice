@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import DraggableChat from "../components/DraggableChat";
-import Layer, { ActiveLayerContext } from "../components/Layer";
+import { useState, useCallback, useMemo } from "react";
+import LayerContainer from "../container/LayerContainer";
+import CodeExecutor from '../components/CodeExecutor';
+import Chat from "../components/Chat";
 
 export default function Home() {
-  const [previewContent, setPreviewContent] = useState<string>("");
-  const [previewKey, setPreviewKey] = useState(0);
-  const [activeLayer, setActiveLayer] = useState<string | null>(null); // 添加 activeLayer 状态
+  const [previewContent, setPreviewContent] = useState<string>(""); // Updated type definition
+  const [previewKey, setPreviewKey] = useState(0); // 添加 previewKey 状态
 
   const handleUpdatePreview = useCallback((content: string) => {
     console.log("Updating preview with content:", content);
     setPreviewContent(content);
-    setPreviewKey((prevKey) => prevKey + 1);
+    setPreviewKey((prevKey) => prevKey + 1); // 更新 previewKey
   }, []);
 
   const defaultIframeContent = `
@@ -43,27 +43,41 @@ export default function Home() {
           <p>内容将在这里显示</p>
         </div>
       </body>
-    </html>
-  `;
+    </html>`;
+
+  const layers = useMemo(() => [
+    {
+      id: "preview",
+      title: "预览",
+      content: (
+        <iframe
+          key={previewKey}
+          srcDoc={previewContent || defaultIframeContent}
+          className="w-full h-full border-none"
+          title="Preview"
+          sandbox="allow-scripts allow-modals"
+          onLoad={() => console.log("iframe content loaded")}
+        />
+      ),
+      size: { width: 600, height: 400 },
+    },
+    {
+      id: "codeExecutor",
+      title: "代码执行器",
+      content: <CodeExecutor />,
+      size: { width: 500, height: 600 },
+    },
+    {
+      id: "aiChat",
+      title: "AI 助手",
+      content: <Chat onUpdatePreview={handleUpdatePreview} />,
+      size: { width: 480, height: 600 },
+    },
+  ], [previewKey, previewContent, handleUpdatePreview]);
 
   return (
-    <ActiveLayerContext.Provider value={{ activeLayer, setActiveLayer }}>
-      <div className="h-screen bg-gray-100 relative" data-testid="Home">
-        <Layer>
-          <iframe
-            key={previewKey}
-            srcDoc={previewContent || defaultIframeContent}
-            className="w-full h-full border-none"
-            title="Preview"
-            sandbox="allow-scripts allow-modals"
-            onLoad={() => console.log("iframe content loaded")}
-          />
-        </Layer>
-        <Layer>
-          <div>Layer 2 Content</div>
-        </Layer>
-        <DraggableChat onUpdatePreview={handleUpdatePreview} />
-      </div>
-    </ActiveLayerContext.Provider>
+    <div className="h-screen bg-gray-100 relative" data-testid="Home">
+      <LayerContainer layers={layers} />
+    </div>
   );
 }
