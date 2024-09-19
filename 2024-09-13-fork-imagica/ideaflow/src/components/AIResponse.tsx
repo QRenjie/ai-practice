@@ -51,7 +51,7 @@ const CodeBlock: React.FC<CodeBlockProps> = React.memo(({ codeString, language, 
       </IconButton>
     </div>
     <SyntaxHighlighter
-      style={vscDarkPlus as any}
+      style={vscDarkPlus}
       language={language}
       PreTag="div"
     >
@@ -59,6 +59,7 @@ const CodeBlock: React.FC<CodeBlockProps> = React.memo(({ codeString, language, 
     </SyntaxHighlighter>
   </div>
 ));
+CodeBlock.displayName = 'CodeBlock';
 
 const AIResponse: React.FC<AIResponseProps> = React.memo(({ text, copyToClipboard, reapplyCode }) => {
   const components: Components = useMemo(() => ({
@@ -88,5 +89,5 @@ const AIResponse: React.FC<AIResponseProps> = React.memo(({ text, copyToClipboar
     </div>
   );
 });
-
+AIResponse.displayName = 'AIResponse';
 export default AIResponse;

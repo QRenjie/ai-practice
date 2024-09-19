@@ -1,6 +1,5 @@
 import React from 'react';
 import { CodeExtractorImpl } from '../utils/CodeExtractor';
-import { debounce } from 'lodash-es';  // 需要安装 lodash-es
 import { v4 as uuidv4 } from 'uuid';  // 需要安装 uuid 包
 
 export interface Message {
@@ -123,7 +122,7 @@ export class ChatController {
   public handleKeyPress = (e: React.KeyboardEvent<Element>): void => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      this.handleSubmit(e as any);
+      this.handleSubmit(e as React.KeyboardEvent<Element>);
     }
   }
 
@@ -167,10 +166,10 @@ export class ChatController {
       await new Promise(resolve => setTimeout(resolve, 50));
       this.setMessages(prev => {
         const newMessages = [...prev];
-        newMessages[newMessages.length - 1] = { 
-          ...newMessages[newMessages.length - 1], 
+        newMessages[newMessages.length - 1] = {
+          ...newMessages[newMessages.length - 1],
           id: messageId,  // 使用同一个id
-          text: displayedContent 
+          text: displayedContent
         };
         return newMessages;
       });

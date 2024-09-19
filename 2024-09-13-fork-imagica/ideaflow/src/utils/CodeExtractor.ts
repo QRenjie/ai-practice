@@ -13,7 +13,7 @@ export class CodeExtractorImpl implements CodeExtractor {
 
     private extractFullHtml(content: string) {
         console.log("Extracting full HTML:", content);
-        let htmlCode = content;
+        const htmlCode = content;
         let cssCode = "";
         let jsCode = "";
 
