@@ -1,0 +1,25 @@
+.layer-animating {
+  transition: all 0.2s ease-in-out;
+}
+
+.layer-resizable:hover {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.layer-resizable .react-resizable-handle {
+  background-color: transparent;
+}
+
+.layer-resizable:hover .react-resizable-handle {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.layer {
+    position: relative;
+    /* 其他样式 */
+}
+
+.layer.active {
+    /* 使 active 的 layer 在最上层 */
+    z-index: 1000;
+}

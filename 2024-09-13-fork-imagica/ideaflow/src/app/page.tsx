@@ -2,10 +2,12 @@
 
 import { useState, useCallback } from "react";
 import DraggableChat from "../components/DraggableChat";
+import Layer, { ActiveLayerContext } from "../components/Layer";
 
 export default function Home() {
   const [previewContent, setPreviewContent] = useState<string>("");
   const [previewKey, setPreviewKey] = useState(0);
+  const [activeLayer, setActiveLayer] = useState<string | null>(null); // 添加 activeLayer 状态
 
   const handleUpdatePreview = useCallback((content: string) => {
     console.log("Updating preview with content:", content);
@@ -24,8 +26,7 @@ export default function Home() {
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(45deg, #f3f4f6 25%, transparent 25%, transparent 75%, #f3f4f6 75%, #f3f4f6),
-                        linear-gradient(45deg, #f3f4f6 25%, transparent 25%, transparent 75%, #f3f4f6 75%, #f3f4f6);
+            background: linear-gradient(45deg, #f3f4f6 25%, transparent 25%, transparent 75%, #f3f4f6 75%, #f3f4f6);
             background-size: 60px 60px;
             background-position: 0 0, 30px 30px;
             font-family: Arial, sans-serif;
@@ -46,16 +47,23 @@ export default function Home() {
   `;
 
   return (
-    <div className="h-screen bg-gray-100 relative">
-      <iframe
-        key={previewKey}
-        srcDoc={previewContent || defaultIframeContent}
-        className="w-full h-full border-none"
-        title="Preview"
-        sandbox="allow-scripts allow-modals"
-        onLoad={() => console.log("iframe content loaded")}
-      />
-      <DraggableChat onUpdatePreview={handleUpdatePreview} />
-    </div>
+    <ActiveLayerContext.Provider value={{ activeLayer, setActiveLayer }}>
+      <div className="h-screen bg-gray-100 relative" data-testid="Home">
+        <Layer>
+          <iframe
+            key={previewKey}
+            srcDoc={previewContent || defaultIframeContent}
+            className="w-full h-full border-none"
+            title="Preview"
+            sandbox="allow-scripts allow-modals"
+            onLoad={() => console.log("iframe content loaded")}
+          />
+        </Layer>
+        <Layer>
+          <div>Layer 2 Content</div>
+        </Layer>
+        <DraggableChat onUpdatePreview={handleUpdatePreview} />
+      </div>
+    </ActiveLayerContext.Provider>
   );
 }
