@@ -48,7 +48,13 @@ async function executeJavaScript(code: string, VM: typeof import('vm2').VM): Pro
 async function executePython(code: string): Promise<string> {
   const pythonCommand = os.platform() === 'win32' ? 'py' : 'python';
   try {
-    const { stdout, stderr } = await execAsync(`${pythonCommand} -c "${code.replace(/"/g, '\\"')}"`);
+    // 对代码进行Base64编码
+    const encodedCode = Buffer.from(code).toString('base64');
+    
+    // 构造Python命令，使用Base64解码并执行代码
+    const command = `${pythonCommand} -c "import base64; exec(base64.b64decode('${encodedCode}').decode('utf-8'))"`;
+    const { stdout, stderr } = await execAsync(command);
+
     if (stderr) {
       throw new Error(stderr);
     }

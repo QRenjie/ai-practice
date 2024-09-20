@@ -227,22 +227,29 @@ export class ChatController {
 
   private handleCodePreview(formattedResponse: string): void {
     const extractor = new CodeExtractorImpl();
-    const { htmlCode, cssCode, jsCode } = extractor.extract(formattedResponse);
 
-    if (formattedResponse.includes("```python")) {
-      const pythonCodeMatch = formattedResponse.match(
-        /```python\n([\s\S]*?)\n```/
-      );
-      if (pythonCodeMatch) {
-        this.onUpdatePreview({ type: "python", content: pythonCodeMatch[1] });
+    // 首先尝试提取 Python 代码
+    const pythonCodeMatch = formattedResponse.match(/```python\n([\s\S]*?)\n```/);
+    if (pythonCodeMatch) {
+      try {
+        this.onUpdatePreview({ type: "python", content: pythonCodeMatch[1].trim() });
+        return; // 如果成功处理了 Python 代码，就直接返回
+      } catch (error) {
+        console.error("处理 Python 代码时出错:", error);
       }
-    } else if (htmlCode || cssCode || jsCode) {
-      const fullHtmlContent = extractor.generateHtmlContent(
-        htmlCode,
-        cssCode,
-        jsCode
-      );
-      this.onUpdatePreview({ type: "html", content: fullHtmlContent });
+    }
+
+    // 如果没有 Python 代码或处理失败，尝试提取 HTML/CSS/JS
+    const { htmlCode, cssCode, jsCode } = extractor.extract(formattedResponse);
+    if (htmlCode || cssCode || jsCode) {
+      try {
+        const fullHtmlContent = extractor.generateHtmlContent(htmlCode, cssCode, jsCode);
+        this.onUpdatePreview({ type: "html", content: fullHtmlContent });
+      } catch (error) {
+        console.error("处理 HTML/CSS/JS 代码时出错:", error);
+      }
+    } else {
+      console.warn("未找到可预览的代码");
     }
   }
 
