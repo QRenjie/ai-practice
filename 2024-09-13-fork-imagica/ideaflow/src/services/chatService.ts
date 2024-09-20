@@ -1,9 +1,11 @@
 import React from "react";
 import { CodeExtractorImpl } from "../utils/CodeExtractor";
-import { v4 as uuidv4 } from "uuid"; // 需要安装 uuid 包
+import { v4 as uuidv4 } from "uuid";
+import { RefObject } from 'react';
+import { WorkspaceState } from "@/context/WorkspaceContext";
 
 export interface Message {
-  id: string; // 现在id是必需的
+  id: string;
   text: string;
   sender: "user" | "bot";
   type: "text" | "code" | "markdown";
@@ -15,163 +17,245 @@ export interface ChatHistory {
 }
 
 export type ApplyData = { type: "html" | "python"; content: string };
+
 export type OnUpdatePreviewCallback = (data: ApplyData) => void;
 
 export class ChatController {
-  private inputRef: React.RefObject<HTMLInputElement>;
+  private inputRef: RefObject<HTMLInputElement> | null = null;
 
   constructor(
-    private setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
-    private setChatHistory: React.Dispatch<React.SetStateAction<ChatHistory[]>>,
-    private setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    private addChatMessage: (message: Message) => void,
+    private updateChatHistory: (history: ChatHistory[]) => void,
+    private setIsLoading: (isLoading: boolean) => void,
     private onUpdatePreview: OnUpdatePreviewCallback,
-    inputRef: React.RefObject<HTMLInputElement>
-  ) {
-    this.inputRef = inputRef;
+    public state: WorkspaceState,
+    private setMessages: (updater: (prev: Message[]) => Message[]) => void
+  ) { }
+
+  setInputRef(ref: RefObject<HTMLInputElement>) {
+    this.inputRef = ref;
   }
 
-  private async callOpenAI(
+  // 备份原有的 callOpenAI 方法
+  private async callOpenAIOriginal(
     message: string,
     history: ChatHistory[]
   ): Promise<string> {
-    const response = await fetch(
-      "http://openai-proxy.brain.loocaa.com/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer DlJYSkMVj1x4zoe8jZnjvxfHG6z5yGxK",
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: [...history, { role: "user", content: message }],
-        }),
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒超时
+
+      const response = await fetch(
+        "http://openai-proxy.brain.loocaa.com/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer DlJYSkMVj1x4zoe8jZnjvxfHG6z5yGxK",
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [...history, { role: "user", content: message }],
+          }),
+          signal: controller.signal
+        }
+      );
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP错误！状态：${response.status}`);
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`HTTP错误！状态：${response.status}`);
+      // 读取原始响应文本
+      const rawText = await response.text();
+
+      // 尝试解析 JSON
+      let data;
+      try {
+        data = JSON.parse(rawText);
+      } catch (error) {
+        throw new Error('无法解析服务器响应');
+      }
+
+      if (!data.choices?.[0]?.message?.content) {
+        throw new Error("OpenAI API的响应结构异常");
+      }
+
+      return data.choices[0].message.content;
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('请求超时，请稍后重试');
+      }
+      throw error; // 重新抛出错误,以便上层函数可以处理
     }
+  }
 
-    const data = await response.json();
-    if (!data.choices?.[0]?.message?.content) {
-      throw new Error("OpenAI API的响应结构异常");
+  // 新增使用流式请求的方法
+  private async callOpenAIStream(
+    message: string,
+    history: ChatHistory[]
+  ): Promise<string> {
+    try {
+      const response = await fetch(
+        "http://openai-proxy.brain.loocaa.com/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer DlJYSkMVj1x4zoe8jZnjvxfHG6z5yGxK",
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [...history, { role: "user", content: message }],
+            stream: true, // 启用流式响应
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP错误！状态：${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let fullResponse = "";
+      const messageId = uuidv4(); // 为整个流式响应生成一个唯一id
+
+      // 先添加一个空的消息
+      this.addChatMessage({ id: messageId, text: "", sender: "bot", type: "markdown" });
+
+      while (true) {
+        const { done, value } = await reader?.read() || { done: true, value: undefined };
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n').filter(line => line.trim() !== '');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') {
+              return fullResponse; // 添加这行来正确结束流
+            }
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices[0]?.delta?.content || '';
+              fullResponse += content;
+              this.updateMessage(messageId, fullResponse);
+            } catch (error) {
+              console.error('解析错误:', error);
+            }
+          }
+        }
+      }
+
+      return fullResponse;
+    } catch (error) {
+      console.error('流处理错误:', error);
+      throw error;
     }
+  }
 
-    return data.choices[0].message.content;
+  private updateMessage(messageId: string, content: string) {
+    this.setMessages((prev) => {
+      const newMessages = [...prev];
+      const index = newMessages.findIndex(msg => msg.id === messageId);
+      if (index !== -1) {
+        newMessages[index] = {
+          ...newMessages[index],
+          text: content
+        };
+      }
+      return newMessages;
+    });
   }
 
   private formatAIResponse(response: string): string {
-    // 移除首尾的空白字符
     const trimmedResponse = response.trim();
 
-    // 检查是否整个响应都是一个HTML字符串
     if (
       trimmedResponse.startsWith("<") &&
       trimmedResponse.endsWith(">") &&
       !trimmedResponse.includes("\n") &&
       !trimmedResponse.includes("```")
     ) {
-      // 如果是单行HTML且不包含Markdown代码块，则将其包装在HTML代码块中
       return `\`\`\`html\n${trimmedResponse}\n\`\`\``;
     }
 
-    // 如果不是，就保持原样返回，因为它可能已经是正确格式的Markdown
-    return response;
+    return trimmedResponse;
   }
 
   public async handleSubmit(e: React.FormEvent): Promise<void> {
     e.preventDefault();
-    const message = this.getInputValue();
+    const message = this.inputRef?.current?.value || "";
     if (!message.trim()) return;
 
     this.setIsLoading(true);
-    const userMessage: ChatHistory = { role: "user", content: message };
-    this.setMessages((prev) => [
-      ...prev,
-      { id: uuidv4(), text: message, sender: "user", type: "text" },
-    ]);
-    this.setChatHistory((prev) => [...prev, userMessage]);
-
     try {
-      const aiResponse = await this.callOpenAI(
+      const userMessage: ChatHistory = { role: "user", content: message };
+      this.addChatMessage({ id: uuidv4(), text: message, sender: "user", type: "text" });
+      this.updateChatHistory([...this.state.chatHistory, userMessage]);
+
+      const aiResponse = await this.callOpenAIStream(
         message,
-        await this.getChatHistory()
+        this.state.chatHistory
       );
+
       const formattedResponse = this.formatAIResponse(aiResponse);
-
-      this.setMessages((prev) => [
-        ...prev,
-        { id: uuidv4(), text: "", sender: "bot", type: "markdown" },
-      ]);
-
-      await this.simulateStreamResponse(formattedResponse);
 
       const botMessage: ChatHistory = {
         role: "assistant",
         content: formattedResponse,
       };
-      this.setChatHistory((prev) => [...prev, userMessage, botMessage]);
+      this.updateChatHistory([...this.state.chatHistory, userMessage, botMessage]);
 
-      const extractor = new CodeExtractorImpl();
-      const { htmlCode, cssCode, jsCode } =
-        extractor.extract(formattedResponse);
-
-      if (formattedResponse.includes("```python")) {
-        // 处理 Python 代码
-        const pythonCodeMatch = formattedResponse.match(
-          /```python\n([\s\S]*?)\n```/
-        );
-        if (pythonCodeMatch) {
-          this.onUpdatePreview({ type: "python", content: pythonCodeMatch[1] });
-        }
-      } else if (htmlCode || cssCode || jsCode) {
-        // 处理 HTML/CSS/JS 代码
-        const fullHtmlContent = extractor.generateHtmlContent(
-          htmlCode,
-          cssCode,
-          jsCode
-        );
-        this.onUpdatePreview({ type: "html", content: fullHtmlContent });
-      }
+      this.handleCodePreview(formattedResponse);
     } catch (error) {
-      console.error("错误:", error);
-      this.setMessages((prev) => [
-        ...prev,
-        {
-          id: uuidv4(),
-          text: "抱歉，发生了错误。",
-          sender: "bot",
-          type: "text",
-        },
-      ]);
+      this.addChatMessage({
+        id: uuidv4(),
+        text: `抱歉，发生了错误: ${error instanceof Error ? error.message : '未知错误'}`,
+        sender: "bot",
+        type: "text"
+      });
     } finally {
       this.setIsLoading(false);
-      this.clearInput();
+      if (this.inputRef?.current) {
+        this.inputRef.current.value = "";
+      }
     }
   }
 
-  private getInputValue(): string {
-    return this.inputRef.current?.value || "";
-  }
+  private handleCodePreview(formattedResponse: string): void {
+    const extractor = new CodeExtractorImpl();
+    const { htmlCode, cssCode, jsCode } = extractor.extract(formattedResponse);
 
-  private clearInput(): void {
-    if (this.inputRef.current) {
-      this.inputRef.current.value = "";
+    if (formattedResponse.includes("```python")) {
+      const pythonCodeMatch = formattedResponse.match(
+        /```python\n([\s\S]*?)\n```/
+      );
+      if (pythonCodeMatch) {
+        this.onUpdatePreview({ type: "python", content: pythonCodeMatch[1] });
+      }
+    } else if (htmlCode || cssCode || jsCode) {
+      const fullHtmlContent = extractor.generateHtmlContent(
+        htmlCode,
+        cssCode,
+        jsCode
+      );
+      this.onUpdatePreview({ type: "html", content: fullHtmlContent });
     }
   }
 
   public handleKeyPress = (e: React.KeyboardEvent<Element>): void => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      this.handleSubmit(e as React.KeyboardEvent<Element>);
+      this.handleSubmit(e as unknown as React.FormEvent);
     }
   };
 
   public copyToClipboard = async (text: string): Promise<void> => {
     try {
       await navigator.clipboard.writeText(text);
-      // 可以在这里显示"已复制！"消息
     } catch (err) {
       console.error("无法复制文本: ", err);
     }
@@ -188,35 +272,29 @@ export class ChatController {
     this.onUpdatePreview({ type: "html", content: fullHtmlContent });
   };
 
-  private getChatHistory = async (): Promise<ChatHistory[]> => {
-    return new Promise((resolve) => {
-      this.setChatHistory((history) => {
-        resolve(history);
-        return history;
-      });
-    });
-  };
-
-  public updatePreviewCallback(newCallback: OnUpdatePreviewCallback): void {
-    this.onUpdatePreview = newCallback;
-  }
-
   private async simulateStreamResponse(content: string): Promise<void> {
     const chunkSize = Math.floor(Math.random() * 11) + 10; // 10-20之间的随机数
     let displayedContent = "";
     const messageId = uuidv4(); // 为整个流式响应生成一个唯一id
 
+    // 先添加一个空的消息
+    this.addChatMessage({ id: messageId, text: "", sender: "bot", type: "markdown" });
+
     for (let i = 0; i < content.length; i += chunkSize) {
       const chunk = content.slice(i, i + chunkSize);
       displayedContent += chunk;
       await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // 更新消息内容
       this.setMessages((prev) => {
         const newMessages = [...prev];
-        newMessages[newMessages.length - 1] = {
-          ...newMessages[newMessages.length - 1],
-          id: messageId, // 使用同一个id
-          text: displayedContent,
-        };
+        const lastMessageIndex = newMessages.findIndex(msg => msg.id === messageId);
+        if (lastMessageIndex !== -1) {
+          newMessages[lastMessageIndex] = {
+            ...newMessages[lastMessageIndex],
+            text: displayedContent
+          };
+        }
         return newMessages;
       });
     }

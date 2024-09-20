@@ -1,51 +1,46 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react";
-import { ChatController, Message, ChatHistory, OnUpdatePreviewCallback } from "../services/chatService";
-import ChatInput from "./ChatInput";
-import MessageList from "./MessageList";
+import React, { useContext, useRef, useMemo, useState, useCallback, useEffect } from 'react';
+import WorkspaceContext from '../context/WorkspaceContext';
+import { ChatController } from '../services/chatService';
+import MessageList from './MessageList';
+import ChatInput from './ChatInput';
 
-interface ChatProps {
-  onUpdatePreview: OnUpdatePreviewCallback;
-}
-
-const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [, setChatHistory] = useState<ChatHistory[]>([]);
+const WorkspaceChat: React.FC = () => {
+  const { state, addChatMessage, updateChatHistory, updatePreview, updateMessages } = useContext(WorkspaceContext)!;
   const inputRef = useRef<HTMLInputElement>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const chatController = useMemo(
-    () =>
-      new ChatController(
-        setMessages,
-        setChatHistory,
-        setIsLoading,
-        onUpdatePreview,
-        inputRef
-      ),
-    [onUpdatePreview]
-  );
+  const chatController = useMemo(() => {
+    const controller = new ChatController(
+      addChatMessage,
+      updateChatHistory,
+      setIsLoading,
+      updatePreview,
+      state,
+      updateMessages
+    );
+    controller.setInputRef(inputRef);
+    return controller;
+  }, []);
 
   useEffect(() => {
-    chatController.updatePreviewCallback((data: { type: 'html' | 'python', content: string }) => onUpdatePreview(data));
-  }, [onUpdatePreview, chatController]);
+    chatController.state = state;
+  }, [state]);
+
+  // useEffect(() => {
+  //   chatController.updatePreviewCallback((data: { type: 'html' | 'python', content: string }) => onUpdatePreview(data));
+  // }, [onUpdatePreview, chatController]);
 
   useEffect(() => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [state.chatMessages]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      chatController.handleSubmit(e);
+      chatController.handleSubmit(e)
     },
     [chatController]
   );
@@ -60,12 +55,13 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
     [handleSubmit]
   );
 
+
   return (
     <div className="flex flex-col h-full bg-gray-100 bg-opacity-10">
       <div className="flex-1 overflow-y-auto p-4">
         <MessageList
           ref={messageListRef}
-          messages={messages}
+          messages={state.chatMessages}
           chatController={chatController}
         />
       </div>
@@ -81,6 +77,4 @@ const Chat: React.FC<ChatProps> = ({ onUpdatePreview }) => {
   );
 };
 
-Chat.displayName = "Chat";
-
-export default React.memo(Chat);
+export default WorkspaceChat;
