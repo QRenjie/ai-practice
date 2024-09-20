@@ -7,6 +7,7 @@ interface LayerConfig {
   title: string;
   content: React.ReactNode;
   size: { width: number; height: number };
+  onClose: () => void;  // 新增
 }
 
 interface LayerContainerProps {
@@ -30,6 +31,7 @@ const LayerContainer: React.FC<LayerContainerProps> = ({ layers }) => {
           initialSize={layer.size}
           initialPosition={calculatePosition(index)}
           title={layer.title}
+          onClose={layer.onClose}  // 新增
         >
           {layer.content}
         </Layer>

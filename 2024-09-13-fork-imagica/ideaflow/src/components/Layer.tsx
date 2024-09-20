@@ -16,6 +16,7 @@ interface LayerProps {
   minWidth?: number;
   minHeight?: number;
   title?: string;
+  onClose?: () => void;  // 新增
 }
 
 const Layer: React.FC<LayerProps> = ({
@@ -25,6 +26,7 @@ const Layer: React.FC<LayerProps> = ({
   initialPosition = { x: 20, y: 20 },
   minWidth = 320,
   title = "Layer",
+  onClose,  // 新增
 }) => {
   const {
     size,
@@ -62,6 +64,12 @@ const Layer: React.FC<LayerProps> = ({
     setPosition({ x: position.x, y: position.y });
   }, [setSize, setPosition]);
 
+  const handleClose = useCallback(() => {
+    if (onClose) {
+      onClose();
+    }
+  }, [onClose]);
+
   return (
     <Rnd
       size={size}
@@ -86,6 +94,7 @@ const Layer: React.FC<LayerProps> = ({
           onFit={handleFit}
           onMinimize={handleMinimize}
           onMaximize={handleMaximize}
+          onClose={handleClose}  // 新增
           isMinimized={isMinimized}
           isMaximized={isMaximized}
           title={title}
