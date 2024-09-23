@@ -1,30 +1,30 @@
-import React, { useContext, useRef, useMemo, useState, useCallback, useEffect } from 'react';
-import WorkspaceContext from '../context/WorkspaceContext';
-import { ChatController } from '../services/chatService';
-import MessageList from './MessageList';
-import ChatInput from './ChatInput';
+import React, {
+  useContext,
+  useRef,
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+import WorkspaceContext from "../context/WorkspaceContext";
+import { ChatController } from "../services/chatService";
+import MessageList from "./MessageList";
+import ChatInput from "./ChatInput";
 
 const WorkspaceChat: React.FC = () => {
-  const { state, addChatMessage, updateChatHistory, updatePreview, updateMessages } = useContext(WorkspaceContext)!;
+  const workspaceContext = useContext(WorkspaceContext)!;
   const inputRef = useRef<HTMLInputElement>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const { state } = workspaceContext;
   const chatController = useMemo(() => {
-    const controller = new ChatController(
-      addChatMessage,
-      updateChatHistory,
-      setIsLoading,
-      updatePreview,
-      state,
-      updateMessages
-    );
+    const controller = new ChatController(workspaceContext, setIsLoading);
     controller.setInputRef(inputRef);
     return controller;
   }, []);
 
   useEffect(() => {
-    chatController.state = state;
+    chatController.context = workspaceContext;
   }, [state]);
 
   // useEffect(() => {
@@ -40,7 +40,7 @@ const WorkspaceChat: React.FC = () => {
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      chatController.handleSubmit(e)
+      chatController.handleSubmit(e);
     },
     [chatController]
   );
@@ -54,7 +54,6 @@ const WorkspaceChat: React.FC = () => {
     },
     [handleSubmit]
   );
-
 
   return (
     <div className="flex flex-col h-full bg-gray-100 bg-opacity-10">

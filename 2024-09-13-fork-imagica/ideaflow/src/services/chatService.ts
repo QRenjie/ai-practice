@@ -1,17 +1,10 @@
+import { WorkspaceContextType } from "./../context/WorkspaceContext";
 import React from "react";
 import { CodeExtractorImpl } from "../utils/CodeExtractor";
 import { v4 as uuidv4 } from "uuid";
-import { RefObject } from 'react';
-import { WorkspaceState } from "@/context/WorkspaceContext";
-import { CodeBlock } from "@/types/apiTypes";
-
-export interface Message {
-  id: string;
-  text: string;
-  sender: "user" | "bot";
-  type: "text" | "code" | "markdown";
-  codeBlocks?: CodeBlock[];
-}
+import { RefObject } from "react";
+import { CodeBlock, Message } from "@/types/apiTypes";
+import { CodeBlocks } from "@/utils/CodeBlocks";
 
 export interface ChatHistory {
   role: string;
@@ -20,22 +13,20 @@ export interface ChatHistory {
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
-export type OnUpdatePreviewCallback = (data: ApplyData) => void;
-
 export class ChatController {
   private inputRef: RefObject<HTMLInputElement> | null = null;
 
   constructor(
-    private addChatMessage: (message: Message) => void,
-    private updateChatHistory: (history: ChatHistory[]) => void,
-    private setIsLoading: (isLoading: boolean) => void,
-    private onUpdatePreview: OnUpdatePreviewCallback,
-    public state: WorkspaceState,
-    private setMessages: (updater: (prev: Message[]) => Message[]) => void
-  ) { }
+    public context: WorkspaceContextType,
+    private setIsLoading: (isLoading: boolean) => void
+  ) {}
 
   setInputRef(ref: RefObject<HTMLInputElement>) {
     this.inputRef = ref;
+  }
+
+  get state() {
+    return this.context.state;
   }
 
   // 新增使用流式请求的方法
@@ -64,33 +55,15 @@ export class ChatController {
         throw new Error(data.error);
       }
 
-      this.addChatMessage({
+      return {
         id: data.id,
-        text: data.content,
-        sender: "bot",
-        type: "markdown",
-        codeBlocks: data.codeBlocks
-      });
-
-      return { id: data.id, content: data.content, codeBlocks: data.codeBlocks };
+        content: data.content,
+        codeBlocks: data.codeBlocks,
+      };
     } catch (error) {
-      console.error('AI响应错误:', error);
+      console.error("AI响应错误:", error);
       throw error;
     }
-  }
-
-  private updateMessage(messageId: string, content: string) {
-    this.setMessages((prev) => {
-      const newMessages = [...prev];
-      const index = newMessages.findIndex(msg => msg.id === messageId);
-      if (index !== -1) {
-        newMessages[index] = {
-          ...newMessages[index],
-          text: content
-        };
-      }
-      return newMessages;
-    });
   }
 
   private formatAIResponse(response: string): string {
@@ -116,29 +89,50 @@ export class ChatController {
     this.setIsLoading(true);
     try {
       const userMessage: ChatHistory = { role: "user", content: message };
-      this.addChatMessage({ id: uuidv4(), text: message, sender: "user", type: "text" });
-      this.updateChatHistory([...this.state.chatHistory, userMessage]);
+      this.context.addChatMessage({
+        id: uuidv4(),
+        text: message,
+        sender: "user",
+        type: "text",
+      });
+      this.context.updateChatHistory([...this.state.chatHistory, userMessage]);
 
       const aiResponse = await this.callOpenAIStream(
         message,
-        this.state.chatHistory
+        this.context.state.chatHistory
       );
 
       const formattedResponse = this.formatAIResponse(aiResponse.content);
+
+      const newMessage: Message = {
+        id: aiResponse.id,
+        text: aiResponse.content,
+        sender: "bot",
+        type: "markdown",
+        codeBlocks: aiResponse.codeBlocks,
+      }
+      this.context.addChatMessage(newMessage);
 
       const botMessage: ChatHistory = {
         role: "assistant",
         content: formattedResponse,
       };
-      this.updateChatHistory([...this.state.chatHistory, userMessage, botMessage]);
+      this.context.updateChatHistory([
+        ...this.state.chatHistory,
+        userMessage,
+        botMessage,
+      ]);
 
       this.handleCodePreview(formattedResponse);
+      this.updateMergedCodeBlocks(newMessage);
     } catch (error) {
-      this.addChatMessage({
+      this.context.addChatMessage({
         id: uuidv4(),
-        text: `抱歉，发生了错误: ${error instanceof Error ? error.message : '未知错误'}`,
+        text: `抱歉，发生了错误: ${
+          error instanceof Error ? error.message : "未知错误"
+        }`,
         sender: "bot",
-        type: "text"
+        type: "text",
       });
     } finally {
       this.setIsLoading(false);
@@ -148,14 +142,26 @@ export class ChatController {
     }
   }
 
+  private updateMergedCodeBlocks(message: Message): void {
+    const blocks = CodeBlocks.mergeCodeBlocks([...this.state.chatMessages, message]);
+    console.log('blocks', blocks);
+    
+    this.context.updateMergedCodeBlocks(blocks);
+  }
+
   private handleCodePreview(formattedResponse: string): void {
     const extractor = new CodeExtractorImpl();
 
     // 首先尝试提取 Python 代码
-    const pythonCodeMatch = formattedResponse.match(/```python\n([\s\S]*?)\n```/);
+    const pythonCodeMatch = formattedResponse.match(
+      /```python\n([\s\S]*?)\n```/
+    );
     if (pythonCodeMatch) {
       try {
-        this.onUpdatePreview({ type: "python", content: pythonCodeMatch[1].trim() });
+        this.context.updatePreview({
+          type: "python",
+          content: pythonCodeMatch[1].trim(),
+        });
         return; // 如果成功处理了 Python 代码，就直接返回
       } catch (error) {
         console.error("处理 Python 代码时出错:", error);
@@ -166,8 +172,12 @@ export class ChatController {
     const { htmlCode, cssCode, jsCode } = extractor.extract(formattedResponse);
     if (htmlCode || cssCode || jsCode) {
       try {
-        const fullHtmlContent = extractor.generateHtmlContent(htmlCode, cssCode, jsCode);
-        this.onUpdatePreview({ type: "html", content: fullHtmlContent });
+        const fullHtmlContent = extractor.generateHtmlContent(
+          htmlCode,
+          cssCode,
+          jsCode
+        );
+        this.context.updatePreview({ type: "html", content: fullHtmlContent });
       } catch (error) {
         console.error("处理 HTML/CSS/JS 代码时出错:", error);
       }
@@ -199,7 +209,7 @@ export class ChatController {
       cssCode,
       jsCode
     );
-    this.onUpdatePreview({ type: "html", content: fullHtmlContent });
+    this.context.updatePreview({ type: "html", content: fullHtmlContent });
   };
 
   private async simulateStreamResponse(content: string): Promise<void> {
@@ -208,7 +218,12 @@ export class ChatController {
     const messageId = uuidv4(); // 为整个流式响应生成一个唯一id
 
     // 先添加一个空的消息
-    this.addChatMessage({ id: messageId, text: "", sender: "bot", type: "markdown" });
+    this.context.addChatMessage({
+      id: messageId,
+      text: "",
+      sender: "bot",
+      type: "markdown",
+    });
 
     for (let i = 0; i < content.length; i += chunkSize) {
       const chunk = content.slice(i, i + chunkSize);
@@ -216,13 +231,15 @@ export class ChatController {
       await new Promise((resolve) => setTimeout(resolve, 50));
 
       // 更新消息内容
-      this.setMessages((prev) => {
+      this.context.updateMessages((prev) => {
         const newMessages = [...prev];
-        const lastMessageIndex = newMessages.findIndex(msg => msg.id === messageId);
+        const lastMessageIndex = newMessages.findIndex(
+          (msg) => msg.id === messageId
+        );
         if (lastMessageIndex !== -1) {
           newMessages[lastMessageIndex] = {
             ...newMessages[lastMessageIndex],
-            text: displayedContent
+            text: displayedContent,
           };
         }
         return newMessages;

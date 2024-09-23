@@ -1,6 +1,6 @@
 import React from 'react';
-import { Message, ChatHistory, ApplyData } from '../services/chatService';
-import { CodeBlock } from '@/types/apiTypes';
+import { ChatHistory, ApplyData } from '../services/chatService';
+import { CodeBlock, Message } from '@/types/apiTypes';
 
 export interface WorkspaceState {
   activeTab: 'preview' | 'chat' | 'code' | 'codeHistory';
@@ -10,7 +10,7 @@ export interface WorkspaceState {
   mergedCodeBlocks: CodeBlock[]; // 新增状态
 }
 
-interface WorkspaceContextType {
+export interface WorkspaceContextType {
   state: WorkspaceState;
   setActiveTab: (tab: WorkspaceState['activeTab']) => void;
   updatePreview: (data: ApplyData) => void;

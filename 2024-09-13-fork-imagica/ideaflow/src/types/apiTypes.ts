@@ -19,5 +19,7 @@ export type AIResponse = AIResponseData | AIResponseError;
 export interface Message {
     id: string;
     text: string;
-    codeBlocks?: CodeBlock[]; // 更新 codeBlocks 属性为可选
+    sender: "user" | "bot";
+    type: "text" | "code" | "markdown";
+    codeBlocks?: CodeBlock[];
 }
