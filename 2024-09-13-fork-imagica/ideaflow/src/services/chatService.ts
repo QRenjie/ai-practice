@@ -3,12 +3,14 @@ import { CodeExtractorImpl } from "../utils/CodeExtractor";
 import { v4 as uuidv4 } from "uuid";
 import { RefObject } from 'react';
 import { WorkspaceState } from "@/context/WorkspaceContext";
+import { CodeBlock } from "@/types/apiTypes";
 
 export interface Message {
   id: string;
   text: string;
   sender: "user" | "bot";
   type: "text" | "code" | "markdown";
+  codeBlocks?: CodeBlock[];
 }
 
 export interface ChatHistory {
@@ -36,122 +38,43 @@ export class ChatController {
     this.inputRef = ref;
   }
 
-  // 备份原有的 callOpenAI 方法
-  private async callOpenAIOriginal(
-    message: string,
-    history: ChatHistory[]
-  ): Promise<string> {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒超时
-
-      const response = await fetch(
-        "http://openai-proxy.brain.loocaa.com/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer DlJYSkMVj1x4zoe8jZnjvxfHG6z5yGxK",
-          },
-          body: JSON.stringify({
-            model: "gpt-3.5-turbo",
-            messages: [...history, { role: "user", content: message }],
-          }),
-          signal: controller.signal
-        }
-      );
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP错误！状态：${response.status}`);
-      }
-
-      // 读取原始响应文本
-      const rawText = await response.text();
-
-      // 尝试解析 JSON
-      let data;
-      try {
-        data = JSON.parse(rawText);
-      } catch (error) {
-        throw new Error('无法解析服务器响应');
-      }
-
-      if (!data.choices?.[0]?.message?.content) {
-        throw new Error("OpenAI API的响应结构异常");
-      }
-
-      return data.choices[0].message.content;
-    } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new Error('请求超时，请稍后重试');
-      }
-      throw error; // 重新抛出错误,以便上层函数可以处理
-    }
-  }
-
   // 新增使用流式请求的方法
   private async callOpenAIStream(
     message: string,
     history: ChatHistory[]
-  ): Promise<string> {
+  ): Promise<{ id: string; content: string; codeBlocks: CodeBlock[] }> {
     try {
-      const response = await fetch(
-        "http://openai-proxy.brain.loocaa.com/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer DlJYSkMVj1x4zoe8jZnjvxfHG6z5yGxK",
-          },
-          body: JSON.stringify({
-            model: "gpt-3.5-turbo",
-            messages: [...history, { role: "user", content: message }],
-            stream: true, // 启用流式响应
-          }),
-        }
-      );
+      const response = await fetch("/api/ai-response", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message,
+          history,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP错误！状态：${response.status}`);
       }
 
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let fullResponse = "";
-      const messageId = uuidv4(); // 为整个流式响应生成一个唯一id
-
-      // 先添加一个空的消息
-      this.addChatMessage({ id: messageId, text: "", sender: "bot", type: "markdown" });
-
-      while (true) {
-        const { done, value } = await reader?.read() || { done: true, value: undefined };
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n').filter(line => line.trim() !== '');
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') {
-              return fullResponse; // 添加这行来正确结束流
-            }
-            try {
-              const parsed = JSON.parse(data);
-              const content = parsed.choices[0]?.delta?.content || '';
-              fullResponse += content;
-              this.updateMessage(messageId, fullResponse);
-            } catch (error) {
-              console.error('解析错误:', error);
-            }
-          }
-        }
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
       }
 
-      return fullResponse;
+      this.addChatMessage({
+        id: data.id,
+        text: data.content,
+        sender: "bot",
+        type: "markdown",
+        codeBlocks: data.codeBlocks
+      });
+
+      return { id: data.id, content: data.content, codeBlocks: data.codeBlocks };
     } catch (error) {
-      console.error('流处理错误:', error);
+      console.error('AI响应错误:', error);
       throw error;
     }
   }
@@ -201,7 +124,7 @@ export class ChatController {
         this.state.chatHistory
       );
 
-      const formattedResponse = this.formatAIResponse(aiResponse);
+      const formattedResponse = this.formatAIResponse(aiResponse.content);
 
       const botMessage: ChatHistory = {
         role: "assistant",
