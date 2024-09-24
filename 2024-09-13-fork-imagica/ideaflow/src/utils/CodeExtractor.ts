@@ -1,87 +1,32 @@
-interface CodeExtractor {
-    extract(content: string): { htmlCode: string; cssCode: string; jsCode: string };
-}
+import { CodeBlock } from "@/types/apiTypes";
 
-export class CodeExtractorImpl implements CodeExtractor {
-    extract(content: string): { htmlCode: string; cssCode: string; jsCode: string } {
-        if (content.trim().startsWith('<')) {
-            return this.extractFullHtml(content);
-        } else {
-            return this.extractCodeBlocks(content);
+/**
+ * 从markdown内容中提取代码块
+ */
+export class CodeExtractor {
+
+    static extract(markdownContent: string): CodeBlock[] {
+        const codeBlockRegex = /```(\w+)(?::(\S+))?\n([\s\S]*?)```/g;
+        const codeBlocks: CodeBlock[] = [];
+        let match;
+
+        if (CodeExtractor.isHtml(markdownContent)) {
+            return [{ fileName: '', language: 'html', code: markdownContent }];
         }
+
+        while ((match = codeBlockRegex.exec(markdownContent)) !== null) {
+            const language = match[1];
+            const fileName = match[2] || '';
+            const code = match[3].trim();
+            codeBlocks.push({ fileName, language, code });
+        }
+
+        return codeBlocks;
     }
 
-    private extractFullHtml(content: string) {
-        console.log("Extracting full HTML:", content);
-        const htmlCode = content;
-        let cssCode = "";
-        let jsCode = "";
-
-        const styleMatch = htmlCode.match(/<style>([\s\S]*?)<\/style>/);
-        const scriptMatch = htmlCode.match(/<script>([\s\S]*?)<\/script>/);
-
-        if (styleMatch) {
-            cssCode = styleMatch[1];
-        }
-        if (scriptMatch) {
-            jsCode = scriptMatch[1];
-        }
-
-        console.log("Extracted CSS:", cssCode);
-        console.log("Extracted JS:", jsCode);
-
-        return { htmlCode, cssCode, jsCode };
-    }
-
-    private extractCodeBlocks(content: string) {
-        let htmlCode = "";
-        let cssCode = "";
-        let jsCode = "";
-
-        const codeBlocks = content.match(/```(\w+)?\n([\s\S]*?)```/g) || [];
-        codeBlocks.forEach((block) => {
-            const [, language, code] = block.match(/```(\w+)?\n([\s\S]*?)```/) || [];
-            const lowerLanguage = language?.toLowerCase();
-            if (lowerLanguage === 'html') {
-                htmlCode += code + '\n';
-            } else if (lowerLanguage === 'css') {
-                cssCode += code + '\n';
-            } else if (lowerLanguage === 'javascript' || lowerLanguage === 'js') {
-                jsCode += code + '\n';
-            }
-        });
-
-        return { htmlCode, cssCode, jsCode };
-    }
-
-    generateHtmlContent(htmlCode: string, cssCode: string, jsCode: string): string {
-        console.log("Generating HTML content with:", { htmlCode, cssCode, jsCode });
-        if (htmlCode.trim().startsWith('<html') || htmlCode.trim().startsWith('<!DOCTYPE html')) {
-            // 如果是完整的 HTML，我们需要确保 CSS 和 JS 被正确插入
-            let fullHtml = htmlCode;
-            if (cssCode && !fullHtml.includes('<style>')) {
-                fullHtml = fullHtml.replace('</head>', `<style>${cssCode}</style></head>`);
-            }
-            if (jsCode && !fullHtml.includes('<script>')) {
-                fullHtml = fullHtml.replace('</body>', `<script>${jsCode}</script></body>`);
-            }
-            return fullHtml;
-        } else {
-            return `
-                <!DOCTYPE html>
-                <html lang="en">
-                  <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <style>${cssCode}</style>
-                  </head>
-                  <body>
-                    ${htmlCode}
-                    <script>${jsCode}</script>
-                  </body>
-                </html>
-            `;
-        }
+    static isHtml(markdownContent: string): boolean {
+        const htmlPattern = /<\/?[a-z][\s\S]*>/i;
+        return htmlPattern.test(markdownContent);
     }
 }
 

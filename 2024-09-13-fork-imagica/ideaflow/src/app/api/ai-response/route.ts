@@ -1,21 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
-import { CodeBlock, AIResponse, AIResponseData } from '@/types/apiTypes';
-
-function extractCodeBlocks(content: string): CodeBlock[] {
-  const codeBlockRegex = /```(\w+)(?::(\S+))?\n([\s\S]*?)```/g;
-  const codeBlocks: CodeBlock[] = [];
-  let match;
-
-  while ((match = codeBlockRegex.exec(content)) !== null) {
-    const language = match[1];
-    const fileName = match[2] || '';
-    const code = match[3].trim();
-    codeBlocks.push({ fileName, language, code });
-  }
-
-  return codeBlocks;
-}
+import { AIResponse, AIResponseData } from '@/types/apiTypes';
+import { CodeExtractor } from '@/utils/CodeExtractor';
 
 export async function POST(req: NextRequest) {
   const { message, history } = await req.json();
@@ -56,7 +42,7 @@ export async function POST(req: NextRequest) {
         if (line.startsWith('data: ')) {
           const data = line.slice(6);
           if (data === '[DONE]') {
-            const codeBlocks = extractCodeBlocks(fullContent);
+            const codeBlocks = CodeExtractor.extract(fullContent);
             const response: AIResponseData = {
               id: messageId,
               content: fullContent,
@@ -75,7 +61,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const codeBlocks = extractCodeBlocks(fullContent);
+    const codeBlocks = CodeExtractor.extract(fullContent);
     return NextResponse.json({
       id: messageId,
       content: fullContent,

@@ -1,21 +1,26 @@
-import React, { useContext, useMemo } from 'react';
-import WorkspaceContext from '../context/WorkspaceContext';
+import React, { useContext, useEffect, useRef } from "react";
+import WorkspaceContext from "../context/WorkspaceContext";
 
 const WorkspacePreview: React.FC = () => {
   const { state } = useContext(WorkspaceContext)!;
-  
-  const previewContent = useMemo(() => {
-    return state.mergedCodeBlocks.map((block) => block.code).join('');
-  }, [state.mergedCodeBlocks]);
+  const { mergedCodeBlocks } = state;
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const previewContent = mergedCodeBlocks.filter(block => block.language === 'html')?.[0]?.code;
+    if (previewContent && iframeRef.current) {
+      const blob = new Blob([previewContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      iframeRef.current.src = url;
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    }
+  }, [mergedCodeBlocks]);
 
   return (
-    <div className="h-full bg-white">
-      <iframe
-        srcDoc={previewContent || '<html><body><h2 style="font-family: sans-serif; color: #4a5568;">预览区域</h2><p style="font-family: sans-serif; color: #718096;">内容将在这里显示</p></body></html>'}
-        className="w-full h-full border-none"
-        title="Preview"
-        sandbox="allow-scripts allow-modals"
-      />
+    <div className="w-full h-full overflow-auto">
+      <iframe ref={iframeRef} className="w-full h-full border-none" sandbox="allow-scripts allow-same-origin"></iframe>
     </div>
   );
 };

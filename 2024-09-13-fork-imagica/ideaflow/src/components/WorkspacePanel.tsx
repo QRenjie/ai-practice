@@ -97,14 +97,30 @@ const WorkspacePanel: React.FC = () => {
             onClick={() => setActiveTab("codeHistory")}
           >
             代码
-          </TabButton>{" "}
-          {/* 新增Tab */}
+          </TabButton>
         </div>
-        <div className="flex-1 overflow-hidden">
-          {state.activeTab === "preview" && <WorkspacePreview />}
-          {state.activeTab === "chat" && <WorkspaceChat />}
-          {state.activeTab === "codeHistory" && <WorkspaceCodeHistory />}{" "}
-          {/* 新增代码历史Tab内容 */}
+        <div className="flex-1 overflow-hidden relative">
+          <div
+            className={`absolute inset-0 ${
+              state.activeTab === "preview" ? "block" : "hidden"
+            }`}
+          >
+            <WorkspacePreview />
+          </div>
+          <div
+            className={`absolute inset-0 ${
+              state.activeTab === "chat" ? "block" : "hidden"
+            }`}
+          >
+            <WorkspaceChat />
+          </div>
+          <div
+            className={`absolute inset-0 ${
+              state.activeTab === "codeHistory" ? "block" : "hidden"
+            }`}
+          >
+            <WorkspaceCodeHistory />
+          </div>
         </div>
       </div>
     </WorkspaceContext.Provider>

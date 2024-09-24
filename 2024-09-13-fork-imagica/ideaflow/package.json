@@ -19,6 +19,7 @@
     "cors": "^2.8.5",
     "diff": "^7.0.0",
     "diff3": "^0.0.4",
+    "dompurify": "^3.1.6",
     "express": "^4.21.0",
     "lodash-es": "^4.17.21",
     "merge": "^2.1.1",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@types/diff": "^5.2.2",
     "@types/diff3": "^0.0.2",
+    "@types/dompurify": "^3.0.5",
     "@types/lodash-es": "^4.17.12",
     "@types/next": "^9.0.0",
     "@types/node": "^20",

@@ -1,10 +1,10 @@
 import { WorkspaceContextType } from "./../context/WorkspaceContext";
 import React from "react";
-import { CodeExtractorImpl } from "../utils/CodeExtractor";
 import { v4 as uuidv4 } from "uuid";
 import { RefObject } from "react";
-import { AIResponseData, CodeBlock, Message } from "@/types/apiTypes";
+import { AIResponseData, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
+import { CodeExtractor } from "@/utils/CodeExtractor";
 
 export interface ChatHistory {
   role: string;
@@ -62,12 +62,7 @@ export class ChatController {
   private formatAIResponse(response: string): string {
     const trimmedResponse = response.trim();
 
-    if (
-      trimmedResponse.startsWith("<") &&
-      trimmedResponse.endsWith(">") &&
-      !trimmedResponse.includes("\n") &&
-      !trimmedResponse.includes("```")
-    ) {
+    if (CodeExtractor.isHtml(trimmedResponse)) {
       return `\`\`\`html\n${trimmedResponse}\n\`\`\``;
     }
 
@@ -99,7 +94,7 @@ export class ChatController {
 
       const newMessage: Message = {
         id: aiResponse.id,
-        text: aiResponse.content,
+        text: formattedResponse,
         sender: "bot",
         type: "markdown",
         codeBlocks: aiResponse.codeBlocks,
@@ -108,7 +103,7 @@ export class ChatController {
 
       const botMessage: ChatHistory = {
         role: "assistant",
-        content: formattedResponse,
+        content: aiResponse.content,
       };
       this.context.updateChatHistory([
         ...this.state.chatHistory,
@@ -116,7 +111,6 @@ export class ChatController {
         botMessage,
       ]);
 
-      this.handleCodePreview(formattedResponse);
       this.updateMergedCodeBlocks(newMessage);
     } catch (error) {
       this.context.addChatMessage({
@@ -141,42 +135,6 @@ export class ChatController {
     this.context.updateMergedCodeBlocks(blocks);
   }
 
-  private handleCodePreview(formattedResponse: string): void {
-    const extractor = new CodeExtractorImpl();
-
-    // 首先尝试提取 Python 代码
-    const pythonCodeMatch = formattedResponse.match(
-      /```python\n([\s\S]*?)\n```/
-    );
-    if (pythonCodeMatch) {
-      try {
-        this.context.updatePreview({
-          type: "python",
-          content: pythonCodeMatch[1].trim(),
-        });
-        return; // 如果成功处理了 Python 代码，就直接返回
-      } catch (error) {
-        console.error("处理 Python 代码时出错:", error);
-      }
-    }
-
-    // 如果没有 Python 代码或处理失败，尝试提取 HTML/CSS/JS
-    const { htmlCode, cssCode, jsCode } = extractor.extract(formattedResponse);
-    if (htmlCode || cssCode || jsCode) {
-      try {
-        const fullHtmlContent = extractor.generateHtmlContent(
-          htmlCode,
-          cssCode,
-          jsCode
-        );
-        this.context.updatePreview({ type: "html", content: fullHtmlContent });
-      } catch (error) {
-        console.error("处理 HTML/CSS/JS 代码时出错:", error);
-      }
-    } else {
-      console.warn("未找到可预览的代码");
-    }
-  }
 
   public handleKeyPress = (e: React.KeyboardEvent<Element>): void => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -193,49 +151,5 @@ export class ChatController {
     }
   };
 
-  public handleReapplyCode = (code: string): void => {
-    const extractor = new CodeExtractorImpl();
-    const { htmlCode, cssCode, jsCode } = extractor.extract(code);
-    const fullHtmlContent = extractor.generateHtmlContent(
-      htmlCode,
-      cssCode,
-      jsCode
-    );
-    this.context.updatePreview({ type: "html", content: fullHtmlContent });
-  };
-
-  private async simulateStreamResponse(content: string): Promise<void> {
-    const chunkSize = Math.floor(Math.random() * 11) + 10; // 10-20之间的随机数
-    let displayedContent = "";
-    const messageId = uuidv4(); // 为整个流式响应生成一个唯一id
-
-    // 先添加一个空的消息
-    this.context.addChatMessage({
-      id: messageId,
-      text: "",
-      sender: "bot",
-      type: "markdown",
-    });
-
-    for (let i = 0; i < content.length; i += chunkSize) {
-      const chunk = content.slice(i, i + chunkSize);
-      displayedContent += chunk;
-      await new Promise((resolve) => setTimeout(resolve, 50));
-
-      // 更新消息内容
-      this.context.updateMessages((prev) => {
-        const newMessages = [...prev];
-        const lastMessageIndex = newMessages.findIndex(
-          (msg) => msg.id === messageId
-        );
-        if (lastMessageIndex !== -1) {
-          newMessages[lastMessageIndex] = {
-            ...newMessages[lastMessageIndex],
-            text: displayedContent,
-          };
-        }
-        return newMessages;
-      });
-    }
-  }
+  public handleReapplyCode = (): void => { };
 }
