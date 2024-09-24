@@ -78,10 +78,10 @@ const WorkspacePanel: React.FC = () => {
 
   return (
     <WorkspaceContext.Provider value={contextValue}>
-      <div className="flex flex-col h-full bg-white shadow-lg relative overflow-hidden">
+      <div className="flex flex-col h-full bg-gradient-to-br from-white to-gray-100 shadow-lg relative overflow-hidden rounded-lg">
         {/* 主要区域 */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex border-b bg-gray-100">
+          <div className="flex border-b bg-blue-200">
             <TabButton
               active={state.activeTab === "preview"}
               onClick={() => setActiveTab("preview")}
@@ -97,13 +97,13 @@ const WorkspacePanel: React.FC = () => {
           </div>
           <div className="flex-1 overflow-hidden relative">
             <div
-              className={`absolute inset-0 ${state.activeTab === "preview" ? "block" : "hidden"}`}
+              className={`absolute inset-0 transition-opacity duration-300 ${state.activeTab === "preview" ? "opacity-100" : "opacity-0"}`}
             >
               <WorkspacePreview />
             </div>
 
             <div
-              className={`absolute inset-0 ${state.activeTab === "codeHistory" ? "block" : "hidden"}`}
+              className={`absolute inset-0 transition-opacity duration-300 ${state.activeTab === "codeHistory" ? "opacity-100" : "opacity-0"}`}
             >
               <WorkspaceCodeHistory />
             </div>
@@ -111,7 +111,7 @@ const WorkspacePanel: React.FC = () => {
         </div>
 
         {/* 底部区域 */}
-        <div className="border-t">
+        <div className="border-t bg-blue-200">
           <WorkspaceChat />
         </div>
       </div>
@@ -127,7 +127,7 @@ interface TabButtonProps {
 
 const TabButton: React.FC<TabButtonProps> = ({ active, onClick, children }) => (
   <button
-    className={`px-4 py-2 ${active ? "bg-white border-b-2 border-blue-500" : "hover:bg-gray-200"
+    className={`px-4 py-2 transition-colors duration-300 ${active ? "bg-white border-b-2 border-blue-500" : "hover:bg-blue-300"
       }`}
     onClick={onClick}
   >

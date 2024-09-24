@@ -50,15 +50,15 @@ const WorkspaceChat: React.FC = () => {
   );
 
   return (
-    <div className="bottom-0 left-0 right-0 w-full bg-gray-100 flex flex-col">
-      <div className={`absolute overflow-auto border-gray-300 p-4 bg-black bg-opacity-10 w-full bottom-[80px] h-2/3 ${isCollapsed ? "hidden" : 'block'}`}>
+    <div className="bottom-0 left-0 right-0 w-full bg-gray-100 flex flex-col rounded-lg shadow-md">
+      <div className={`absolute overflow-auto border-gray-300 p-4 bg-white bg-opacity-90 w-full bottom-[80px] h-2/3 ${isCollapsed ? "hidden" : 'block'}`}>
         <MessageList
           messages={state.chatMessages}
           chatController={chatController}
         />
       </div>
       {/* 聊天输入框始终显示，将折叠状态和切换函数传递给 ChatInput */}
-      <div className="relative w-full border-t border-gray-300 p-4 bg-black bg-opacity-10">
+      <div className="relative w-full border-t border-gray-300 p-4 bg-white bg-opacity-90">
         <ChatInput
           inputRef={inputRef}
           isLoading={isLoading}

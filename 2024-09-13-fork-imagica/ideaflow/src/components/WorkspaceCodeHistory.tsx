@@ -29,7 +29,7 @@ const WorkspaceCodeHistory: React.FC = () => {
   };
 
   return (
-    <div className="p-4 overflow-auto h-full">
+    <div className="p-4 overflow-auto h-full bg-white rounded-lg shadow-md flex items-center justify-center">
       {mergedCodeBlocks.length > 0 ? (
         <MonacoEditor
           language={currentLanguage} // 使用当前代码块的语言
@@ -41,7 +41,10 @@ const WorkspaceCodeHistory: React.FC = () => {
           }}
         />
       ) : (
-        <p>没有代码历史</p>
+        <div className="text-center text-gray-500">
+          <h2 className="text-xl font-semibold">代码历史</h2>
+          <p>没有代码历史</p>
+        </div>
       )}
     </div>
   );
