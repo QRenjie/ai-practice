@@ -1,58 +1,39 @@
 import { CodeBlock, Message } from "@/types/apiTypes";
-import * as Diff from "diff";
 
 export class CodeBlocks {
-  static extractCodeBlocks(
-    blocks1: CodeBlock[],
-    blocks2: CodeBlock[]
+  static mergeCodeBlocks(
+    previousMergedBlocks: CodeBlock[],
+    newMessage: Message
   ): CodeBlock[] {
+    if (!newMessage.codeBlocks || newMessage.codeBlocks.length === 0) {
+      return previousMergedBlocks;
+    }
+
     const mergedBlocks: CodeBlock[] = [];
+    const previousBlocksMap = new Map(
+      previousMergedBlocks.map((block) => [block.fileName, block])
+    );
 
-    const map1 = new Map(blocks1.map((block) => [block.fileName, block]));
-    const map2 = new Map(blocks2.map((block) => [block.fileName, block]));
-
-    const allFileNames = new Set([...map1.keys(), ...map2.keys()]);
-
-    allFileNames.forEach((fileName) => {
-      const block1 = map1.get(fileName);
-      const block2 = map2.get(fileName);
-
-      if (block1 && block2) {
-        // 如果两个块都存在，使用 diff 库来计算差异并合并代码
-        const diff = Diff.diffLines(block1.code, block2.code);
-        const mergedCode = diff
-          .map((part) => {
-            return part.value;
-          })
-          .join("");
-        mergedBlocks.push({
-          fileName,
-          language: block1.language,
-          code: mergedCode,
-        });
-      } else if (block1) {
-        mergedBlocks.push(block1);
-      } else if (block2) {
-        mergedBlocks.push(block2);
+    // 遍历新代码块
+    newMessage.codeBlocks.forEach((newBlock) => {
+      const prevBlock = previousBlocksMap.get(newBlock.fileName);
+      if (prevBlock) {
+        // 如果文件名相同，选择替换或合并
+        // 这里选择替换旧的代码块
+        mergedBlocks.push(newBlock);
+      } else {
+        // 如果是新的文件，直接添加
+        mergedBlocks.push(newBlock);
       }
+      // 从映射中删除已处理的文件
+      previousBlocksMap.delete(newBlock.fileName);
+    });
+
+    // 添加剩余的旧代码块（在新代码中未出现的文件）
+    previousBlocksMap.forEach((block) => {
+      mergedBlocks.push(block);
     });
 
     return mergedBlocks;
-  }
-
-  static mergeCodeBlocks(chatMessages: Message[]): CodeBlock[] {
-    const aiMessages = chatMessages.filter((msg) =>
-      msg.sender === 'bot' && Array.isArray(msg.codeBlocks) && msg.codeBlocks.length > 0
-    );
-    if (aiMessages.length === 0) return [];
-
-    if (aiMessages.length === 1) {
-      return aiMessages[0].codeBlocks || [];
-    }
-
-    const lastTwoMessages = aiMessages.slice(-2);
-    const [lastMessage, secondLastMessage] = lastTwoMessages;
-
-    return CodeBlocks.extractCodeBlocks(secondLastMessage.codeBlocks || [], lastMessage.codeBlocks || []);
   }
 }

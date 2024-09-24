@@ -3,7 +3,7 @@ import React from "react";
 import { CodeExtractorImpl } from "../utils/CodeExtractor";
 import { v4 as uuidv4 } from "uuid";
 import { RefObject } from "react";
-import { CodeBlock, Message } from "@/types/apiTypes";
+import { AIResponseData, CodeBlock, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
 
 export interface ChatHistory {
@@ -19,7 +19,7 @@ export class ChatController {
   constructor(
     public context: WorkspaceContextType,
     private setIsLoading: (isLoading: boolean) => void
-  ) {}
+  ) { }
 
   setInputRef(ref: RefObject<HTMLInputElement>) {
     this.inputRef = ref;
@@ -30,10 +30,7 @@ export class ChatController {
   }
 
   // 新增使用流式请求的方法
-  private async callOpenAIStream(
-    message: string,
-    history: ChatHistory[]
-  ): Promise<{ id: string; content: string; codeBlocks: CodeBlock[] }> {
+  private async callOpenAIStream(message: string, history: ChatHistory[]): Promise<AIResponseData> {
     try {
       const response = await fetch("/api/ai-response", {
         method: "POST",
@@ -55,11 +52,7 @@ export class ChatController {
         throw new Error(data.error);
       }
 
-      return {
-        id: data.id,
-        content: data.content,
-        codeBlocks: data.codeBlocks,
-      };
+      return data;
     } catch (error) {
       console.error("AI响应错误:", error);
       throw error;
@@ -128,9 +121,8 @@ export class ChatController {
     } catch (error) {
       this.context.addChatMessage({
         id: uuidv4(),
-        text: `抱歉，发生了错误: ${
-          error instanceof Error ? error.message : "未知错误"
-        }`,
+        text: `抱歉，发生了错误: ${error instanceof Error ? error.message : "未知错误"
+          }`,
         sender: "bot",
         type: "text",
       });
@@ -143,9 +135,9 @@ export class ChatController {
   }
 
   private updateMergedCodeBlocks(message: Message): void {
-    const blocks = CodeBlocks.mergeCodeBlocks([...this.state.chatMessages, message]);
+    const previousMergedBlocks = this.state.mergedCodeBlocks;
+    const blocks = CodeBlocks.mergeCodeBlocks(previousMergedBlocks, message);
     console.log('blocks', blocks);
-    
     this.context.updateMergedCodeBlocks(blocks);
   }
 
