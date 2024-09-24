@@ -8,7 +8,7 @@ import { CodeBlock, Message } from "@/types/apiTypes";
 
 const WorkspacePanel: React.FC = () => {
   const [state, setState] = useState<WorkspaceState>({
-    activeTab: "chat",
+    activeTab: "preview",
     previewContent: "",
     chatHistory: [],
     chatMessages: [],
@@ -78,49 +78,41 @@ const WorkspacePanel: React.FC = () => {
 
   return (
     <WorkspaceContext.Provider value={contextValue}>
-      <div className="flex flex-col h-full bg-white shadow-lg rounded-lg overflow-hidden">
-        <div className="flex border-b bg-gray-100">
-          <TabButton
-            active={state.activeTab === "preview"}
-            onClick={() => setActiveTab("preview")}
-          >
-            预览
-          </TabButton>
-          <TabButton
-            active={state.activeTab === "chat"}
-            onClick={() => setActiveTab("chat")}
-          >
-            聊天
-          </TabButton>
-          <TabButton
-            active={state.activeTab === "codeHistory"}
-            onClick={() => setActiveTab("codeHistory")}
-          >
-            代码
-          </TabButton>
+      <div className="flex flex-col h-full bg-white shadow-lg relative overflow-hidden">
+        {/* 主要区域 */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex border-b bg-gray-100">
+            <TabButton
+              active={state.activeTab === "preview"}
+              onClick={() => setActiveTab("preview")}
+            >
+              预览
+            </TabButton>
+            <TabButton
+              active={state.activeTab === "codeHistory"}
+              onClick={() => setActiveTab("codeHistory")}
+            >
+              代码
+            </TabButton>
+          </div>
+          <div className="flex-1 overflow-hidden relative">
+            <div
+              className={`absolute inset-0 ${state.activeTab === "preview" ? "block" : "hidden"}`}
+            >
+              <WorkspacePreview />
+            </div>
+
+            <div
+              className={`absolute inset-0 ${state.activeTab === "codeHistory" ? "block" : "hidden"}`}
+            >
+              <WorkspaceCodeHistory />
+            </div>
+          </div>
         </div>
-        <div className="flex-1 overflow-hidden relative">
-          <div
-            className={`absolute inset-0 ${
-              state.activeTab === "preview" ? "block" : "hidden"
-            }`}
-          >
-            <WorkspacePreview />
-          </div>
-          <div
-            className={`absolute inset-0 ${
-              state.activeTab === "chat" ? "block" : "hidden"
-            }`}
-          >
-            <WorkspaceChat />
-          </div>
-          <div
-            className={`absolute inset-0 ${
-              state.activeTab === "codeHistory" ? "block" : "hidden"
-            }`}
-          >
-            <WorkspaceCodeHistory />
-          </div>
+
+        {/* 底部区域 */}
+        <div className="border-t">
+          <WorkspaceChat />
         </div>
       </div>
     </WorkspaceContext.Provider>
@@ -135,9 +127,8 @@ interface TabButtonProps {
 
 const TabButton: React.FC<TabButtonProps> = ({ active, onClick, children }) => (
   <button
-    className={`px-4 py-2 ${
-      active ? "bg-white border-b-2 border-blue-500" : "hover:bg-gray-200"
-    }`}
+    className={`px-4 py-2 ${active ? "bg-white border-b-2 border-blue-500" : "hover:bg-gray-200"
+      }`}
     onClick={onClick}
   >
     {children}

@@ -1,7 +1,6 @@
 import React, {
   useContext,
   useRef,
-  useMemo,
   useState,
   useCallback,
   useEffect,
@@ -14,10 +13,11 @@ import ChatInput from "./ChatInput";
 const WorkspaceChat: React.FC = () => {
   const workspaceContext = useContext(WorkspaceContext)!;
   const inputRef = useRef<HTMLInputElement>(null);
-  const messageListRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { state } = workspaceContext;
-  const chatController = useMemo(() => {
+  const [isCollapsed, setIsCollapsed] = useState(true); // 默认折叠
+
+  const chatController = React.useMemo(() => {
     const controller = new ChatController(workspaceContext, setIsLoading);
     controller.setInputRef(inputRef);
     return controller;
@@ -27,15 +27,9 @@ const WorkspaceChat: React.FC = () => {
     chatController.context = workspaceContext;
   }, [state]);
 
-  // useEffect(() => {
-  //   chatController.updatePreviewCallback((data: { type: 'html' | 'python', content: string }) => onUpdatePreview(data));
-  // }, [onUpdatePreview, chatController]);
-
-  useEffect(() => {
-    if (messageListRef.current) {
-      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-    }
-  }, [state.chatMessages]);
+  const handleToggleCollapse = useCallback(() => {
+    setIsCollapsed(!isCollapsed);
+  }, [isCollapsed]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -56,20 +50,22 @@ const WorkspaceChat: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col h-full bg-gray-100 bg-opacity-10">
-      <div className="flex-1 overflow-y-auto p-4">
+    <div className="bottom-0 left-0 right-0 w-full bg-gray-100 flex flex-col">
+      <div className={`absolute overflow-auto border-gray-300 p-4 bg-black bg-opacity-10 w-full bottom-[80px] h-2/3 ${isCollapsed ? "hidden" : 'block'}`}>
         <MessageList
-          ref={messageListRef}
           messages={state.chatMessages}
           chatController={chatController}
         />
       </div>
-      <div className="border-t border-gray-300 border-opacity-30 p-4 bg-black bg-opacity-10">
+      {/* 聊天输入框始终显示，将折叠状态和切换函数传递给 ChatInput */}
+      <div className="relative w-full border-t border-gray-300 p-4 bg-black bg-opacity-10">
         <ChatInput
           inputRef={inputRef}
           isLoading={isLoading}
           onSubmit={handleSubmit}
           onKeyPress={handleKeyPress}
+          isCollapsed={isCollapsed}
+          onToggleCollapse={handleToggleCollapse}
         />
       </div>
     </div>

@@ -3,7 +3,7 @@ import { ChatHistory, ApplyData } from '../services/chatService';
 import { CodeBlock, Message } from '@/types/apiTypes';
 
 export interface WorkspaceState {
-  activeTab: 'preview' | 'chat' | 'code' | 'codeHistory';
+  activeTab: 'preview' | 'code' | 'codeHistory';
   previewContent: string;
   chatHistory: ChatHistory[];
   chatMessages: Message[];

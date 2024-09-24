@@ -25,8 +25,17 @@ export class CodeExtractor {
     }
 
     static isHtml(markdownContent: string): boolean {
-        const htmlPattern = /<\/?[a-z][\s\S]*>/i;
-        return htmlPattern.test(markdownContent);
+        // 移除开头的空白字符
+        const trimmedContent = markdownContent.trim();
+        
+        // 检查是否以<!DOCTYPE html>、<html>或任何HTML标签开头
+        const htmlPatterns = [
+            /^<!DOCTYPE\s+html\s*>/i,
+            /^<html\b/i,
+            /^<([a-z]+)(?:\s|>)/i
+        ];
+
+        return htmlPatterns.some(pattern => pattern.test(trimmedContent));
     }
 }
 

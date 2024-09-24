@@ -2,24 +2,24 @@ import { WorkspaceContextType } from "./../context/WorkspaceContext";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { RefObject } from "react";
-import { AIResponseData, Message } from "@/types/apiTypes";
+import { ChatHistory, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
 import { CodeExtractor } from "@/utils/CodeExtractor";
+import AIService from "./AIService";
 
-export interface ChatHistory {
-  role: string;
-  content: string;
-}
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
 export class ChatController {
   private inputRef: RefObject<HTMLInputElement> | null = null;
+  aiService: AIService;
 
   constructor(
     public context: WorkspaceContextType,
     private setIsLoading: (isLoading: boolean) => void
-  ) { }
+  ) { 
+    this.aiService = new AIService();
+  }
 
   setInputRef(ref: RefObject<HTMLInputElement>) {
     this.inputRef = ref;
@@ -29,35 +29,7 @@ export class ChatController {
     return this.context.state;
   }
 
-  // 新增使用流式请求的方法
-  private async callOpenAIStream(message: string, history: ChatHistory[]): Promise<AIResponseData> {
-    try {
-      const response = await fetch("/api/ai-response", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message,
-          history,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP错误！状态：${response.status}`);
-      }
-
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      return data;
-    } catch (error) {
-      console.error("AI响应错误:", error);
-      throw error;
-    }
-  }
+  
 
   private formatAIResponse(response: string): string {
     const trimmedResponse = response.trim();
@@ -83,11 +55,14 @@ export class ChatController {
         sender: "user",
         type: "text",
       });
-      this.context.updateChatHistory([...this.state.chatHistory, userMessage]);
+      
+      // 检查聊天历史是否为空
+      const currentChatHistory = this.state.chatHistory || [];
+      this.context.updateChatHistory([...currentChatHistory, userMessage]);
 
-      const aiResponse = await this.callOpenAIStream(
+      const aiResponse = await this.aiService.callOpenAIStream(
         message,
-        this.context.state.chatHistory
+        currentChatHistory // 使用可能为空的聊天历史
       );
 
       const formattedResponse = this.formatAIResponse(aiResponse.content);
@@ -106,7 +81,7 @@ export class ChatController {
         content: aiResponse.content,
       };
       this.context.updateChatHistory([
-        ...this.state.chatHistory,
+        ...currentChatHistory,
         userMessage,
         botMessage,
       ]);
@@ -151,5 +126,8 @@ export class ChatController {
     }
   };
 
-  public handleReapplyCode = (): void => { };
+  public handleReapplyCode = (code: string): void => {
+    console.log(code);
+
+  };
 }

@@ -52,11 +52,11 @@ const Layer: React.FC<LayerProps> = ({
     setActiveLayer(layerId);
   }, [setActiveLayer, layerId]);
 
-  const handleDragStop:RndDragCallback = useCallback((_, d) => {
+  const handleDragStop: RndDragCallback = useCallback((_, d) => {
     setPosition({ x: d.x, y: d.y });
   }, [setPosition]);
 
-  const handleResize:RndResizeCallback = useCallback((_, __, ref, ___, position) => {
+  const handleResize: RndResizeCallback = useCallback((_, __, ref, ___, position) => {
     setSize({
       width: ref.offsetWidth,
       height: ref.offsetHeight,
@@ -82,9 +82,8 @@ const Layer: React.FC<LayerProps> = ({
       maxHeight={maxSize.height}
       bounds="parent"
       dragHandleClassName="draggable-handle"
-      className={`shadow-2xl rounded-lg overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 ${
-        isMinimized ? "h-10" : ""
-      } ${isAnimating ? "layer-animating" : ""} layer-resizable ${activeLayer === layerId ? 'active' : ''}`} // 添加动画类和可调整大小类
+      className={`shadow-2xl rounded-lg overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 ${isMinimized ? "h-10" : ""
+        } ${isAnimating ? "layer-animating" : ""} layer-resizable ${activeLayer === layerId ? 'active' : ''}`} // 添加动画类和可调整大小类
       data-testid="Layer"
       onClick={handleClick} // 添加点击事件
       style={{ zIndex: activeLayer === layerId ? 1000 : 'auto' }} // 动态设置 z-index
@@ -99,7 +98,7 @@ const Layer: React.FC<LayerProps> = ({
           isMaximized={isMaximized}
           title={title}
         />
-        <div className={`flex-grow overflow-auto ${isMinimized ? 'hidden' : ''}`}>
+        <div className={`flex-1 ${isMinimized ? 'hidden' : ''}`}>
           {children}
         </div>
       </div>

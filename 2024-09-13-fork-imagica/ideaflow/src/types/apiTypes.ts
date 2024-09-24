@@ -23,3 +23,8 @@ export interface Message {
     type: "text" | "code" | "markdown";
     codeBlocks?: CodeBlock[];
 }
+export interface ChatHistory {
+    role: string;
+    content: string;
+  }
+  
