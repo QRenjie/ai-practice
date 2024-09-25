@@ -41,9 +41,9 @@ const WorkspacePreview: React.FC = () => {
   }, [previewContent]);
 
   return (
-    <div className="w-full h-full overflow-auto bg-white rounded-lg shadow-md flex items-center justify-center">
+    <div className="w-full h-full overflow-auto bg-white shadow-md flex items-center justify-center">
       {previewContent ? (
-        <iframe ref={iframeRef} className="w-full h-full border-none rounded-lg" sandbox="allow-scripts allow-same-origin"></iframe>
+        <iframe ref={iframeRef} className="w-full h-full border-none" sandbox="allow-scripts allow-same-origin"></iframe>
       ) : (
         <div className="text-center text-gray-500">
           <h2 className="text-xl font-semibold">预览区域</h2>

@@ -46,8 +46,7 @@ export class ChatController {
     return trimmedResponse;
   }
 
-  public async handleSubmit(e: React.FormEvent): Promise<void> {
-    e.preventDefault();
+  public async handleSubmit(): Promise<void> {
     const message = this.inputRef?.current?.value || "";
     if (!message.trim()) return;
 
@@ -119,7 +118,7 @@ export class ChatController {
   public handleKeyPress = (e: React.KeyboardEvent<Element>): void => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      this.handleSubmit(e as unknown as React.FormEvent);
+      this.handleSubmit();
     }
   };
 

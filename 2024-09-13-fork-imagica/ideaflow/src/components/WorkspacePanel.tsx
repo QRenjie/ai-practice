@@ -96,7 +96,7 @@ const WorkspacePanel: React.FC = () => {
 
   return (
     <WorkspaceContext.Provider value={contextValue}>
-      <div className="flex flex-col h-full bg-gradient-to-br from-white to-gray-100 shadow-lg relative overflow-hidden rounded-lg">
+      <div className="flex flex-col h-full bg-gradient-to-br from-white to-gray-100 shadow-lg relative overflow-hidden">
         {/* 主要区域 */}
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="flex border-b bg-blue-200">
@@ -116,7 +116,7 @@ const WorkspacePanel: React.FC = () => {
           <div className="flex-1 overflow-hidden relative">
             <div
               className={`absolute inset-0 transition-opacity duration-300 ${
-                state.ui.activeTab === "preview" ? "opacity-100" : "opacity-0"
+                state.ui.activeTab === "preview" ? "opacity-100 z-10" : "opacity-0 z-0"
               }`}
             >
               <WorkspacePreview />
@@ -125,8 +125,8 @@ const WorkspacePanel: React.FC = () => {
             <div
               className={`absolute inset-0 transition-opacity duration-300 ${
                 state.ui.activeTab === "codeHistory"
-                  ? "opacity-100"
-                  : "opacity-0"
+                  ? "opacity-100 z-10"
+                  : "opacity-0 z-0"
               }`}
             >
               <WorkspaceCodeHistory />
