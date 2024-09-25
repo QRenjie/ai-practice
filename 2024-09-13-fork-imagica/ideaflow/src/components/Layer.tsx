@@ -1,7 +1,6 @@
 import React, { useContext, useRef, useCallback } from "react";
 import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
 import LayerHeader from "./LayerHeader";
-import "./Layer.css"; // 引入 CSS 文件
 import ActiveLayerContext from "../context/ActiveLayerContext"; // 更新导入路径
 import useLayerPosition from "../hooks/useLayerPosition"; // 使用自定义钩子
 
@@ -82,8 +81,13 @@ const Layer: React.FC<LayerProps> = ({
       maxHeight={maxSize.height}
       bounds="parent"
       dragHandleClassName="draggable-handle"
-      className={`shadow-2xl rounded-lg overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 ${isMinimized ? "h-10" : ""
-        } ${isAnimating ? "layer-animating" : ""} layer-resizable ${activeLayer === layerId ? 'active' : ''}`} // 添加动画类和可调整大小类
+      className={`
+        shadow-2xl rounded-lg overflow-hidden
+        bg-gradient-to-br from-gray-200 to-gray-300
+        ${isMinimized ? "h-10" : ""}
+        ${isAnimating ? "transition-all duration-300 ease-in-out" : ""}
+        ${activeLayer === layerId ? 'ring-2 ring-blue-500' : ''}
+      `}
       data-testid="Layer"
       onClick={handleClick} // 添加点击事件
       style={{ zIndex: activeLayer === layerId ? 1000 : 'auto' }} // 动态设置 z-index

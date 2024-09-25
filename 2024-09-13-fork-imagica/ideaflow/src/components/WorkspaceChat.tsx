@@ -53,7 +53,7 @@ const WorkspaceChat: React.FC = () => {
     <div className="bottom-0 left-0 right-0 w-full bg-gray-100 flex flex-col rounded-lg shadow-md">
       <div className={`absolute overflow-auto border-gray-300 p-4 bg-white bg-opacity-90 w-full bottom-[80px] h-2/3 ${isCollapsed ? "hidden" : 'block'}`}>
         <MessageList
-          messages={state.chatMessages}
+          messages={state.chat.messages}
           chatController={chatController}
         />
       </div>

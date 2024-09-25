@@ -4,7 +4,7 @@ import MonacoEditor from "@monaco-editor/react";
 
 const WorkspaceCodeHistory: React.FC = () => {
   const { state, updateMergedCodeBlocks } = useContext(WorkspaceContext)!;
-  const { mergedCodeBlocks } = state;
+  const { code: { mergedCodeBlocks } } = state;
   const [currentCode, setCurrentCode] = useState<string>("");
   const [currentLanguage, setCurrentLanguage] = useState<string>("javascript");
 

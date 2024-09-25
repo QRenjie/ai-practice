@@ -4,7 +4,7 @@ import AIService from "@/services/AIService";
 
 const WorkspacePreview: React.FC = () => {
   const { state } = useContext(WorkspaceContext)!;
-  const { mergedCodeBlocks } = state;
+  const { code: { mergedCodeBlocks } } = state;
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [previewContent, setPreviewContent] = useState<string>("");
 

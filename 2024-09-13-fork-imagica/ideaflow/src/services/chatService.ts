@@ -7,7 +7,6 @@ import { CodeBlocks } from "@/utils/CodeBlocks";
 import { CodeExtractor } from "@/utils/CodeExtractor";
 import AIService from "./AIService";
 
-
 export type ApplyData = { type: "html" | "python"; content: string };
 
 export class ChatController {
@@ -17,7 +16,7 @@ export class ChatController {
   constructor(
     public context: WorkspaceContextType,
     private setIsLoading: (isLoading: boolean) => void
-  ) { 
+  ) {
     this.aiService = new AIService();
   }
 
@@ -29,7 +28,13 @@ export class ChatController {
     return this.context.state;
   }
 
-  
+  get chatHistory() {
+    return this.context.state.chat.history;
+  }
+
+  get mergedCodeBlocks() {
+    return this.context.state.code.mergedCodeBlocks;
+  }
 
   private formatAIResponse(response: string): string {
     const trimmedResponse = response.trim();
@@ -55,9 +60,9 @@ export class ChatController {
         sender: "user",
         type: "text",
       });
-      
+
       // 检查聊天历史是否为空
-      const currentChatHistory = this.state.chatHistory || [];
+      const currentChatHistory = this.chatHistory || [];
       this.context.updateChatHistory([...currentChatHistory, userMessage]);
 
       const aiResponse = await this.aiService.callOpenAIStream(
@@ -73,7 +78,7 @@ export class ChatController {
         sender: "bot",
         type: "markdown",
         codeBlocks: aiResponse.codeBlocks,
-      }
+      };
       this.context.addChatMessage(newMessage);
 
       const botMessage: ChatHistory = {
@@ -90,8 +95,9 @@ export class ChatController {
     } catch (error) {
       this.context.addChatMessage({
         id: uuidv4(),
-        text: `抱歉，发生了错误: ${error instanceof Error ? error.message : "未知错误"
-          }`,
+        text: `抱歉，发生了错误: ${
+          error instanceof Error ? error.message : "未知错误"
+        }`,
         sender: "bot",
         type: "text",
       });
@@ -104,12 +110,11 @@ export class ChatController {
   }
 
   private updateMergedCodeBlocks(message: Message): void {
-    const previousMergedBlocks = this.state.mergedCodeBlocks;
+    const previousMergedBlocks = this.mergedCodeBlocks;
     const blocks = CodeBlocks.mergeCodeBlocks(previousMergedBlocks, message);
-    console.log('blocks', blocks);
+    console.log("blocks", blocks);
     this.context.updateMergedCodeBlocks(blocks);
   }
-
 
   public handleKeyPress = (e: React.KeyboardEvent<Element>): void => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -128,6 +133,5 @@ export class ChatController {
 
   public handleReapplyCode = (code: string): void => {
     console.log(code);
-
   };
 }

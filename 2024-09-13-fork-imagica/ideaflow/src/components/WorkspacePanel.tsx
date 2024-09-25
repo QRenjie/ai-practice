@@ -1,48 +1,63 @@
 import React, { useState, useCallback, useMemo } from "react";
-import WorkspaceContext, { WorkspaceState } from "../context/WorkspaceContext";
+import WorkspaceContext, {
+  defaultWorkspaceState,
+  WorkspaceState,
+} from "../context/WorkspaceContext";
 import WorkspacePreview from "./WorkspacePreview";
 import WorkspaceChat from "./WorkspaceChat";
 import WorkspaceCodeHistory from "./WorkspaceCodeHistory"; // 新增导入
-import { ApplyData, ChatHistory } from "@/services/chatService";
-import { CodeBlock, Message } from "@/types/apiTypes";
+import { ApplyData } from "@/services/chatService";
+import { ChatHistory, CodeBlock, Message } from "@/types/apiTypes";
 
 const WorkspacePanel: React.FC = () => {
-  const [state, setState] = useState<WorkspaceState>({
-    activeTab: "preview",
-    previewContent: "",
-    chatHistory: [],
-    chatMessages: [],
-    mergedCodeBlocks: [], // 初始化状态
-  });
+  const [state, setState] = useState<WorkspaceState>(defaultWorkspaceState());
 
-  const setActiveTab = useCallback((tab: WorkspaceState["activeTab"]) => {
-    setState((prevState) => ({ ...prevState, activeTab: tab }));
+  const setActiveTab = useCallback((tab: WorkspaceState["ui"]["activeTab"]) => {
+    setState((prevState) => ({
+      ...prevState,
+      ui: { ...prevState.ui, activeTab: tab },
+    }));
   }, []);
 
   const updatePreview = useCallback((data: ApplyData) => {
     setState((prevState) => ({
       ...prevState,
-      previewContent:
-        data.type === "html" ? data.content : prevState.previewContent,
+      preview: {
+        ...prevState.preview,
+        content:
+          data.type === "html" ? data.content : prevState.preview.content,
+      },
     }));
   }, []);
 
   const addChatMessage = useCallback((message: Message) => {
     setState((prevState) => ({
       ...prevState,
-      chatMessages: [...prevState.chatMessages, message],
+      chat: {
+        ...prevState.chat,
+        messages: [...prevState.chat.messages, message],
+      },
     }));
   }, []);
 
   const updateChatHistory = useCallback((history: ChatHistory[]) => {
-    setState((prevState) => ({ ...prevState, chatHistory: history }));
+    setState((prevState) => ({
+      ...prevState,
+      chat: {
+        ...prevState.chat,
+        history,
+      },
+    }));
   }, []);
 
   const updateMessages = useCallback(
     (updater: (prev: Message[]) => Message[]) => {
       setState((prevState) => ({
         ...prevState,
-        chatMessages: updater(prevState.chatMessages),
+        chat: {
+          ...prevState.chat,
+          messages: updater(prevState.chat.messages),
+        },
       }));
     },
     []
@@ -51,7 +66,10 @@ const WorkspacePanel: React.FC = () => {
   const updateMergedCodeBlocks = useCallback((blocks: CodeBlock[]) => {
     setState((prevState) => ({
       ...prevState,
-      mergedCodeBlocks: blocks,
+      code: {
+        ...prevState.code,
+        mergedCodeBlocks: blocks,
+      },
     }));
   }, []);
 
@@ -83,13 +101,13 @@ const WorkspacePanel: React.FC = () => {
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="flex border-b bg-blue-200">
             <TabButton
-              active={state.activeTab === "preview"}
+              active={state.ui.activeTab === "preview"}
               onClick={() => setActiveTab("preview")}
             >
               预览
             </TabButton>
             <TabButton
-              active={state.activeTab === "codeHistory"}
+              active={state.ui.activeTab === "codeHistory"}
               onClick={() => setActiveTab("codeHistory")}
             >
               代码
@@ -97,13 +115,19 @@ const WorkspacePanel: React.FC = () => {
           </div>
           <div className="flex-1 overflow-hidden relative">
             <div
-              className={`absolute inset-0 transition-opacity duration-300 ${state.activeTab === "preview" ? "opacity-100" : "opacity-0"}`}
+              className={`absolute inset-0 transition-opacity duration-300 ${
+                state.ui.activeTab === "preview" ? "opacity-100" : "opacity-0"
+              }`}
             >
               <WorkspacePreview />
             </div>
 
             <div
-              className={`absolute inset-0 transition-opacity duration-300 ${state.activeTab === "codeHistory" ? "opacity-100" : "opacity-0"}`}
+              className={`absolute inset-0 transition-opacity duration-300 ${
+                state.ui.activeTab === "codeHistory"
+                  ? "opacity-100"
+                  : "opacity-0"
+              }`}
             >
               <WorkspaceCodeHistory />
             </div>
@@ -127,8 +151,9 @@ interface TabButtonProps {
 
 const TabButton: React.FC<TabButtonProps> = ({ active, onClick, children }) => (
   <button
-    className={`px-4 py-2 transition-colors duration-300 ${active ? "bg-white border-b-2 border-blue-500" : "hover:bg-blue-300"
-      }`}
+    className={`px-4 py-2 transition-colors duration-300 ${
+      active ? "bg-white border-b-2 border-blue-500" : "hover:bg-blue-300"
+    }`}
     onClick={onClick}
   >
     {children}
