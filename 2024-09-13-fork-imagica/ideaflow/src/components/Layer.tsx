@@ -15,7 +15,7 @@ interface LayerProps {
   minWidth?: number;
   minHeight?: number;
   title?: string;
-  onClose?: () => void;  // 新增
+  onClose?: () => void; // 新增
 }
 
 const Layer: React.FC<LayerProps> = ({
@@ -25,7 +25,7 @@ const Layer: React.FC<LayerProps> = ({
   initialPosition = { x: 20, y: 20 },
   minWidth = 320,
   title = "Layer",
-  onClose,  // 新增
+  onClose, // 新增
 }) => {
   const {
     size,
@@ -51,17 +51,23 @@ const Layer: React.FC<LayerProps> = ({
     setActiveLayer(layerId);
   }, [setActiveLayer, layerId]);
 
-  const handleDragStop: RndDragCallback = useCallback((_, d) => {
-    setPosition({ x: d.x, y: d.y });
-  }, [setPosition]);
+  const handleDragStop: RndDragCallback = useCallback(
+    (_, d) => {
+      setPosition({ x: d.x, y: d.y });
+    },
+    [setPosition]
+  );
 
-  const handleResize: RndResizeCallback = useCallback((_, __, ref, ___, position) => {
-    setSize({
-      width: ref.offsetWidth,
-      height: ref.offsetHeight,
-    });
-    setPosition({ x: position.x, y: position.y });
-  }, [setSize, setPosition]);
+  const handleResize: RndResizeCallback = useCallback(
+    (_, __, ref, ___, position) => {
+      setSize({
+        width: ref.offsetWidth,
+        height: ref.offsetHeight,
+      });
+      setPosition({ x: position.x, y: position.y });
+    },
+    [setSize, setPosition]
+  );
 
   const handleClose = useCallback(() => {
     if (onClose) {
@@ -86,24 +92,30 @@ const Layer: React.FC<LayerProps> = ({
         bg-gradient-to-br from-gray-200 to-gray-300
         ${isMinimized ? "h-10" : ""}
         ${isAnimating ? "transition-all duration-300 ease-in-out" : ""}
-        ${activeLayer === layerId ? 'ring-2 ring-blue-500' : ''}
+        ${activeLayer === layerId ? "ring-2 ring-blue-500" : ""}
       `}
       data-testid="Layer"
       onClick={handleClick} // 添加点击事件
-      style={{ zIndex: activeLayer === layerId ? 1000 : 'auto' }} // 动态设置 z-index
+      style={{
+        display: "flex",
+        flexDirection: "column-reverse",
+        zIndex: activeLayer === layerId ? 1000 : "auto",
+      }} // 动态设置 z-index
     >
-      <div className="flex flex-col h-full bg-white bg-opacity-10 backdrop-blur-sm">
-        <LayerHeader
-          onFit={handleFit}
-          onMinimize={handleMinimize}
-          onMaximize={handleMaximize}
-          onClose={handleClose}  // 新增
-          isMinimized={isMinimized}
-          isMaximized={isMaximized}
-          title={title}
-        />
-        <div className={`flex-1 ${isMinimized ? 'hidden' : ''}`}>
-          {children}
+      <div date-testid="LayerMain" className="relative w-full h-full">
+        <div className="flex flex-col h-full bg-white bg-opacity-10 backdrop-blur-sm">
+          <LayerHeader
+            onFit={handleFit}
+            onMinimize={handleMinimize}
+            onMaximize={handleMaximize}
+            onClose={handleClose} // 新增
+            isMinimized={isMinimized}
+            isMaximized={isMaximized}
+            title={title}
+          />
+          <div className={`flex-1 ${isMinimized ? "hidden" : ""}`}>
+            {children}
+          </div>
         </div>
       </div>
     </Rnd>

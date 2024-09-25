@@ -5,86 +5,54 @@ interface ChatInputProps {
   isLoading: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  isCollapsed: boolean; // 新增
-  onToggleCollapse: () => void; // 新增
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
 const ChatInput: React.FC<ChatInputProps> = React.memo(
-  ({ inputRef, isLoading, onSubmit, onKeyPress, isCollapsed, onToggleCollapse }) => (
-    <form onSubmit={onSubmit} className="flex items-center">
+  ({
+    inputRef,
+    isLoading,
+    onSubmit,
+    onKeyPress,
+    isCollapsed,
+    onToggleCollapse,
+  }) => (
+    <form onSubmit={onSubmit} className="flex items-center p-2 bg-white border-t border-gray-300">
       {/* 输入框 */}
       <input
         ref={inputRef}
         type="text"
         name="chatInput"
         onKeyPress={onKeyPress}
-        className="flex-grow p-3 text-gray-800 placeholder-gray-500 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
+        className="flex-grow p-2 text-gray-800 placeholder-gray-500 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 rounded-md"
         placeholder="输入你的问题或按回车提交"
         disabled={isLoading}
         defaultValue=""
       />
-      {/* 折叠/展开图标按钮，移动到右侧 */}
-      <button
-        type="button"
-        onClick={onToggleCollapse}
-        className="px-2 focus:outline-none"
-      >
-        {isCollapsed ? (
-          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {/* 展开图标 */}
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8l8 8 8-8" />
-          </svg>
-        ) : (
-          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {/* 折叠图标 */}
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 16l-8-8-8 8" />
-          </svg>
-        )}
-      </button>
-      {/* 发送按钮 */}
-      <SubmitButton isLoading={isLoading} />
+      {/* 右侧按钮组 */}
+      <div className="flex items-center space-x-2 ml-2">
+        {/* 发送按钮 */}
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 disabled:bg-blue-300 transition-colors duration-300 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded-md"
+          disabled={isLoading}
+        >
+          {isLoading ? "发送中..." : "发送"}
+        </button>
+        {/* 折叠/展开按钮 */}
+        <button
+          type="button"
+          onClick={onToggleCollapse}
+          className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 focus:outline-none rounded-md"
+        >
+          {isCollapsed ? "展开" : "折叠"}
+        </button>
+      </div>
     </form>
   )
 );
 
 ChatInput.displayName = "ChatInput";
-
-const SubmitButton: React.FC<{ isLoading: boolean }> = React.memo(
-  ({ isLoading }) => (
-    <button
-      type="submit"
-      className="bg-blue-500 text-white px-4 py-3 hover:bg-blue-600 disabled:bg-blue-300 transition-colors duration-300 focus:outline-none focus:ring-1 focus:ring-blue-500 relative rounded-r-lg"
-      disabled={isLoading}
-    >
-      <span className={isLoading ? "invisible" : "visible"}>发送</span>
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <svg
-            className="animate-spin h-5 w-5 text-white"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-        </div>
-      )}
-    </button>
-  )
-);
-
-SubmitButton.displayName = "SubmitButton";
 
 export default ChatInput;
