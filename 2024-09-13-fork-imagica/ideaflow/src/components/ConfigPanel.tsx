@@ -10,7 +10,7 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ onKeywordSelect }) => {
 
   return (
     <div className="p-4">
-      <h2 className="text-lg font-semibold mb-4">建议的后续主题</h2>
+      <h2 className="text-lg font-semibold mb-4">您可能想发送的建议</h2>
       <div className="flex flex-wrap gap-2">
         {state.config.recommendedKeywords.map((keyword, index) => (
           <button
