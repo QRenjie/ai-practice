@@ -50,7 +50,7 @@ const MessageList = forwardRef<HTMLDivElement, MessageListProps>(
     }, [messages, open]);
 
     return (
-      <div ref={ref} className="flex-1 overflow-y-auto p-4 bg-white">
+      <div ref={ref} className="flex-1 overflow-y-auto">
         <div className="space-y-4">
           {messages.map((message, index) => (
             <MessageItem

@@ -73,6 +73,16 @@ const WorkspacePanel: React.FC = () => {
     }));
   }, []);
 
+  const toggleChatCollapse = useCallback(() => {
+    setState((prevState) => ({
+      ...prevState,
+      config: {
+        ...prevState.config,
+        isChatCollapsed: !prevState.config.isChatCollapsed,
+      },
+    }));
+  }, []);
+
   const contextValue = useMemo(
     () => ({
       state,
@@ -80,8 +90,9 @@ const WorkspacePanel: React.FC = () => {
       updatePreview,
       addChatMessage,
       updateMessages,
-      updateMergedCodeBlocks, // 新增方法
-      updateRecommendedKeywords
+      updateMergedCodeBlocks,
+      updateRecommendedKeywords,
+      toggleChatCollapse,
     }),
     [
       state,
@@ -90,7 +101,8 @@ const WorkspacePanel: React.FC = () => {
       addChatMessage,
       updateMessages,
       updateMergedCodeBlocks,
-      updateRecommendedKeywords
+      updateRecommendedKeywords,
+      toggleChatCollapse,
     ]
   );
 
@@ -137,7 +149,7 @@ const WorkspacePanel: React.FC = () => {
         </div>
 
         {/* 底部区域 */}
-        <div className="border-t bg-blue-200">
+        <div className={`border-t bg-blue-200 transition-all duration-300`}>
           <WorkspaceChat />
         </div>
       </div>

@@ -21,6 +21,7 @@ interface ChatState {
 interface ConfigState {
   selectedModel: string;
   recommendedKeywords: string[];
+  isChatCollapsed: boolean;
 }
 
 export interface WorkspaceState {
@@ -39,6 +40,7 @@ export interface WorkspaceContextType {
   updateMessages: (updater: (prev: Message[]) => Message[]) => void;
   updateMergedCodeBlocks: (blocks: CodeBlock[]) => void;
   updateRecommendedKeywords: (keywords: string[]) => void;
+  toggleChatCollapse: () => void; // 新增这一行
 }
 
 export const defaultWorkspaceState = () =>
@@ -46,6 +48,7 @@ export const defaultWorkspaceState = () =>
     config: {
       selectedModel: "gpt-3.5-turbo",
       recommendedKeywords: [],
+      isChatCollapsed: false,
     },
     ui: {
       activeTab: "preview",
