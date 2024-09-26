@@ -78,7 +78,7 @@ export class ChatController {
 
       this.updateMergedCodeBlocks(newMessage);
 
-      this.fetchNewRecommendedKeywords([newMessage]);
+      this.fetchNewRecommendedKeywords([...this.chatMessages, newMessage]);
     } catch (error) {
       this.context.addChatMessage({
         id: uuidv4(),
@@ -123,18 +123,31 @@ export class ChatController {
   };
 
   fetchNewRecommendedKeywords = async (messages: Message[]) => {
-    if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1];
+    if (messages.length >= 2) {
+      const userMessage = messages.findLast(
+        (message) => message.sender === "user"
+      ); // 用户的最后一条消息
+      const aiMessage = messages.findLast(
+        (message) => message.sender === "bot"
+      ); // AI 的回答
+
+      if (!userMessage || !aiMessage) {
+        return;
+      }
+
       console.log(
-        "AI回答结束，尝试更新关键词，最后一条消息:",
-        lastMessage.text
+        "尝试更新关键词，用户消息:",
+        userMessage.text,
+        "AI回答:",
+        aiMessage.text
       );
       try {
         const aiService = new AIService();
         const response = await aiService.getRecommendedKeywords(
-          lastMessage.text
+          userMessage.text,
+          aiMessage.text
         );
-        console.log("API 响应:", response); // 添加这行日志
+        console.log("API 响应:", response);
         console.log("收到的推荐关键词:", response.keywords);
         if (response.keywords && response.keywords.length > 0) {
           this.context.updateRecommendedKeywords(response.keywords);

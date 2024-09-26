@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { KeywordGenerator } from "@/utils/KeywordGenerator";
 
 export async function POST(req: NextRequest) {
-  const { lastMessage } = await req.json();
+  const { userMessage, aiResponse } = await req.json();
 
   try {
-    const keywords = await KeywordGenerator.generateKeywords(lastMessage);
+    const keywords = await KeywordGenerator.generateKeywords(userMessage, aiResponse);
     return NextResponse.json({ keywords });
   } catch (error) {
     console.error("生成推荐关键词时发生错误:", error);

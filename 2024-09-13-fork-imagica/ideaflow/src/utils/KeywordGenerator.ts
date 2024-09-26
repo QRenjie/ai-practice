@@ -8,11 +8,18 @@ export class KeywordGenerator {
   }
 
   static async generateKeywords(
-    lastMessage: string,
+    userMessage: string,
+    aiResponse: string,
     retries = 3
   ): Promise<string[]> {
     const keywordCount = this.getRandomKeywordCount(4);
-    const prompt = `根据以下消息，生成${keywordCount}个相关的关键词或短语，这些关键词应该代表可能的后续问题或讨论方向。请直接列出关键词，每行一个，不要有编号或其他格式：\n\n"${lastMessage}"`;
+    const prompt = `基于以下用户消息和AI回答，生成${keywordCount}个相关的关键词、短语或后续问题。这些内容应该是用户可能想要进一步了解或讨论的主题。请提供多样化的内容，包括但不限于：单词、短语、概念和问题。每行一个，不要有编号或其他格式：
+
+用户消息：
+"${userMessage}"
+
+AI回答：
+"${aiResponse}"`;
 
     const messageId = uuidv4();
 
@@ -29,22 +36,22 @@ export class KeywordGenerator {
         () => {} // 这里我们不需要处理每个chunk
       );
 
-      console.log("AI 响应内容:", result.content); // 添加这行日志
+      console.log("AI 响应内容:", result.content);
 
       const keywords = result.content
         .split("\n")
         .map((keyword) => keyword.trim())
         .filter(Boolean);
 
-      console.log("提取的关键词:", keywords); // 添加这行日志
+      console.log("提取的关键词:", keywords);
 
-      return keywords.slice(0, keywordCount); // 确保返回指定数量的关键词
+      return keywords.slice(0, keywordCount);
     } catch (error) {
       console.error("OpenAI API错误:", error);
       if (retries > 0 && error.response?.status === 409) {
         console.log(`重试生成关键词，剩余尝试次数: ${retries - 1}`);
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // 等待1秒后重试
-        return this.generateKeywords(lastMessage, retries - 1);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return this.generateKeywords(userMessage, aiResponse, retries - 1);
       }
       throw error;
     }

@@ -52,14 +52,14 @@ export default class AIService {
 
     }
 
-    async getRecommendedKeywords(lastMessage: string): Promise<{ keywords: string[] }> {
+    async getRecommendedKeywords(userMessage: string, aiResponse: string): Promise<{ keywords: string[] }> {
         try {
             const response = await fetch("/api/recommended-keywords", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ lastMessage }),
+                body: JSON.stringify({ userMessage, aiResponse }),
             });
 
             if (!response.ok) {
@@ -67,7 +67,7 @@ export default class AIService {
             }
 
             const data = await response.json();
-            console.log("API 返回的数据:", data); // 添加这行日志
+            console.log("API 返回的数据:", data);
             return data;
         } catch (error) {
             console.error("获取推荐关键词错误:", error);

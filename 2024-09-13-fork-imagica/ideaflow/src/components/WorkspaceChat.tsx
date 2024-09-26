@@ -61,24 +61,24 @@ const WorkspaceChat: React.FC = () => {
   }, []);
 
   return (
-    <form className="flex flex-col">
+    <form className="flex flex-col bg-gray-100 focus-within:ring-0 transition-all duration-300 p-1">
       <div className="w-full">
-        {/* 主要聊天框 */}
         <textarea
           ref={inputRef}
           name="chatInput"
           onKeyPress={handleKeyPress}
-          className="textarea textarea-bordered w-full h-8 leading-4 overflow-y-auto resize-none text-base text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
+          className="w-full h-10 p-1 leading-5 overflow-y-auto resize-none text-sm text-gray-800 placeholder-gray-500 bg-gray-100 border-none focus:outline-none focus:ring-0 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-corner-neutral"
           placeholder="输入你的问题或按回车提交"
           disabled={isLoading}
           rows={2}
         />
       </div>
-
-      {/* 底部内容 */}
-      <ChatFooter handleTogglePanel={handleTogglePanel} openPanel={openPanel} />
-
-      {/* 浮动面板 */}
+      <ChatFooter
+        handleTogglePanel={handleTogglePanel}
+        openPanel={openPanel}
+        handleSubmit={handleSubmit}
+        loading={isLoading} // 传递isLoading状态
+      />
       <div
         className={`absolute bottom-16 left-16 right-2 h-2/3 overflow-hidden bg-white border-2 border-blue-300 rounded-lg shadow-lg transition-all duration-300
           ${openPanel !== "none" ? "z-20 opacity-100" : "-z-10 opacity-0"}
@@ -87,7 +87,6 @@ const WorkspaceChat: React.FC = () => {
         {openPanel === "config" && (
           <ConfigPanel onKeywordSelect={handleKeywordSelect} />
         )}
-
         {openPanel === "messages" && (
           <div className="h-full overflow-y-auto">
             <MessageList
