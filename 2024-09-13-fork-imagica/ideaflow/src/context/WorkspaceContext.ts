@@ -1,6 +1,6 @@
 import React from "react";
 import { ApplyData } from "../services/chatService";
-import { CodeBlock, Message, ChatHistory } from "@/types/apiTypes";
+import { CodeBlock, Message } from "@/types/apiTypes";
 
 interface PreviewState {
   content: string;
@@ -15,8 +15,12 @@ interface CodeState {
 }
 
 interface ChatState {
-  history: ChatHistory[];
   messages: Message[];
+}
+
+interface ConfigState {
+  selectedModel: string;
+  recommendedKeywords: string[];
 }
 
 export interface WorkspaceState {
@@ -24,6 +28,7 @@ export interface WorkspaceState {
   preview: PreviewState;
   code: CodeState;
   chat: ChatState;
+  config: ConfigState;
 }
 
 export interface WorkspaceContextType {
@@ -31,13 +36,17 @@ export interface WorkspaceContextType {
   setActiveTab: (tab: UIState["activeTab"]) => void;
   updatePreview: (data: ApplyData) => void;
   addChatMessage: (message: Message) => void;
-  updateChatHistory: (history: ChatHistory[]) => void;
   updateMessages: (updater: (prev: Message[]) => Message[]) => void;
   updateMergedCodeBlocks: (blocks: CodeBlock[]) => void;
+  updateRecommendedKeywords: (keywords: string[]) => void;
 }
 
 export const defaultWorkspaceState = () =>
   ({
+    config: {
+      selectedModel: "gpt-3.5-turbo",
+      recommendedKeywords: [],
+    },
     ui: {
       activeTab: "preview",
     },
@@ -48,7 +57,6 @@ export const defaultWorkspaceState = () =>
       mergedCodeBlocks: [],
     },
     chat: {
-      history: [],
       messages: [],
     },
   } as WorkspaceState);

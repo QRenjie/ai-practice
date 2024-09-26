@@ -9,10 +9,11 @@ import WorkspaceContext from "../context/WorkspaceContext";
 import { ChatController } from "../services/chatService";
 import MessageList from "./MessageList";
 import ConfigPanel from "./ConfigPanel";
+import ChatFooter from "./ChatFooter";
 
 const WorkspaceChat: React.FC = () => {
   const workspaceContext = useContext(WorkspaceContext)!;
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { state } = workspaceContext;
   const [openPanel, setOpenPanel] = useState<"none" | "messages" | "config">(
@@ -42,7 +43,7 @@ const WorkspaceChat: React.FC = () => {
   );
 
   const handleKeyPress = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         handleSubmit(e as unknown as React.FormEvent);
@@ -50,14 +51,6 @@ const WorkspaceChat: React.FC = () => {
     },
     [handleSubmit]
   );
-
-  const getButtonClass = (panel: "messages" | "config") => {
-    const baseClass =
-      "px-3 py-2 rounded-md focus:outline-none transition-colors duration-200";
-    const activeClass = "bg-blue-500 text-white hover:bg-blue-600";
-    const inactiveClass = "bg-gray-200 text-gray-700 hover:bg-gray-300";
-    return `${baseClass} ${openPanel === panel ? activeClass : inactiveClass}`;
-  };
 
   const handleKeywordSelect = useCallback((keyword: string) => {
     if (inputRef.current) {
@@ -68,71 +61,44 @@ const WorkspaceChat: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full">
-      <div className="flex items-center">
-        <form
-          onSubmit={handleSubmit}
-          className="flex-grow flex items-center p-2 bg-white border-t border-gray-300"
-        >
-          <input
-            ref={inputRef}
-            type="text"
-            name="chatInput"
-            onKeyPress={handleKeyPress}
-            className="flex-grow p-2 text-gray-800 placeholder-gray-500 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 rounded-md"
-            placeholder="输入你的问题或按回车提交"
-            disabled={isLoading}
-          />
-          <div className="flex items-center space-x-2 ml-2">
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 disabled:bg-blue-300 transition-colors duration-300 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded-md"
-              disabled={isLoading}
-            >
-              {isLoading ? "发送中..." : "发送"}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleTogglePanel("messages")}
-              className={getButtonClass("messages")}
-            >
-              对话
-            </button>
-            <button
-              type="button"
-              onClick={() => handleTogglePanel("config")}
-              className={getButtonClass("config")}
-            >
-              配置
-            </button>
-          </div>
-        </form>
+    <form className="flex flex-col">
+      <div className="w-full">
+        {/* 主要聊天框 */}
+        <textarea
+          ref={inputRef}
+          name="chatInput"
+          onKeyPress={handleKeyPress}
+          className="textarea textarea-bordered w-full h-8 leading-4 overflow-y-auto resize-none text-base text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
+          placeholder="输入你的问题或按回车提交"
+          disabled={isLoading}
+          rows={2}
+        />
       </div>
 
-      <div
-        className={`absolute bottom-16 left-16 right-2 h-2/3 overflow-hidden bg-white border-2 border-blue-300 rounded-lg shadow-lg transition-all duration-300
-          ${openPanel === "messages" ? "z-20 opacity-100" : "-z-0 opacity-0"}
-        `}
-      >
-        <div className="h-full overflow-y-auto">
-          <MessageList
-            open={openPanel === "messages"}
-            messages={state.chat.messages}
-            chatController={chatController}
-          />
-        </div>
-      </div>
+      {/* 底部内容 */}
+      <ChatFooter handleTogglePanel={handleTogglePanel} openPanel={openPanel} />
 
+      {/* 浮动面板 */}
       <div
         className={`absolute bottom-16 left-16 right-2 h-2/3 overflow-hidden bg-white border-2 border-blue-300 rounded-lg shadow-lg transition-all duration-300
-          ${openPanel === "config" ? "z-20 opacity-100" : "-z-0 opacity-0"}
+          ${openPanel !== "none" ? "z-20 opacity-100" : "-z-10 opacity-0"}
         `}
       >
-        <div className="h-full overflow-y-auto">
+        {openPanel === "config" && (
           <ConfigPanel onKeywordSelect={handleKeywordSelect} />
-        </div>
+        )}
+
+        {openPanel === "messages" && (
+          <div className="h-full overflow-y-auto">
+            <MessageList
+              open={openPanel === "messages"}
+              messages={state.chat.messages}
+              chatController={chatController}
+            />
+          </div>
+        )}
       </div>
-    </div>
+    </form>
   );
 };
 

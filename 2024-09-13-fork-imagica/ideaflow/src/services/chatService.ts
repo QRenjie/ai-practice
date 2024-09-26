@@ -2,7 +2,7 @@ import { WorkspaceContextType } from "./../context/WorkspaceContext";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { RefObject } from "react";
-import { ChatHistory, Message } from "@/types/apiTypes";
+import { Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
 import { CodeExtractor } from "@/utils/CodeExtractor";
 import AIService from "./AIService";
@@ -10,7 +10,7 @@ import AIService from "./AIService";
 export type ApplyData = { type: "html" | "python"; content: string };
 
 export class ChatController {
-  private inputRef: RefObject<HTMLInputElement> | null = null;
+  private inputRef: RefObject<HTMLTextAreaElement> | null = null;
   aiService: AIService;
 
   constructor(
@@ -20,7 +20,7 @@ export class ChatController {
     this.aiService = new AIService();
   }
 
-  setInputRef(ref: RefObject<HTMLInputElement>) {
+  setInputRef(ref: RefObject<HTMLTextAreaElement>) {
     this.inputRef = ref;
   }
 
@@ -28,8 +28,8 @@ export class ChatController {
     return this.context.state;
   }
 
-  get chatHistory() {
-    return this.context.state.chat.history;
+  get chatMessages() {
+    return this.context.state.chat.messages;
   }
 
   get mergedCodeBlocks() {
@@ -52,21 +52,17 @@ export class ChatController {
 
     this.setIsLoading(true);
     try {
-      const userMessage: ChatHistory = { role: "user", content: message };
-      this.context.addChatMessage({
+      const userMessage: Message = {
         id: uuidv4(),
         text: message,
         sender: "user",
         type: "text",
-      });
-
-      // 检查聊天历史是否为空
-      const currentChatHistory = this.chatHistory || [];
-      this.context.updateChatHistory([...currentChatHistory, userMessage]);
+      };
+      this.context.addChatMessage(userMessage);
 
       const aiResponse = await this.aiService.callOpenAIStream(
         message,
-        currentChatHistory // 使用可能为空的聊天历史
+        this.chatMessages // 使用 messages 替代 history
       );
 
       const formattedResponse = this.formatAIResponse(aiResponse.content);
@@ -79,16 +75,6 @@ export class ChatController {
         codeBlocks: aiResponse.codeBlocks,
       };
       this.context.addChatMessage(newMessage);
-
-      const botMessage: ChatHistory = {
-        role: "assistant",
-        content: aiResponse.content,
-      };
-      this.context.updateChatHistory([
-        ...currentChatHistory,
-        userMessage,
-        botMessage,
-      ]);
 
       this.updateMergedCodeBlocks(newMessage);
     } catch (error) {

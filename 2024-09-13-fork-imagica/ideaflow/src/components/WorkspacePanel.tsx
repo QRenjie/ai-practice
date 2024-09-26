@@ -7,7 +7,7 @@ import WorkspacePreview from "./WorkspacePreview";
 import WorkspaceChat from "./WorkspaceChat";
 import WorkspaceCodeHistory from "./WorkspaceCodeHistory"; // 新增导入
 import { ApplyData } from "@/services/chatService";
-import { ChatHistory, CodeBlock, Message } from "@/types/apiTypes";
+import { CodeBlock, Message } from "@/types/apiTypes";
 
 const WorkspacePanel: React.FC = () => {
   const [state, setState] = useState<WorkspaceState>(defaultWorkspaceState());
@@ -40,16 +40,6 @@ const WorkspacePanel: React.FC = () => {
     }));
   }, []);
 
-  const updateChatHistory = useCallback((history: ChatHistory[]) => {
-    setState((prevState) => ({
-      ...prevState,
-      chat: {
-        ...prevState.chat,
-        history,
-      },
-    }));
-  }, []);
-
   const updateMessages = useCallback(
     (updater: (prev: Message[]) => Message[]) => {
       setState((prevState) => ({
@@ -73,24 +63,34 @@ const WorkspacePanel: React.FC = () => {
     }));
   }, []);
 
+  const updateRecommendedKeywords = useCallback((keywords: string[]) => {
+    setState((prevState) => ({
+      ...prevState,
+      config: {
+        ...prevState.config,
+        recommendedKeywords: keywords,
+      },
+    }));
+  }, []);
+
   const contextValue = useMemo(
     () => ({
       state,
       setActiveTab,
       updatePreview,
       addChatMessage,
-      updateChatHistory,
       updateMessages,
       updateMergedCodeBlocks, // 新增方法
+      updateRecommendedKeywords
     }),
     [
       state,
       setActiveTab,
       updatePreview,
       addChatMessage,
-      updateChatHistory,
       updateMessages,
       updateMergedCodeBlocks,
+      updateRecommendedKeywords
     ]
   );
 
@@ -116,7 +116,9 @@ const WorkspacePanel: React.FC = () => {
           <div className="flex-1 overflow-hidden relative">
             <div
               className={`absolute inset-0 transition-opacity duration-300 ${
-                state.ui.activeTab === "preview" ? "opacity-100 z-10" : "opacity-0 z-0"
+                state.ui.activeTab === "preview"
+                  ? "opacity-100 z-10"
+                  : "opacity-0 z-0"
               }`}
             >
               <WorkspacePreview />

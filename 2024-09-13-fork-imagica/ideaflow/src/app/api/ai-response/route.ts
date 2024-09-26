@@ -1,75 +1,42 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
-import { AIResponse, AIResponseData } from '@/types/apiTypes';
-import { CodeExtractor } from '@/utils/CodeExtractor';
+import { NextRequest, NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
+import { AIResponse, AiChatResponse } from "@/types/apiTypes";
+import { openAIClient } from "@/utils/ApiClient";
+import { streamProcessor } from "@/utils/StreamProcessor";
+import { CodeExtractor } from "@/utils/CodeExtractor";
 
 export async function POST(req: NextRequest) {
   const { message, history } = await req.json();
-  const messageId = uuidv4(); // 生成消息ID
+  const messageId = uuidv4();
 
   try {
-    const airesponse = await fetch(
-      "http://openai-proxy.brain.loocaa.com/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer DlJYSkMVj1x4zoe8jZnjvxfHG6z5yGxK",
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: [...history, { role: "user", content: message }],
-          stream: true,
-        }),
+    const response = await openAIClient.postStream("/chat/completions", {
+      model: "gpt-3.5-turbo",
+      messages: [...history, { role: "user", content: message }],
+      stream: true,
+    });
+
+    if (!response.data) {
+      throw new Error("Response data is undefined");
+    }
+
+    const result = await streamProcessor.processStream(
+      response,
+      messageId,
+      (chunk) => {
+        // 这里可以实现实时发送部分响应到客户端
+        // 例如，使用 Server-Sent Events 或 WebSocket
+        console.log("Received chunk:", chunk);
       }
     );
 
-    if (!airesponse.ok) {
-      throw new Error(`HTTP错误！状态：${airesponse.status}`);
-    }
-
-    const reader = airesponse.body?.getReader();
-    const decoder = new TextDecoder("utf-8");
-    let fullContent = "";
-
-    while (true) {
-      const { done, value } = await reader?.read() || { done: true, value: undefined };
-      if (done) break;
-
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n').filter(line => line.trim() !== '');
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6);
-          if (data === '[DONE]') {
-            const codeBlocks = CodeExtractor.extract(fullContent);
-            const response: AIResponseData = {
-              id: messageId,
-              content: fullContent,
-              codeBlocks: codeBlocks
-            };
-            return NextResponse.json(response);
-          }
-          try {
-            const parsed = JSON.parse(data);
-            const content = parsed.choices[0]?.delta?.content || '';
-            fullContent += content;
-          } catch (error) {
-            console.error('解析错误:', error);
-          }
-        }
-      }
-    }
-
-    const codeBlocks = CodeExtractor.extract(fullContent);
     return NextResponse.json({
-      id: messageId,
-      content: fullContent,
-      codeBlocks: codeBlocks
-    });
+      ...result,
+      codeBlocks: CodeExtractor.extract(result.content),
+    } as AiChatResponse);
   } catch (error) {
-    console.error('流处理错误:', error);
-    const errorResponse: AIResponse = { error: '处理请求时发生错误' };
+    console.error("OpenAI API错误:", error);
+    const errorResponse: AIResponse = { error: "处理请求时发生错误" };
     return NextResponse.json(errorResponse, { status: 500 });
   }
 }

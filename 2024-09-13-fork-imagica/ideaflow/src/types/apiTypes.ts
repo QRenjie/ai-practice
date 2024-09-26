@@ -1,30 +1,25 @@
+import { StreamApiProcessorType } from "@/utils/StreamProcessor";
+
 export interface CodeBlock {
-    fileName: string;
-    language: string;
-    code: string;
+  fileName: string;
+  language: string;
+  code: string;
 }
 
-export interface AIResponseData {
-    id: string;
-    content: string;
-    codeBlocks: CodeBlock[];
+export interface AiChatResponse extends StreamApiProcessorType {
+  codeBlocks: CodeBlock[];
 }
 
 export interface AIResponseError {
-    error: string;
+  error: string;
 }
 
-export type AIResponse = AIResponseData | AIResponseError;
+export type AIResponse = AiChatResponse | AIResponseError;
 
 export interface Message {
-    id: string;
-    text: string;
-    sender: "user" | "bot";
-    type: "text" | "code" | "markdown";
-    codeBlocks?: CodeBlock[];
+  id: string;
+  text: string;
+  sender: "user" | "bot";
+  type: "text" | "code" | "markdown";
+  codeBlocks?: CodeBlock[];
 }
-export interface ChatHistory {
-    role: string;
-    content: string;
-  }
-  
