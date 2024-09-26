@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 
-class ApiClient {
+export default class ApiClient {
   private axiosInstance: AxiosInstance;
 
   constructor(baseURL: string) {
@@ -16,10 +16,9 @@ class ApiClient {
     endpoint: string,
     data: D,
     config?: AxiosRequestConfig
-  ): Promise<T> {
+  ): Promise<AxiosResponse> {
     try {
-      const response = await this.axiosInstance.post<T>(endpoint, data, config);
-      return response.data;
+      return await this.axiosInstance.post<T>(endpoint, data, config);
     } catch (error) {
       console.error("API请求错误:", error);
       throw error;
@@ -49,11 +48,3 @@ class ApiClient {
     ] = `Bearer ${token}`;
   }
 }
-
-// 创建OpenAI API客户端实例
-const openAIClient = new ApiClient("http://openai-proxy.brain.loocaa.com/v1");
-
-// 如果有token，可以在这里设置
-openAIClient.setAuthToken("DlJYSkMVj1x4zoe8jZnjvxfHG6z5yGxK");
-
-export { ApiClient, openAIClient };

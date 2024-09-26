@@ -11,7 +11,7 @@ export class StreamProcessor {
   async processStream(
     response: AxiosResponse,
     messageId: string,
-    onChunk: (chunk: string) => void
+    onChunk?: (chunk: string) => void
   ): Promise<StreamApiProcessorType> {
     let fullContent = "";
 
@@ -40,7 +40,7 @@ export class StreamProcessor {
 
   private async processChunk(
     chunk: string,
-    onChunk: (chunk: string) => void
+    onChunk?: (chunk: string) => void
   ): Promise<string> {
     let processedContent = "";
     const lines = chunk.split("\n").filter((line) => line.trim() !== "");
@@ -55,7 +55,7 @@ export class StreamProcessor {
           const parsed = JSON.parse(data);
           const content = parsed.choices[0]?.delta?.content || "";
           processedContent += content;
-          onChunk(content);
+          onChunk?.(content);
         } catch (error) {
           console.error("解析错误:", error);
         }

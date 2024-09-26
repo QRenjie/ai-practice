@@ -67,6 +67,7 @@ export default class AIService {
             }
 
             const data = await response.json();
+            console.log("API 返回的数据:", data); // 添加这行日志
             return data;
         } catch (error) {
             console.error("获取推荐关键词错误:", error);

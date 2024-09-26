@@ -1,32 +1,14 @@
-import React, { useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import WorkspaceContext from "../context/WorkspaceContext";
-import AIService from "../services/AIService";
 
 interface ConfigPanelProps {
   onKeywordSelect: (keyword: string) => void;
 }
 
 const ConfigPanel: React.FC<ConfigPanelProps> = ({ onKeywordSelect }) => {
-  const { state, updateRecommendedKeywords } = useContext(WorkspaceContext)!;
-  const aiService = new AIService();
+  const { state } = useContext(WorkspaceContext)!;
 
-  useEffect(() => {
-    updateRecommendedKeywordsFromAI();
-  }, [state.chat.messages]);
-
-  const updateRecommendedKeywordsFromAI = async () => {
-    if (state.chat.messages.length > 0) {
-      const lastMessage = state.chat.messages[state.chat.messages.length - 1];
-      try {
-        const response = await aiService.getRecommendedKeywords(
-          lastMessage.text
-        );
-        updateRecommendedKeywords(response.keywords);
-      } catch (error) {
-        console.error("获取推荐关键词失败:", error);
-      }
-    }
-  };
+  console.log("ConfigPanel 中的推荐关键词:", state.config.recommendedKeywords); // 添加这行日志
 
   return (
     <div className="p-4">

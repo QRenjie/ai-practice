@@ -1,24 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { AIResponse, AiChatResponse } from "@/types/apiTypes";
-import { openAIClient } from "@/utils/ApiClient";
 import { streamProcessor } from "@/utils/StreamProcessor";
 import { CodeExtractor } from "@/utils/CodeExtractor";
+import { openAIClient } from "@/utils/ServerClient";
 
 export async function POST(req: NextRequest) {
   const { message, history } = await req.json();
   const messageId = uuidv4();
 
   try {
-    const response = await openAIClient.postStream("/chat/completions", {
+    const response = await openAIClient.chat({
       model: "gpt-3.5-turbo",
-      messages: [...history, { role: "user", content: message }],
-      stream: true,
+      message,
+      history,
     });
-
-    if (!response.data) {
-      throw new Error("Response data is undefined");
-    }
 
     const result = await streamProcessor.processStream(
       response,
