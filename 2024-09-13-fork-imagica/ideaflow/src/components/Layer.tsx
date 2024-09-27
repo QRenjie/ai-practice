@@ -24,7 +24,7 @@ interface LayerProps {
   initialState: LayerState;
   minWidth?: number;
   minHeight?: number;
-  active?: boolean
+  active?: boolean;
   title?: string;
   onClose?: () => void; // 新增
 }
@@ -116,6 +116,7 @@ const Layer: React.FC<LayerProps> = ({
         date-testid="LayerMain"
         data-activelyayer={activeLayer === layerId}
         className="relative w-full h-full flex flex-col bg-white bg-opacity-10 backdrop-blur-sm"
+        onContextMenu={(e) => e.stopPropagation()}
       >
         <LayerHeader
           onFit={handleFit}

@@ -1,17 +1,20 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import LayerProvider from "../container/LayerProvider";
 import {
   defaultWorkspaceState,
   WorkspaceState,
 } from "@/context/WorkspaceContext";
 import Workspace from "@/components/Workspace";
+import ContextMenu, { ContextMenuRef } from "@/components/ContextMenu";
 
 export default function Home() {
   const [workspaces, setWorkspaces] = useState<WorkspaceState[]>([
     defaultWorkspaceState({ id: "workspace1", layer: { title: "工作区 1" } }),
   ]);
+
+  const contextMenuRef = useRef<ContextMenuRef>(null);
 
   const calculatePosition = useCallback((index: number) => {
     const offset = 30; // 每个新 Layer 的偏移量
@@ -29,7 +32,7 @@ export default function Home() {
     return { x: Math.min(x, maxX), y: Math.min(y, maxY) };
   }, []);
 
-  const addWorkspace = () => {
+  const addWorkspace = useCallback(() => {
     setWorkspaces((prevWorkspaces) => {
       const newState = defaultWorkspaceState({
         id: `workspace${prevWorkspaces.length + 1}`,
@@ -42,25 +45,26 @@ export default function Home() {
 
       return [...prevWorkspaces, newState];
     });
-  };
+  }, [calculatePosition]);
 
-  const closeWorkspace = (id: string) => {
+  const closeWorkspace = useCallback((id: string) => {
     setWorkspaces((prevWorkspaces) =>
       prevWorkspaces.filter((workspace) => workspace.id !== id)
     );
-  };
+  }, []);
+
+  const handleContextMenu = useCallback((event: React.MouseEvent) => {
+    event.preventDefault();
+    contextMenuRef.current?.open({ x: event.clientX, y: event.clientY });
+  }, []);
 
   return (
     <div
       className="h-screen bg-gradient-to-r from-blue-100 to-blue-300 relative"
       data-testid="Home"
+      onContextMenu={handleContextMenu}
     >
-      <button
-        onClick={addWorkspace}
-        className="absolute top-4 left-4 bg-blue-500 text-white px-4 py-2 rounded z-10"
-      >
-        添加工作区
-      </button>
+      <ContextMenu ref={contextMenuRef} onAddWorkspace={addWorkspace} />
 
       <LayerProvider>
         {workspaces.map((workspace, index) => (
