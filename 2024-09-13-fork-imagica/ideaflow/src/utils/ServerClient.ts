@@ -23,7 +23,6 @@ class OpenAIClient extends ApiClient {
   }
 
   async generateKeywords({ model, prompt }: { model?: string; prompt: string }) {
-    console.log("开始生成关键词，prompt:", prompt);
     try {
       const response = await this.postStream("/chat/completions", {
         model: model || this.defualtModel,
@@ -33,7 +32,6 @@ class OpenAIClient extends ApiClient {
         ],
         stream: true,
       });
-      console.log("关键词生成请求成功");
       return response;
     } catch (error) {
       console.error("生成关键词时发生错误:", error);

@@ -99,7 +99,6 @@ export class ChatController {
   private updateMergedCodeBlocks(message: Message): void {
     const previousMergedBlocks = this.mergedCodeBlocks;
     const blocks = CodeBlocks.mergeCodeBlocks(previousMergedBlocks, message);
-    console.log("blocks", blocks);
     this.context.updateMergedCodeBlocks(blocks);
   }
 
@@ -124,31 +123,9 @@ export class ChatController {
 
   fetchNewRecommendedKeywords = async (messages: Message[]) => {
     if (messages.length >= 2) {
-      const userMessage = messages.findLast(
-        (message) => message.sender === "user"
-      ); // 用户的最后一条消息
-      const aiMessage = messages.findLast(
-        (message) => message.sender === "bot"
-      ); // AI 的回答
-
-      if (!userMessage || !aiMessage) {
-        return;
-      }
-
-      console.log(
-        "尝试更新关键词，用户消息:",
-        userMessage.text,
-        "AI回答:",
-        aiMessage.text
-      );
       try {
         const aiService = new AIService();
-        const response = await aiService.getRecommendedKeywords(
-          userMessage.text,
-          aiMessage.text
-        );
-        console.log("API 响应:", response);
-        console.log("收到的推荐关键词:", response.keywords);
+        const response = await aiService.getRecommendedKeywords(messages);
         if (response.keywords && response.keywords.length > 0) {
           this.context.updateRecommendedKeywords(response.keywords);
         } else {

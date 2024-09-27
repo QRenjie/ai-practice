@@ -15,6 +15,7 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ onKeywordSelect }) => {
         {state.config.recommendedKeywords.map((keyword, index) => (
           <button
             key={index}
+            type="button"
             onClick={() => onKeywordSelect(keyword)}
             className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors duration-200"
           >
