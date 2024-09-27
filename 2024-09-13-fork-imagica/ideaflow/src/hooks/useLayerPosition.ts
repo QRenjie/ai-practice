@@ -1,84 +1,122 @@
-import { useState, useCallback } from "react";
+import { LayerState } from "@/components/Layer";
+import { useState, useCallback, useEffect } from "react";
+import debounce from "lodash-es/debounce";
 
 type Size = { width: number | string; height: number | string };
-const useLayerPosition = (
-  initialSize: Size,
-  initialPosition: { x: number; y: number }
-) => {
-  const [size, setSize] = useState(initialSize);
-  const [position, setPosition] = useState(initialPosition);
-  const [isMaximized, setIsMaximized] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+
+const useLayerPosition = (initialState: LayerState) => {
   const [isAnimating, setIsAnimating] = useState(false);
-  const [maxSize] = useState<Size>({
-    width: "100%",
-    height: "100%",
-  });
+  const [state, setState] = useState<LayerState>(initialState);
 
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     const updateMaxSize = () => {
-  //       setMaxSize({ width: window.innerWidth, height: window.innerHeight });
-  //       if (isMaximized) {
-  //         setSize({ width: window.innerWidth, height: window.innerHeight });
-  //         setPosition({ x: 0, y: 0 });
-  //       }
-  //     };
+  const setSize = useCallback((size: Size) => {
+    setState((prevState) => ({ ...prevState, size }));
+  }, []);
 
-  //     const debouncedUpdateMaxSize = debounce(updateMaxSize, 80);
+  const setPosition = useCallback((position: { x: number; y: number }) => {
+    setState((prevState) => ({ ...prevState, position }));
+  }, []);
 
-  //     updateMaxSize();
+  const setIsMaximized = useCallback((isMaximized: boolean) => {
+    setState((prevState) => ({ ...prevState, isMaximized }));
+  }, []);
 
-  //     window.addEventListener("resize", debouncedUpdateMaxSize);
-  //     return () => window.removeEventListener("resize", debouncedUpdateMaxSize);
-  //   }
-  // }, [isMaximized]);
+  const setIsMinimized = useCallback((isMinimized: boolean) => {
+    setState((prevState) => ({ ...prevState, isMinimized }));
+  }, []);
+
+  const setMaxSize = useCallback((maxSize: Size) => {
+    setState((prevState) => ({ ...prevState, maxSize }));
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const updateMaxSize = () => {
+        setMaxSize({ width: window.innerWidth, height: window.innerHeight });
+        if (state.isMaximized) {
+          setSize({ width: window.innerWidth, height: window.innerHeight });
+          setPosition({ x: 0, y: 0 });
+        }
+      };
+
+      const debouncedUpdateMaxSize = debounce(updateMaxSize, 80);
+
+      updateMaxSize();
+
+      window.addEventListener("resize", debouncedUpdateMaxSize);
+      return () => window.removeEventListener("resize", debouncedUpdateMaxSize);
+    }
+  }, [state.isMaximized, setMaxSize, setSize, setPosition]);
 
   const handleMaximize = useCallback(() => {
     setIsAnimating(true);
     setTimeout(() => setIsAnimating(false), 300); // 动画持续时间
 
-    if (isMaximized) {
-      setSize(initialSize);
-      setPosition(initialPosition);
+    if (state.isMaximized) {
+      setSize(initialState.size);
+      setPosition(initialState.position);
     } else {
-      setSize({ width: maxSize.width, height: maxSize.height });
+      setSize({ width: state.maxSize.width, height: state.maxSize.height });
       setPosition({ x: 0, y: 0 });
     }
-    setIsMaximized(!isMaximized);
+    setIsMaximized(!state.isMaximized);
     setIsMinimized(false);
-  }, [isMaximized, initialSize, initialPosition, maxSize]);
+  }, [
+    state.isMaximized,
+    state.maxSize,
+    initialState.size,
+    initialState.position,
+    setSize,
+    setPosition,
+    setIsMaximized,
+    setIsMinimized,
+    setIsAnimating,
+  ]);
 
   const handleMinimize = useCallback(() => {
     setIsAnimating(true);
     setTimeout(() => setIsAnimating(false), 300); // 动画持续时间
 
-    if (isMinimized) {
-      setSize(initialSize);
+    if (state.isMinimized) {
+      setSize(initialState.size);
     } else {
-      setSize({ width: initialSize.width, height: 40 });
+      setSize({ width: initialState.size.width, height: 40 });
     }
-    setIsMinimized(!isMinimized);
+    setIsMinimized(!state.isMinimized);
     setIsMaximized(false);
-  }, [isMinimized, initialSize]);
+  }, [
+    state.isMinimized,
+    initialState.size,
+    setSize,
+    setIsMinimized,
+    setIsMaximized,
+    setIsAnimating,
+  ]);
 
   const handleFit = useCallback(() => {
     setIsAnimating(true);
     setTimeout(() => setIsAnimating(false), 300); // 动画持续时间
 
-    setSize(initialSize);
-    setPosition(initialPosition);
+    setSize(initialState.size);
+    setPosition(initialState.position);
     setIsMaximized(false);
     setIsMinimized(false);
-  }, [initialSize, initialPosition]);
+  }, [
+    initialState.size,
+    initialState.position,
+    setSize,
+    setPosition,
+    setIsMaximized,
+    setIsMinimized,
+    setIsAnimating,
+  ]);
 
   return {
-    size,
-    position,
-    isMaximized,
-    isMinimized,
-    isAnimating,
-    maxSize,
+    size: state.size,
+    position: state.position,
+    isMaximized: state.isMaximized,
+    isMinimized: state.isMinimized,
+    isAnimating: isAnimating,
+    maxSize: state.maxSize,
     setSize,
     setPosition,
     handleMaximize,

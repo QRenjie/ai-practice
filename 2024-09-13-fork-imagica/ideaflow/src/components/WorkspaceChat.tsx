@@ -112,8 +112,8 @@ const WorkspaceChat: React.FC = () => {
             ref={inputRef}
             name="chatInput"
             onKeyPress={handleKeyPress}
-            className={`w-full p-1 leading-5 overflow-y-auto resize-none text-sm text-gray-800 placeholder-gray-500 bg-gray-100 border-none focus:outline-none focus:ring-0 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-corner-neutral ${
-              state.config.isChatCollapsed ? "h-6" : "h-10"
+            className={`w-full p-1 overflow-y-auto resize-none text-sm text-gray-800 placeholder-gray-500 bg-gray-100 border-none focus:outline-none focus:ring-0 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-corner-neutral ${
+              state.config.isChatCollapsed ? "h-6 leading-none" : "h-10 leading-5"
             }`}
             placeholder="输入你的问题或按回车提交"
             disabled={isLoading}

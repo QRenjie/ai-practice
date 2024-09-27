@@ -1,6 +1,9 @@
 import React from "react";
 import { ApplyData } from "../services/chatService";
 import { CodeBlock, Message } from "@/types/apiTypes";
+import { LayerState } from "@/components/Layer";
+import { merge, cloneDeep } from "lodash-es"; // 修改这一行
+import workspaceConfig from "../config/workspace.json"; // 新增这一行
 
 interface PreviewState {
   content: string;
@@ -8,6 +11,8 @@ interface PreviewState {
 
 interface UIState {
   activeTab: "preview" | "codeHistory";
+  size: { width: number; height: number };
+  position: { x: number; y: number };
 }
 
 interface CodeState {
@@ -25,11 +30,13 @@ interface ConfigState {
 }
 
 export interface WorkspaceState {
+  id: string;
   ui: UIState;
   preview: PreviewState;
   code: CodeState;
   chat: ChatState;
   config: ConfigState;
+  layer: LayerState;
 }
 
 export interface WorkspaceContextType {
@@ -43,26 +50,19 @@ export interface WorkspaceContextType {
   toggleChatCollapse: () => void; // 新增这一行
 }
 
-export const defaultWorkspaceState = () =>
-  ({
-    config: {
-      selectedModel: "gpt-3.5-turbo",
-      recommendedKeywords: [],
-      isChatCollapsed: false,
-    },
-    ui: {
-      activeTab: "preview",
-    },
-    preview: {
-      content: "",
-    },
-    code: {
-      mergedCodeBlocks: [],
-    },
-    chat: {
-      messages: [],
-    },
-  } as WorkspaceState);
+// 定义递归的 DeepPartial 类型
+type DeepPartial<T> = {
+  [P in keyof T]?: DeepPartial<T[P]>;
+};
+
+export const defaultWorkspaceState = (
+  source?: DeepPartial<WorkspaceState>
+): WorkspaceState => {
+  // 深复制 workspaceConfig
+  const configCopy = cloneDeep(workspaceConfig) as WorkspaceState;
+  // 使用 lodash 的 merge 方法将 configCopy 和 source 合并
+  return merge(configCopy, source);
+};
 
 const WorkspaceContext = React.createContext<WorkspaceContextType | null>(null);
 

@@ -7,13 +7,24 @@ import useLayerPosition from "../hooks/useLayerPosition"; // 使用自定义钩�
 // 静态计数器
 let layerCounter = 0;
 
+type Size = { width: number | string; height: number | string };
+
+export interface LayerState {
+  title: string;
+  size: Size;
+  position: { x: number; y: number };
+  isMaximized: boolean;
+  isMinimized: boolean;
+  maxSize: Size;
+}
+
 interface LayerProps {
   id?: string; // 将 id 属性变为可选
   children: React.ReactNode;
-  initialSize?: { width: number; height: number };
-  initialPosition?: { x: number; y: number };
+  initialState: LayerState;
   minWidth?: number;
   minHeight?: number;
+  active?: boolean
   title?: string;
   onClose?: () => void; // 新增
 }
@@ -21,8 +32,7 @@ interface LayerProps {
 const Layer: React.FC<LayerProps> = ({
   id,
   children,
-  initialSize = { width: 480, height: 600 },
-  initialPosition = { x: 20, y: 20 },
+  initialState,
   minWidth = 320,
   title = "Layer",
   onClose, // 新增
@@ -39,7 +49,7 @@ const Layer: React.FC<LayerProps> = ({
     handleMaximize,
     handleMinimize,
     handleFit,
-  } = useLayerPosition(initialSize, initialPosition);
+  } = useLayerPosition(initialState);
 
   const { activeLayer, setActiveLayer } = useContext(ActiveLayerContext);
 
@@ -102,20 +112,22 @@ const Layer: React.FC<LayerProps> = ({
         zIndex: activeLayer === layerId ? 1000 : "auto",
       }} // 动态设置 z-index
     >
-      <div date-testid="LayerMain" className="relative w-full h-full">
-        <div className="flex flex-col h-full bg-white bg-opacity-10 backdrop-blur-sm">
-          <LayerHeader
-            onFit={handleFit}
-            onMinimize={handleMinimize}
-            onMaximize={handleMaximize}
-            onClose={handleClose} // 新增
-            isMinimized={isMinimized}
-            isMaximized={isMaximized}
-            title={title}
-          />
-          <div className={`flex-1 ${isMinimized ? "hidden" : ""}`}>
-            {children}
-          </div>
+      <div
+        date-testid="LayerMain"
+        data-activelyayer={activeLayer === layerId}
+        className="relative w-full h-full flex flex-col bg-white bg-opacity-10 backdrop-blur-sm"
+      >
+        <LayerHeader
+          onFit={handleFit}
+          onMinimize={handleMinimize}
+          onMaximize={handleMaximize}
+          onClose={handleClose} // 新增
+          isMinimized={isMinimized}
+          isMaximized={isMaximized}
+          title={title}
+        />
+        <div className={`flex-1 ${isMinimized ? "hidden" : ""}`}>
+          {children}
         </div>
       </div>
     </Rnd>
