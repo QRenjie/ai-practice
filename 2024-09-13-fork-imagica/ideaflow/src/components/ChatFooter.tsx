@@ -43,7 +43,7 @@ export function ChatFooterActions({
   const { state } = useContext(WorkspaceContext)!;
 
   const sizeClass = state.config.isChatCollapsed ? "w-6 h-6" : "w-7 h-7";
-  
+
   const getButtonClass = (panel: "messages" | "config") => {
     const baseClass =
       "p-1.5 rounded-full transition-colors duration-200 focus:outline-none flex items-center justify-center";
@@ -118,16 +118,6 @@ function ChatFooter(props: ChatFooterProps) {
         <div className="flex flex-1 flex-nowrap gap-2 text-[0.7rem] items-center overflow-x-auto no-scrollbar">
           {" "}
           {/* 添加 no-scrollbar 类 */}
-          {recommendedKeywords.map((keyword, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => onKeywordSelect(keyword)}
-              className="py-1 px-0.5 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors duration-200 whitespace-nowrap" // 添加 whitespace-nowrap 类
-            >
-              {keyword.endsWith("?") ? `${keyword}` : `#${keyword}`}
-            </button>
-          ))}
           {recommendedKeywords.map((keyword, index) => (
             <button
               key={index}

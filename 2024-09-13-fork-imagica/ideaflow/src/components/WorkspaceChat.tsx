@@ -12,9 +12,10 @@ import MessageList from "./MessageList";
 import ConfigPanel from "./ConfigPanel";
 import ChatFooter, {
   ChatFooterActions,
-  CollapseChatFooterButton,
+  // CollapseChatFooterButton, // 移除未使用的导入
 } from "./ChatFooter";
 import Popover from "./common/Popover";
+import { useCreation } from "ahooks";
 
 const WorkspaceChat: React.FC = () => {
   const workspaceContext = useContext(WorkspaceContext)!;
@@ -25,7 +26,7 @@ const WorkspaceChat: React.FC = () => {
     "none"
   );
 
-  const chatController = useMemo(() => {
+  const chatController = useCreation(() => {
     const controller = new ChatController(workspaceContext, setIsLoading);
     controller.setInputRef(inputRef);
     return controller;
@@ -60,7 +61,7 @@ const WorkspaceChat: React.FC = () => {
   const handleKeywordSelect = useCallback((keyword: string) => {
     if (inputRef.current) {
       inputRef.current.value = keyword;
-      handleTogglePanel("config");
+      // handleTogglePanel("config");
       chatController.handleSubmit();
     }
   }, []);

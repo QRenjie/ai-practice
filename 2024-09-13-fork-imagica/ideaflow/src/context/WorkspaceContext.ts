@@ -4,6 +4,7 @@ import { CodeBlock, Message } from "@/types/apiTypes";
 import { LayerState } from "@/components/Layer";
 import { merge, cloneDeep } from "lodash-es"; // 修改这一行
 import workspaceConfig from "../config/workspace.json"; // 新增这一行
+import { v4 as uuidv4 } from "uuid";
 
 interface PreviewState {
   content: string;
@@ -60,6 +61,7 @@ export const defaultWorkspaceState = (
 ): WorkspaceState => {
   // 深复制 workspaceConfig
   const configCopy = cloneDeep(workspaceConfig) as WorkspaceState;
+  configCopy.id = uuidv4();
   // 使用 lodash 的 merge 方法将 configCopy 和 source 合并
   return merge(configCopy, source);
 };

@@ -11,7 +11,7 @@ import ContextMenu, { ContextMenuRef } from "@/components/ContextMenu";
 
 export default function Home() {
   const [workspaces, setWorkspaces] = useState<WorkspaceState[]>([
-    defaultWorkspaceState({ id: "workspace1", layer: { title: "工作区 1" } }),
+    defaultWorkspaceState({ layer: { title: "工作区 1" } }),
   ]);
 
   const contextMenuRef = useRef<ContextMenuRef>(null);

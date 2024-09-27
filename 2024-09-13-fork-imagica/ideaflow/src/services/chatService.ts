@@ -6,6 +6,7 @@ import { Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
 import { CodeExtractor } from "@/utils/CodeExtractor";
 import AIService from "./AIService";
+import { prompts } from "@/config/prompts";
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
@@ -18,6 +19,7 @@ export class ChatController {
     private setIsLoading: (isLoading: boolean) => void
   ) {
     this.aiService = new AIService();
+    this.initRecommendedKeywords();
   }
 
   setInputRef(ref: RefObject<HTMLTextAreaElement>) {
@@ -136,4 +138,21 @@ export class ChatController {
       }
     }
   };
+
+  initRecommendedKeywords() {
+    this.fetchNewRecommendedKeywords([
+      {
+        sender: "user",
+        text: prompts.initRecommond1,
+        id: "",
+        type: "text",
+      },
+      {
+        sender: "user",
+        text: prompts.initRecommond2,
+        id: "",
+        type: "text",
+      },
+    ]);
+  }
 }
