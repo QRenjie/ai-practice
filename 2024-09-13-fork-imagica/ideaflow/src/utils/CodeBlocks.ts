@@ -18,9 +18,9 @@ export class CodeBlocks {
     newMessage.codeBlocks.forEach((newBlock) => {
       const prevBlock = previousBlocksMap.get(newBlock.fileName);
       if (prevBlock) {
-        // 如果文件名相同，选择替换或合并
-        // 这里选择替换旧的代码块
-        mergedBlocks.push(newBlock);
+        // 如果文件名相同，合并代码块
+        const mergedCode = this.mergeCode(prevBlock.code, newBlock.code);
+        mergedBlocks.push({ ...newBlock, code: mergedCode });
       } else {
         // 如果是新的文件，直接添加
         mergedBlocks.push(newBlock);
@@ -35,5 +35,11 @@ export class CodeBlocks {
     });
 
     return mergedBlocks;
+  }
+
+  static mergeCode(oldCode: string, newCode: string): string {
+    // 这里可以使用更复杂的算法来合并代码
+    // 例如，使用diff算法来找到差异并合并
+    return newCode; // 简单替换，实际应用中需要更复杂的逻辑
   }
 }

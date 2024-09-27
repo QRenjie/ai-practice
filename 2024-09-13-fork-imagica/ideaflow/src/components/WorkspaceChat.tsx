@@ -122,7 +122,7 @@ const WorkspaceChat: React.FC = () => {
       onOpenChange={handleOpenChange}
       trigger="click"
     >
-      <form
+      <div
         className={`bg-gray-100 focus-within:ring-0 transition-all duration-300 ${
           state.config.isChatCollapsed ? "h-8 px-1" : "p-1"
         }`}
@@ -144,7 +144,7 @@ const WorkspaceChat: React.FC = () => {
           {state.config.isChatCollapsed && <ChatFooterActions {...chatProps} />}
         </div>
         {!state.config.isChatCollapsed && <ChatFooter {...chatProps} />}
-      </form>
+      </div>
     </Popover>
   );
 };

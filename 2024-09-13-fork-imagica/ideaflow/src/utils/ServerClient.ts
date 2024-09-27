@@ -17,7 +17,7 @@ class OpenAIClient extends ApiClient {
       model: model || this.defualtModel,
       messages: history
         ? [...history, { role: "user", content: message }]
-        : [{ role: "user", content: message + '如果是html代码则将css，html，javascript 代码放在一个文件中' }],
+        : [{ role: "user", content: message + '（如果是html代码则将css，html，javascript 代码放在一个文件中，如果有代码直接返回代码）' }],
       stream: true,
     });
   }
