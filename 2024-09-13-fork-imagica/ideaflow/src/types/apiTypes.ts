@@ -18,8 +18,8 @@ export type AIResponse = AiChatResponse | AIResponseError;
 
 export interface Message {
   id: string;
-  text: string;
-  sender: "user" | "bot";
+  content: string;
+  role: "user" | "assistant";
   type: "text" | "code" | "markdown";
   codeBlocks?: CodeBlock[];
 }

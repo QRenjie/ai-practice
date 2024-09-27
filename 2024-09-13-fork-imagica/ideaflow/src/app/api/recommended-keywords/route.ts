@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { KeywordGenerator } from "@/utils/KeywordGenerator";
+import { openAIClient } from "@/utils/ServerClient";
 
 export async function POST(req: NextRequest) {
-  const { chatHistory, language = "zh" } = await req.json();
+  const { messages } = await req.json();
 
   try {
-    if (Array.isArray(chatHistory) && chatHistory.length) {
-      const keywords = await KeywordGenerator.generateKeywords(chatHistory, language);
+    if (Array.isArray(messages) && messages.length) {
+      const keywords = await openAIClient.generateKeywords({ messages });
       return NextResponse.json({ keywords });
     }
     return NextResponse.json({ keywords: [] });

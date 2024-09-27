@@ -56,23 +56,23 @@ export class ChatController {
     try {
       const userMessage: Message = {
         id: uuidv4(),
-        text: message,
-        sender: "user",
+        content: message,
+        role: "user",
         type: "text",
       };
       this.context.addChatMessage(userMessage);
 
       const aiResponse = await this.aiService.callOpenAIStream(
         message,
-        this.chatMessages // 使用 messages 替代 history
+        this.chatMessages
       );
 
       const formattedResponse = this.formatAIResponse(aiResponse.content);
 
       const newMessage: Message = {
         id: aiResponse.id,
-        text: formattedResponse,
-        sender: "bot",
+        content: formattedResponse,
+        role: "assistant",
         type: "markdown",
         codeBlocks: aiResponse.codeBlocks,
       };
@@ -84,10 +84,10 @@ export class ChatController {
     } catch (error) {
       this.context.addChatMessage({
         id: uuidv4(),
-        text: `抱歉，发生了错误: ${
+        content: `抱歉，发生了错误: ${
           error instanceof Error ? error.message : "未知错误"
         }`,
-        sender: "bot",
+        role: "assistant",
         type: "text",
       });
     } finally {
@@ -142,14 +142,14 @@ export class ChatController {
   initRecommendedKeywords() {
     this.fetchNewRecommendedKeywords([
       {
-        sender: "user",
-        text: prompts.initRecommond1,
+        role: "user",
+        content: prompts.initRecommond1,
         id: "",
         type: "text",
       },
       {
-        sender: "user",
-        text: prompts.initRecommond2,
+        role: "user",
+        content: prompts.initRecommond2,
         id: "",
         type: "text",
       },

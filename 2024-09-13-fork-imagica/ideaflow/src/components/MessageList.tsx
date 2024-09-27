@@ -13,23 +13,23 @@ const MessageItem = memo<{ message: Message; chatController: ChatController }>(
   ({ message, chatController }) => (
     <div
       className={`flex ${
-        message.sender === "user" ? "justify-end" : "justify-start"
+        message.role === "user" ? "justify-end" : "justify-start"
       } mb-4`}
     >
       <div
         className={`max-w-[70%] rounded-lg p-3 ${
-          message.sender === "user"
+          message.role === "user"
             ? "bg-blue-100 text-blue-900"
             : "bg-gray-100 text-gray-900"
         }`}
       >
-        {message.sender === "user" ? (
-          <p className="whitespace-pre-wrap text-sm">{message.text}</p>
+        {message.role === "user" ? (
+          <p className="whitespace-pre-wrap text-sm">{message.content}</p>
         ) : (
           <AIResponse
-            text={message.text}
+            text={message.content}
             copyToClipboard={chatController.copyToClipboard}
-            reapplyCode={() => chatController.handleReapplyCode(message.text)}
+            reapplyCode={() => chatController.handleReapplyCode(message.content)}
           />
         )}
       </div>

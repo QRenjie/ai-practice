@@ -4,14 +4,14 @@ import { openAIClient } from "@/utils/ServerClient";
 import { Message } from "@/types/apiTypes";
 import { prompts } from "@/config/prompts";
 
-interface OpenAIError extends Error {
+export interface OpenAIError extends Error {
   response?: {
     status: number;
   };
 }
 
 export class KeywordGenerator {
-  private static getRandomKeywordCount(max = 7): number {
+  static getRandomKeywordCount(max = 7): number {
     return Math.floor(Math.random() * (max - 3 + 1)) + 3;
   }
 
@@ -26,7 +26,10 @@ export class KeywordGenerator {
   ): Promise<string[]> {
     const keywordCount = this.getRandomKeywordCount(4);
 
-    const prompt = prompts.generateKeywords[language](keywordCount, JSON.stringify(chatHistory));
+    const prompt = prompts.generateKeywords[language](
+      keywordCount,
+      JSON.stringify(chatHistory)
+    );
 
     const messageId = uuidv4();
 

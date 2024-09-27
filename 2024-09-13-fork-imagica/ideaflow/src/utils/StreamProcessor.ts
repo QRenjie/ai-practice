@@ -1,5 +1,3 @@
-import { AxiosResponse } from "axios";
-
 export type StreamApiProcessorType = {
   id: string;
   content: string;
@@ -7,29 +5,37 @@ export type StreamApiProcessorType = {
 
 export class StreamProcessor {
   private decoder = new TextDecoder("utf-8");
+  private buffer = "";
 
   async processStream(
-    response: AxiosResponse,
+    response: Response,
     messageId: string,
     onChunk?: (chunk: string) => void
   ): Promise<StreamApiProcessorType> {
     let fullContent = "";
 
-    if (!response.data) {
-      throw new Error("Response data is undefined");
+    if (!response.body) {
+      throw new Error("Response body is null");
     }
 
-    // 检查 response.data 是否是可迭代的
-    if (typeof response.data[Symbol.asyncIterator] === "function") {
-      for await (const chunk of response.data) {
-        const decodedChunk = this.decoder.decode(chunk);
-        fullContent += await this.processChunk(decodedChunk, onChunk);
+    const reader = response.body.getReader();
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const decodedChunk = this.decoder.decode(value, { stream: true });
+        const { processedContent, shouldStop } = await this.processChunk(
+          decodedChunk,
+          onChunk
+        );
+        fullContent += processedContent;
+
+        if (shouldStop) break;
       }
-    } else if (typeof response.data === "string") {
-      // 如果 response.data 是字符串，直接处理
-      fullContent = await this.processChunk(response.data, onChunk);
-    } else {
-      throw new Error("Unsupported response data type");
+    } finally {
+      reader.releaseLock();
     }
 
     return {
@@ -41,14 +47,21 @@ export class StreamProcessor {
   private async processChunk(
     chunk: string,
     onChunk?: (chunk: string) => void
-  ): Promise<string> {
+  ): Promise<{ processedContent: string; shouldStop: boolean }> {
     let processedContent = "";
-    const lines = chunk.split("\n").filter((line) => line.trim() !== "");
+    let shouldStop = false;
+    
+    this.buffer += chunk;
+    const lines = this.buffer.split("\n");
+    
+    // 保留最后一行，可能是不完整的
+    this.buffer = lines.pop() || "";
 
     for (const line of lines) {
       if (line.startsWith("data: ")) {
-        const data = line.slice(6);
+        const data = line.slice(6).trim();
         if (data === "[DONE]") {
+          shouldStop = true;
           break;
         }
         try {
@@ -58,11 +71,13 @@ export class StreamProcessor {
           onChunk?.(content);
         } catch (error) {
           console.error("解析错误:", error);
+          // 不完整的 JSON，添加回 buffer
+          this.buffer = line + "\n" + this.buffer;
         }
       }
     }
 
-    return processedContent;
+    return { processedContent, shouldStop };
   }
 }
 
