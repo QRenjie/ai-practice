@@ -10,7 +10,10 @@ import WorkspaceContext from "../context/WorkspaceContext";
 import { ChatController } from "../services/chatService";
 import MessageList from "./MessageList";
 import ConfigPanel from "./ConfigPanel";
-import ChatFooter, { CollapseChatFooterButton } from "./ChatFooter";
+import ChatFooter, {
+  ChatFooterActions,
+  CollapseChatFooterButton,
+} from "./ChatFooter";
 import Popover from "./common/Popover";
 
 const WorkspaceChat: React.FC = () => {
@@ -92,12 +95,28 @@ const WorkspaceChat: React.FC = () => {
     return null;
   }, [chatController, handleKeywordSelect, openPanel, state.chat.messages]);
 
+  const chatProps = useMemo(() => {
+    return {
+      openPanel: openPanel,
+      handleTogglePanel: handleTogglePanel,
+      handleSubmit: handleSubmit,
+      isLoading: isLoading,
+      onKeywordSelect: handleKeywordSelect,
+    };
+  }, [
+    handleKeywordSelect,
+    handleSubmit,
+    handleTogglePanel,
+    isLoading,
+    openPanel,
+  ]);
+
   return (
     <Popover
       overlayClassName="w-4/5 h-[40%] max-h-[66%]"
       relative
       placement="topRight"
-      open={openPanel !== "none" && !state.config.isChatCollapsed}
+      open={openPanel !== "none"}
       content={PopoverContent}
       onOpenChange={handleOpenChange}
       trigger="click"
@@ -113,22 +132,17 @@ const WorkspaceChat: React.FC = () => {
             name="chatInput"
             onKeyPress={handleKeyPress}
             className={`w-full p-1 overflow-y-auto resize-none text-sm text-gray-800 placeholder-gray-500 bg-gray-100 border-none focus:outline-none focus:ring-0 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-corner-neutral ${
-              state.config.isChatCollapsed ? "h-6 leading-none" : "h-10 leading-5"
+              state.config.isChatCollapsed
+                ? "h-6 leading-none"
+                : "h-10 leading-5"
             }`}
             placeholder="输入你的问题或按回车提交"
             disabled={isLoading}
             rows={1}
           />
-          {state.config.isChatCollapsed && <CollapseChatFooterButton />}
+          {state.config.isChatCollapsed && <ChatFooterActions {...chatProps} />}
         </div>
-        {!state.config.isChatCollapsed && (
-          <ChatFooter
-            openPanel={openPanel}
-            handleTogglePanel={handleTogglePanel}
-            handleSubmit={handleSubmit}
-            isLoading={isLoading}
-          />
-        )}
+        {!state.config.isChatCollapsed && <ChatFooter {...chatProps} />}
       </form>
     </Popover>
   );
