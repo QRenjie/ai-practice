@@ -22,7 +22,7 @@ const WorkspacePovider: React.FC<{
   const updatePreviewCodeBlock = useCallback((codeBlock: CodeBlock) => {
     setState((prevState) => ({
       ...prevState,
-      code: { ...prevState.code, codeBlock },
+      preview: { ...prevState.preview, codeBlock },
     }));
   }, []);
 

@@ -113,8 +113,14 @@ export class ChatController {
     this.context.updateMergedCodeBlocks(blocks);
 
     // 更新预览内容
-    const codeBlock = await codeRender.render(blocks);
-    this.context.updatePreviewCodeBlock(codeBlock);
+    try {
+      const codeBlock = await codeRender.render(blocks);
+      console.log("jj render codeBlock", codeBlock);
+
+      this.context.updatePreviewCodeBlock(codeBlock);
+    } catch (e) {
+      console.log("jj codeblock error", e);
+    }
   }
 
   public handleKeyPress = (e: React.KeyboardEvent<Element>): void => {

@@ -27,6 +27,7 @@ const WorkspacePreview: React.FC = () => {
       blobUrlRef.current && URL.revokeObjectURL(blobUrlRef.current);
     };
   }, [codeBlock]);
+  console.log("jj ", codeBlock);
 
   return (
     <div className="w-full h-full overflow-auto bg-white shadow-md flex items-center justify-center">

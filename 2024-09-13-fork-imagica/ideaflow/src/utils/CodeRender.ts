@@ -18,7 +18,6 @@ export default class CodeRender {
     const codeBlock = blocks.filter((block) =>
       CodeRender.vaildFileTypes.includes(block.language)
     )?.[0];
-    console.log("codeBlock", codeBlock);
 
     if (!codeBlock) {
       return Promise.reject("No valid code block found");

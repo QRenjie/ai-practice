@@ -9,7 +9,7 @@ export default class AIApiScheduler {
   backendApi: BackendApiScheduler;
 
   // 新增参数，决定是否使用后端接口，默认前端直接发送请求
-  constructor(public useBackend = false) {
+  constructor(public useBackend = true) {
     this.backendApi = new BackendApiScheduler();
   }
 

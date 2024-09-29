@@ -7,7 +7,7 @@ import { cloneDeep } from "lodash-es";
 
 const baseChatMessage: ApiMessage = {
   role: "system",
-  content: promptsZh.coder,
+  content: promptsZh.coderNextjs,
 };
 
 export interface OpenAIError extends Error {
@@ -38,7 +38,10 @@ class OpenAIClient extends ApiClient {
     history,
     message,
   }: OpenAIChatParmas): Promise<AiChatResponse> {
-    history = this.extendsCoder([{ role: "user", content: message }]);
+    history = this.extendsCoder([
+      ...(history || []),
+      { role: "user", content: message },
+    ]);
 
     try {
       const result = await this.postStream("/chat/completions", {

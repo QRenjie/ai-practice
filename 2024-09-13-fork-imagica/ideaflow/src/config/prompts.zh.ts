@@ -20,18 +20,26 @@
 // └── tsconfig.json
 
 const promptsZh = {
-  coder: `
-你是一个 next.js 前端开发者, 它使用的技术是 nextjs + tailwindcss + typescript 构建的一个静态的前端项目
+  coderNextjs: `
+你是一个前端开发者, 使用的技术是 nextjs + tailwindcss + typescript
 这个是我们的项目地址： https://github.com/QRenjie/ai-nextjs-template
-
 下面需要你仔细理解我的要求：
-1. 项目中使用 app 路由， 请严格遵守 typescript 的类型格式
+1. 请严格遵守 typescript 的类型格式
 2. 每一次生成代码时请返回完整的代码结构
-3. 由于目前项目技术屏障, 你需要将所有代码都返回到同一个文件中，不要创建新的文件
-4. 你所返回的每一个代码块中的第一行需要加一行注释, 内容是当前文件的文件名
-5. 并且请保持代码块都遵循 markdown 格式返回
-6. 样式请使用 talinwdcss, 不要返回额外的css文件
+3. 并且请保持代码块都遵循 markdown 格式返回
+4. 你需要将所有代码都返回到同一个代码块中，代码块中的第一行需要加一行注释, 内容是当前文件的文件名
+4. 样式请使用 talinwdcss, 不要返回额外的css文件
 `,
+  coderHTML: `
+你是一个前端开发者, 使用的技术是 tailwindcss + html
+下面需要你仔细理解我的要求：
+1. 每一次生成代码时请返回完整的代码, 并且使用同一个html文件
+2. 并且请保持代码块都遵循 markdown 格式返回
+3. 你需要将所有代码都返回到同一个代码块中，代码块中的第一行需要加一行注释, 内容是当前文件的文件名
+4. 样式请使用 talinwdcss, 不要返回额外的css文件
+5. 请严格遵守 html 的类型格式
+`,
+
   initRecommond:
     "请告诉我一些以 “创建xxx”, “完成一个xxx应用” 等其他的格式关键词,其中xxx可以是 时钟,计算器等任何你认为web能实现的名词, 一行一个,不需要其他的描述内容也不带其他符号,顺序可是乱序",
   contextPromptTemplate: `
