@@ -16,10 +16,13 @@ export interface AIResponseError {
 
 export type AIResponse = AiChatResponse | AIResponseError;
 
-export interface Message {
+export interface Message extends ApiMessage {
   id: string;
-  content: string;
-  role: "user" | "assistant";
   type: "text" | "code" | "markdown";
   codeBlocks?: CodeBlock[];
+}
+
+export interface ApiMessage {
+  content: string;
+  role: "user" | "system" | "assistant";
 }

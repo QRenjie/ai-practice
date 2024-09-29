@@ -51,7 +51,14 @@ export default class ApiClient {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      return await streamProcessor.processStream(response, uuidv4(), onChunk);
+      const result = await streamProcessor.processStream(
+        response,
+        uuidv4(),
+        onChunk
+      );
+
+      console.log(" post stream response", response, result);
+      return result;
     } catch (error) {
       console.error("API流式请求错误:", error);
       throw error;

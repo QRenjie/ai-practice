@@ -1,30 +1,26 @@
-import { AiChatResponse, Message } from "@/types/apiTypes";
+import { AiChatResponse, ApiMessage, Message } from "@/types/apiTypes";
 import ApiClient from "./ApiClient";
 import { CodeExtractor } from "./CodeExtractor";
 import { OpenAIError } from "./KeywordGenerator";
+import models from "@/config/models";
+import { prompts } from "@/config/prompts";
 
-const baseChatMessage: Message[] = [
+const baseChatMessage: ApiMessage[] = [
   {
-    role: "user",
-    content:
-      "你是前端开发者, 如果你回答的是html代码, 则将css, html, javascript 代码放在一个文件中",
-    id: "",
-    type: "text",
+    role: "system",
+    content: prompts.coder,
   },
 ];
 
-const baseKeywordMessage: Message[] = [
+const baseKeywordMessage: ApiMessage[] = [
   {
-    role: "user",
-    content:
-      "你是一个帮助生成相关关键词的AI助手。你是一个可以通过用户对话推测用户可能会说的下一句是什么非常智能的ai, 下面是用户和AI对话的内容，请生成 4 - 6个相关的关键词、短语或后续问题。这些内容应该是用户可能想要进一步了解或讨论的主题。每行一个，不要有编号或其他格式",
-    id: "",
-    type: "text",
+    role: "system",
+    content: prompts.recommonder,
   },
 ];
 
 class OpenAIClient extends ApiClient {
-  defualtModel = "gpt-3.5-turbo";
+  defualtModel = models.turbo;
 
   async chat({
     model,
@@ -33,7 +29,7 @@ class OpenAIClient extends ApiClient {
   }: {
     model?: string;
     message: string;
-    history?: Message[];
+    history?: ApiMessage[];
   }): Promise<AiChatResponse> {
     history = [...baseChatMessage, ...(history || [])];
 
@@ -59,16 +55,14 @@ class OpenAIClient extends ApiClient {
   }
 
   async generateKeywords({
-    model,
     messages,
   }: {
-    model?: string;
-    messages: Message[];
+    messages: ApiMessage[];
   }): Promise<{ keywords: string[] }> {
     try {
       const result = await this.postStream("/chat/completions", {
-        model: model || this.defualtModel,
-        messages: [...baseKeywordMessage, ...(messages || [])],
+        model: models.gpt4,
+        messages: messages,
         stream: true,
       });
 

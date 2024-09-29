@@ -2,13 +2,18 @@ import { WorkspaceContextType } from "./../context/WorkspaceContext";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { RefObject } from "react";
-import { Message } from "@/types/apiTypes";
+import { ApiMessage, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
 import { CodeExtractor } from "@/utils/CodeExtractor";
 import AIService from "./AIService";
 import { prompts } from "@/config/prompts";
+import { pick } from "lodash-es";
 
 export type ApplyData = { type: "html" | "python"; content: string };
+
+function getApiMessage(messages: Message[]): ApiMessage[] {
+  return messages.map((message) => pick(message, ["role", "content"]));
+}
 
 export class ChatController {
   private inputRef: RefObject<HTMLTextAreaElement> | null = null;
@@ -64,7 +69,7 @@ export class ChatController {
 
       const aiResponse = await this.aiService.callOpenAIStream(
         message,
-        this.chatMessages
+        getApiMessage(this.chatMessages)
       );
 
       const formattedResponse = this.formatAIResponse(aiResponse.content);
@@ -80,7 +85,10 @@ export class ChatController {
 
       this.updateMergedCodeBlocks(newMessage);
 
-      this.fetchNewRecommendedKeywords([...this.chatMessages, newMessage]);
+      const newMessages = [...this.chatMessages, newMessage];
+      if (newMessages.length >= 2) {
+        this.fetchNewRecommendedKeywords(getApiMessage(newMessages));
+      }
     } catch (error) {
       this.context.addChatMessage({
         id: uuidv4(),
@@ -123,36 +131,28 @@ export class ChatController {
     console.log(code);
   };
 
-  fetchNewRecommendedKeywords = async (messages: Message[]) => {
-    if (messages.length >= 2) {
-      try {
-        const aiService = new AIService();
-        const response = await aiService.getRecommendedKeywords(messages);
-        if (response.keywords && response.keywords.length > 0) {
-          this.context.updateRecommendedKeywords(response.keywords);
-        } else {
-          console.warn("未收到有效的关键词");
-        }
-      } catch (error) {
-        console.error("获取推荐关键词失败:", error);
+  /**
+   * 当message 为空时表示初始化提示词
+   * @param messages 
+   */
+  fetchNewRecommendedKeywords = async (messages: ApiMessage[]) => {
+    try {
+      const aiService = new AIService();
+      const prompt = messages.length === 0 
+        ? prompts.initRecommond 
+        : prompts.contextPromptTemplate.replace('{{chatHistory}}', messages.map(msg => msg.content).join('\n'));
+      const response = await aiService.getRecommendedKeywords([{ role: "user", content: prompt }]);
+      if (response.keywords && response.keywords.length > 0) {
+        this.context.updateRecommendedKeywords(response.keywords);
+      } else {
+        console.warn("未收到有效的关键词");
       }
+    } catch (error) {
+      console.error("获取推荐关键词失败:", error);
     }
   };
 
   initRecommendedKeywords() {
-    this.fetchNewRecommendedKeywords([
-      {
-        role: "user",
-        content: prompts.initRecommond1,
-        id: "",
-        type: "text",
-      },
-      {
-        role: "user",
-        content: prompts.initRecommond2,
-        id: "",
-        type: "text",
-      },
-    ]);
+    this.fetchNewRecommendedKeywords([]);
   }
 }

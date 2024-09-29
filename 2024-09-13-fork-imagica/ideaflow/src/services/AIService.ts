@@ -1,18 +1,25 @@
-import { AiChatResponse, CodeBlock, Message } from "@/types/apiTypes";
+import {
+  AiChatResponse,
+  ApiMessage,
+  CodeBlock,
+  Message,
+} from "@/types/apiTypes";
 import { openAIClient } from "@/utils/ServerClient";
 import { pick } from "lodash-es";
+import models from '../config/models';
 
 export default class AIService {
   // 新增使用流式请求的方法
   async callOpenAIStream(
     message: string,
-    messages: Message[]
+    messages: ApiMessage[]
   ): Promise<AiChatResponse> {
     try {
+      const selectedModel = models["turbo"]; // 使用映射对象中的键来引用模型
       const response = await openAIClient.chat({
-        model: "gpt-3.5-turbo",
+        model: selectedModel,
         message,
-        history: messages.map(message => pick(message, ['role', 'content'])),
+        history: messages,
       });
 
       console.log("response", response);
@@ -57,11 +64,11 @@ export default class AIService {
   }
 
   async getRecommendedKeywords(
-    messages: Message[]
+    messages: ApiMessage[]
   ): Promise<{ keywords: string[] }> {
     try {
       const result = await openAIClient.generateKeywords({
-        messages: messages.map(message => pick(message, ['role', 'content'])).slice(0, 20),
+        messages: messages.slice(0, 20),
       });
       console.log("result", result);
 
