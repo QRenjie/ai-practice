@@ -3,7 +3,8 @@
   "config": {
     "selectedModel": "gpt-3.5-turbo",
     "recommendedKeywords": [],
-    "isChatCollapsed": false
+    "isChatCollapsed": false,
+    "useLayer": true
   },
   "ui": {
     "activeTab": "preview",
@@ -27,10 +28,19 @@
   },
   "layer": {
     "title": "",
-    "size": { "width": 480, "height": 600 },
-    "position": { "x": 20, "y": 20 },
+    "size": {
+      "width": 480,
+      "height": 600
+    },
+    "position": {
+      "x": 20,
+      "y": 20
+    },
     "isMaximized": false,
     "isMinimized": false,
-    "maxSize": { "width": "100%", "height": "100%" }
+    "maxSize": {
+      "width": "100%",
+      "height": "100%"
+    }
   }
 }

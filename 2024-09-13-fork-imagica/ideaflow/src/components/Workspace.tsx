@@ -1,8 +1,10 @@
 import React from "react";
 import { WorkspaceState } from "../context/WorkspaceContext";
 import WorkspacePovider from "../container/WorkspacePovider";
-import Layer from "./Layer";
 import WorkspacePanel from "./WorkspacePanel";
+import dynamic from "next/dynamic";
+
+const Layer = dynamic(() => import("./Layer"));
 
 const Workspace: React.FC<{
   index: number;
@@ -11,14 +13,18 @@ const Workspace: React.FC<{
 }> = ({ state, onClose }) => {
   return (
     <WorkspacePovider key={state.id} initialState={state}>
-      <Layer
-        id={state.id}
-        initialState={state.layer}
-        onClose={() => onClose?.(state.id)}
-        title={state.layer.title}
-      >
+      {state.config.useLayer ? (
+        <Layer
+          id={state.id}
+          initialState={state.layer}
+          onClose={() => onClose?.(state.id)}
+          title={state.layer.title}
+        >
+          <WorkspacePanel />
+        </Layer>
+      ) : (
         <WorkspacePanel />
-      </Layer>
+      )}
     </WorkspacePovider>
   );
 };

@@ -28,6 +28,7 @@ interface ConfigState {
   selectedModel: string;
   recommendedKeywords: string[];
   isChatCollapsed: boolean;
+  useLayer: boolean;
 }
 
 export interface WorkspaceState {
