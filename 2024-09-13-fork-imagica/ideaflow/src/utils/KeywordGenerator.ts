@@ -1,4 +1,4 @@
-import { streamProcessor } from "@/utils/StreamProcessor";
+import { streamProcessor } from "@/base/api/StreamProcessor";
 import { v4 as uuidv4 } from "uuid";
 import { openAIClient } from "@/utils/ServerClient";
 import { Message } from "@/types/apiTypes";

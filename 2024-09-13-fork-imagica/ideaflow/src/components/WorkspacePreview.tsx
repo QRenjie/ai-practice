@@ -1,26 +1,33 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import WorkspaceContext from "../context/WorkspaceContext";
-import AIService from "@/services/AIService";
+import AIApiScheduler from "@/services/AIApiScheduler";
 
 const WorkspacePreview: React.FC = () => {
   const { state } = useContext(WorkspaceContext)!;
-  const { code: { mergedCodeBlocks } } = state;
+  const {
+    code: { mergedCodeBlocks },
+  } = state;
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [previewContent, setPreviewContent] = useState<string>("");
 
   useEffect(() => {
-    const codeBlock = mergedCodeBlocks.filter(block => block.language === 'html' || block.language === 'python')?.[0];
+    const codeBlock = mergedCodeBlocks.filter(
+      (block) => block.language === "html" || block.language === "python"
+    )?.[0];
 
     if (codeBlock) {
-      if (codeBlock.language === 'python') {
-        const aiService = new AIService()
-        aiService.execPythonCode(codeBlock)
+      if (codeBlock.language === "python") {
+        const aIApiScheduler = new AIApiScheduler();
+        aIApiScheduler
+          .execPythonCode(codeBlock)
           .then(({ result }) => {
             setPreviewContent(result);
           })
-          .catch(error => {
-            console.error('Error executing Python code:', error);
-            setPreviewContent(`<p>Error executing Python code: ${error.message}</p>`);
+          .catch((error) => {
+            console.error("Error executing Python code:", error);
+            setPreviewContent(
+              `<p>Error executing Python code: ${error.message}</p>`
+            );
           });
       } else {
         // HTML 内容直接设置
@@ -31,7 +38,7 @@ const WorkspacePreview: React.FC = () => {
 
   useEffect(() => {
     if (previewContent && iframeRef.current) {
-      const blob = new Blob([previewContent], { type: 'text/html' });
+      const blob = new Blob([previewContent], { type: "text/html" });
       const url = URL.createObjectURL(blob);
       iframeRef.current.src = url;
       return () => {
@@ -43,7 +50,11 @@ const WorkspacePreview: React.FC = () => {
   return (
     <div className="w-full h-full overflow-auto bg-white shadow-md flex items-center justify-center">
       {previewContent ? (
-        <iframe ref={iframeRef} className="w-full h-full border-none" sandbox="allow-scripts allow-same-origin"></iframe>
+        <iframe
+          ref={iframeRef}
+          className="w-full h-full border-none"
+          sandbox="allow-scripts allow-same-origin"
+        ></iframe>
       ) : (
         <div className="text-center text-gray-500">
           <h2 className="text-xl font-semibold">预览区域</h2>

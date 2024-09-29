@@ -5,7 +5,7 @@ import { RefObject } from "react";
 import { ApiMessage, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
 import { CodeExtractor } from "@/utils/CodeExtractor";
-import AIService from "./AIService";
+import AIApiScheduler from "./AIApiScheduler";
 import { prompts } from "@/config/prompts";
 import { pick } from "lodash-es";
 
@@ -17,13 +17,13 @@ function getApiMessage(messages: Message[]): ApiMessage[] {
 
 export class ChatController {
   private inputRef: RefObject<HTMLTextAreaElement> | null = null;
-  aiService: AIService;
+  aIApiScheduler: AIApiScheduler;
 
   constructor(
     public context: WorkspaceContextType,
     private setIsLoading: (isLoading: boolean) => void
   ) {
-    this.aiService = new AIService();
+    this.aIApiScheduler = new AIApiScheduler();
     this.initRecommendedKeywords();
   }
 
@@ -67,7 +67,7 @@ export class ChatController {
       };
       this.context.addChatMessage(userMessage);
 
-      const aiResponse = await this.aiService.callOpenAIStream(
+      const aiResponse = await this.aIApiScheduler.callOpenAIStream(
         message,
         getApiMessage(this.chatMessages)
       );
@@ -133,15 +133,21 @@ export class ChatController {
 
   /**
    * 当message 为空时表示初始化提示词
-   * @param messages 
+   * @param messages
    */
   fetchNewRecommendedKeywords = async (messages: ApiMessage[]) => {
     try {
-      const aiService = new AIService();
-      const prompt = messages.length === 0 
-        ? prompts.initRecommond 
-        : prompts.contextPromptTemplate.replace('{{chatHistory}}', messages.map(msg => msg.content).join('\n'));
-      const response = await aiService.getRecommendedKeywords([{ role: "user", content: prompt }]);
+      const aIApiScheduler = new AIApiScheduler();
+      const prompt =
+        messages.length === 0
+          ? prompts.initRecommond
+          : prompts.contextPromptTemplate.replace(
+              "{{chatHistory}}",
+              messages.map((msg) => msg.content).join("\n")
+            );
+      const response = await aIApiScheduler.getRecommendedKeywords([
+        { role: "user", content: prompt },
+      ]);
       if (response.keywords && response.keywords.length > 0) {
         this.context.updateRecommendedKeywords(response.keywords);
       } else {

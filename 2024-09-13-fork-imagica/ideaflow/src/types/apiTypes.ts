@@ -1,4 +1,4 @@
-import { StreamApiProcessorType } from "@/utils/StreamProcessor";
+import { StreamApiProcessorType } from "@/base/api/StreamProcessor";
 
 export interface CodeBlock {
   fileName: string;

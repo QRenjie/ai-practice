@@ -1,7 +1,7 @@
-import { AiChatResponse, ApiMessage, Message } from "@/types/apiTypes";
+import { AiChatResponse, ApiMessage } from "@/types/apiTypes";
 import ApiClient from "./ApiClient";
-import { CodeExtractor } from "./CodeExtractor";
-import { OpenAIError } from "./KeywordGenerator";
+import { CodeExtractor } from "@/utils/CodeExtractor";
+import { OpenAIError } from "@/utils/KeywordGenerator";
 import models from "@/config/models";
 import { prompts } from "@/config/prompts";
 
@@ -19,6 +19,15 @@ const baseKeywordMessage: ApiMessage[] = [
   },
 ];
 
+export interface OpenAIChatParmas {
+  model?: string;
+  message: string;
+  history?: ApiMessage[];
+}
+
+export interface OpenAIGenerateKeysParams {
+  messages: ApiMessage[];
+}
 class OpenAIClient extends ApiClient {
   defualtModel = models.turbo;
 
@@ -26,11 +35,7 @@ class OpenAIClient extends ApiClient {
     model,
     history,
     message,
-  }: {
-    model?: string;
-    message: string;
-    history?: ApiMessage[];
-  }): Promise<AiChatResponse> {
+  }: OpenAIChatParmas): Promise<AiChatResponse> {
     history = [...baseChatMessage, ...(history || [])];
 
     try {
@@ -56,9 +61,7 @@ class OpenAIClient extends ApiClient {
 
   async generateKeywords({
     messages,
-  }: {
-    messages: ApiMessage[];
-  }): Promise<{ keywords: string[] }> {
+  }: OpenAIGenerateKeysParams): Promise<{ keywords: string[] }> {
     try {
       const result = await this.postStream("/chat/completions", {
         model: models.gpt4,

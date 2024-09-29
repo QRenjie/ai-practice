@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AIResponse } from "@/types/apiTypes";
-import { openAIClient } from "@/utils/ServerClient";
+import { openAIClient } from "@/base/api/ServerClient";
 
 export async function POST(req: NextRequest) {
   const { model, message, history } = await req.json();
