@@ -6,7 +6,8 @@ const nextConfig = {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        vm2: false,
+        fs: false,
+        module: false,
       };
     }
     return config;
@@ -14,8 +15,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
-        destination: '/api/:path*',
+        source: "/api/:path*",
+        destination: "/api/:path*",
       },
     ];
   },
