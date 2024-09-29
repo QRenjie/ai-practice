@@ -114,7 +114,7 @@ const WorkspaceChat: React.FC = () => {
 
   return (
     <Popover
-      overlayClassName="w-4/5 h-[40%] max-h-[66%]"
+      overlayClassName="w-4/5 h-[60%] max-h-[66%]"
       relative
       placement="topRight"
       open={openPanel !== "none"}
