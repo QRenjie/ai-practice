@@ -7,7 +7,7 @@ import { cloneDeep } from "lodash-es";
 
 const baseChatMessage: ApiMessage = {
   role: "system",
-  content: promptsZh.coderNextjs,
+  content: promptsZh.coderHTML,
 };
 
 export interface OpenAIError extends Error {
