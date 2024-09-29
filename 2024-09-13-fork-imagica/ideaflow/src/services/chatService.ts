@@ -8,6 +8,7 @@ import { CodeExtractor } from "@/utils/CodeExtractor";
 import AIApiScheduler from "./AIApiScheduler";
 import { pick } from "lodash-es";
 import promptsZh from "@/config/prompts.zh";
+import { codeRender } from "@/utils/CodeRender";
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
@@ -83,7 +84,7 @@ export class ChatController {
       };
       this.context.addChatMessage(newMessage);
 
-      this.updateMergedCodeBlocks(newMessage);
+      await this.updateMergedCodeBlocks(newMessage);
 
       const newMessages = [...this.chatMessages, newMessage];
       if (newMessages.length >= 2) {
@@ -106,10 +107,14 @@ export class ChatController {
     }
   }
 
-  private updateMergedCodeBlocks(message: Message): void {
+  private async updateMergedCodeBlocks(message: Message): Promise<void> {
     const previousMergedBlocks = this.mergedCodeBlocks;
     const blocks = CodeBlocks.mergeCodeBlocks(previousMergedBlocks, message);
     this.context.updateMergedCodeBlocks(blocks);
+
+    // 更新预览内容
+    const codeBlock = await codeRender.render(blocks);
+    this.context.updatePreviewCodeBlock(codeBlock);
   }
 
   public handleKeyPress = (e: React.KeyboardEvent<Element>): void => {

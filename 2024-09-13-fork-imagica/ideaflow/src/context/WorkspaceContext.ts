@@ -1,5 +1,4 @@
 import React from "react";
-import { ApplyData } from "../services/chatService";
 import { CodeBlock, Message } from "@/types/apiTypes";
 import { LayerState } from "@/components/Layer";
 import { merge, cloneDeep } from "lodash-es"; // 修改这一行
@@ -7,7 +6,7 @@ import workspaceConfig from "../config/workspace.json"; // 新增这一行
 import { v4 as uuidv4 } from "uuid";
 
 interface PreviewState {
-  content: string;
+  codeBlock?: CodeBlock;
 }
 
 interface UIState {
@@ -44,7 +43,7 @@ export interface WorkspaceState {
 export interface WorkspaceContextType {
   state: WorkspaceState;
   setActiveTab: (tab: UIState["activeTab"]) => void;
-  updatePreview: (data: ApplyData) => void;
+  updatePreviewCodeBlock: (codeBlock: CodeBlock) => void;
   addChatMessage: (message: Message) => void;
   updateMessages: (updater: (prev: Message[]) => Message[]) => void;
   updateMergedCodeBlocks: (blocks: CodeBlock[]) => void;

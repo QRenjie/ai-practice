@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import WorkspaceContext, { WorkspaceState } from "../context/WorkspaceContext";
-import { ApplyData } from "@/services/chatService";
 import { CodeBlock, Message } from "@/types/apiTypes";
 
 const WorkspacePovider: React.FC<{
@@ -20,14 +19,10 @@ const WorkspacePovider: React.FC<{
     }));
   }, []);
 
-  const updatePreview = useCallback((data: ApplyData) => {
+  const updatePreviewCodeBlock = useCallback((codeBlock: CodeBlock) => {
     setState((prevState) => ({
       ...prevState,
-      preview: {
-        ...prevState.preview,
-        content:
-          data.type === "html" ? data.content : prevState.preview.content,
-      },
+      code: { ...prevState.code, codeBlock },
     }));
   }, []);
 
@@ -88,7 +83,7 @@ const WorkspacePovider: React.FC<{
     () => ({
       state,
       setActiveTab,
-      updatePreview,
+      updatePreviewCodeBlock,
       addChatMessage,
       updateMessages,
       updateMergedCodeBlocks,
@@ -98,7 +93,7 @@ const WorkspacePovider: React.FC<{
     [
       state,
       setActiveTab,
-      updatePreview,
+      updatePreviewCodeBlock,
       addChatMessage,
       updateMessages,
       updateMergedCodeBlocks,

@@ -3,13 +3,12 @@ import ApiClient from "./ApiClient";
 import { CodeExtractor } from "@/utils/CodeExtractor";
 import models from "@/config/models";
 import promptsZh from "@/config/prompts.zh";
+import { cloneDeep } from "lodash-es";
 
-const baseChatMessage: ApiMessage[] = [
-  {
-    role: "system",
-    content: promptsZh.coder,
-  },
-];
+const baseChatMessage: ApiMessage = {
+  role: "system",
+  content: promptsZh.coder,
+};
 
 export interface OpenAIError extends Error {
   response?: {
@@ -29,18 +28,22 @@ export interface OpenAIGenerateKeysParams {
 class OpenAIClient extends ApiClient {
   defualtModel = models.turbo;
 
+  private extendsCoder(messages?: ApiMessage[]): ApiMessage[] {
+    return [cloneDeep(baseChatMessage), ...(messages || [])];
+  }
+
   // 生成代码的对话
   async generateCode({
     model,
     history,
     message,
   }: OpenAIChatParmas): Promise<AiChatResponse> {
-    history = [...baseChatMessage, ...(history || [])];
+    history = this.extendsCoder([{ role: "user", content: message }]);
 
     try {
       const result = await this.postStream("/chat/completions", {
         model: model || this.defualtModel,
-        messages: [...history, { role: "user", content: message }],
+        messages: history,
         stream: true,
       });
 
@@ -64,7 +67,7 @@ class OpenAIClient extends ApiClient {
     try {
       const result = await this.postStream("/chat/completions", {
         model: models.gpt4,
-        messages: messages,
+        messages: this.extendsCoder(messages),
         stream: true,
       });
 

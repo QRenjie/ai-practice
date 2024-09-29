@@ -76,4 +76,28 @@ export default class AIApiScheduler {
       throw error;
     }
   }
+
+  // 新增 renderTSX 方法
+  async renderTSX(codeBlock: CodeBlock): Promise<{content: string}> {
+    try {
+      const response = await fetch("/api/render", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(codeBlock),
+      });
+      if (!response.ok) {
+        throw new Error("网络响应不正常");
+      }
+      const result = await response.json();
+
+      console.log("renderTSX result", result);
+      
+      return result;
+    } catch (error) {
+      console.error("渲染 TSX 错误:", error);
+      throw error;
+    }
+  }
 }

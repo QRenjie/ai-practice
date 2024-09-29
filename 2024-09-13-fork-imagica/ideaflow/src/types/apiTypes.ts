@@ -2,6 +2,7 @@ import { StreamApiProcessorType } from "@/base/api/StreamProcessor";
 
 export interface CodeBlock {
   fileName: string;
+  // html python jsx tsx
   language: string;
   code: string;
 }
