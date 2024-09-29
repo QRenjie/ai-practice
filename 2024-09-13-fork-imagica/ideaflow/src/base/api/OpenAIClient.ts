@@ -1,23 +1,21 @@
 import { AiChatResponse, ApiMessage } from "@/types/apiTypes";
 import ApiClient from "./ApiClient";
 import { CodeExtractor } from "@/utils/CodeExtractor";
-import { OpenAIError } from "@/utils/KeywordGenerator";
 import models from "@/config/models";
-import { prompts } from "@/config/prompts";
+import promptsZh from "@/config/prompts.zh";
 
 const baseChatMessage: ApiMessage[] = [
   {
     role: "system",
-    content: prompts.coder,
+    content: promptsZh.coder,
   },
 ];
 
-const baseKeywordMessage: ApiMessage[] = [
-  {
-    role: "system",
-    content: prompts.recommonder,
-  },
-];
+export interface OpenAIError extends Error {
+  response?: {
+    status: number;
+  };
+}
 
 export interface OpenAIChatParmas {
   model?: string;
@@ -31,7 +29,8 @@ export interface OpenAIGenerateKeysParams {
 class OpenAIClient extends ApiClient {
   defualtModel = models.turbo;
 
-  async chat({
+  // 生成代码的对话
+  async generateCode({
     model,
     history,
     message,

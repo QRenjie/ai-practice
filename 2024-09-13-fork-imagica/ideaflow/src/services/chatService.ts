@@ -6,8 +6,8 @@ import { ApiMessage, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
 import { CodeExtractor } from "@/utils/CodeExtractor";
 import AIApiScheduler from "./AIApiScheduler";
-import { prompts } from "@/config/prompts";
 import { pick } from "lodash-es";
+import promptsZh from "@/config/prompts.zh";
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
@@ -140,8 +140,8 @@ export class ChatController {
       const aIApiScheduler = new AIApiScheduler();
       const prompt =
         messages.length === 0
-          ? prompts.initRecommond
-          : prompts.contextPromptTemplate.replace(
+          ? promptsZh.initRecommond
+          : promptsZh.contextPromptTemplate.replace(
               "{{chatHistory}}",
               messages.map((msg) => msg.content).join("\n")
             );

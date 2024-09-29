@@ -30,7 +30,7 @@ export default class AIApiScheduler {
         console.log("response from backend", response);
         return response;
       } else {
-        const response = await openAIClient.chat(params);
+        const response = await openAIClient.generateCode(params);
 
         console.log("response from openAIClient", response);
         return response;

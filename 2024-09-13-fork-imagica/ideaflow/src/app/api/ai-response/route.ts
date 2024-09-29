@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const { model, message, history } = await req.json();
 
   try {
-    const response = await openAIClient.chat({
+    const response = await openAIClient.generateCode({
       model,
       message,
       history,
