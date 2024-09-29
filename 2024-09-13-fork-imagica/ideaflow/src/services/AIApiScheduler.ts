@@ -1,5 +1,5 @@
 import { AiChatResponse, ApiMessage, CodeBlock } from "@/types/apiTypes";
-import { openAIClient } from "@/base/api/ServerClient";
+import { openAIClient } from "@/base/api/OpenAIClient";
 import BackendApiScheduler from "./BackendApiScheduler";
 
 /**

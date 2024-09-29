@@ -1,7 +1,7 @@
 import {
   OpenAIChatParmas,
   OpenAIGenerateKeysParams,
-} from "@/base/api/ServerClient";
+} from "@/base/api/OpenAIClient";
 import { AiChatResponse, CodeBlock } from "@/types/apiTypes";
 
 /**

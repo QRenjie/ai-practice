@@ -1,4 +1,4 @@
-import { openAIClient } from "@/base/api/ServerClient";
+import { openAIClient } from "@/base/api/OpenAIClient";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
