@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import WorkspaceContext from "../context/WorkspaceContext";
 import MonacoEditor from "@monaco-editor/react";
-import { SandpackCodeEditor } from "@codesandbox/sandpack-react";
+import {
+  SandpackCodeEditor,
+  SandpackFileExplorer,
+} from "@codesandbox/sandpack-react";
 
 const WorkspaceCode: React.FC = () => {
   const { state } = useContext(WorkspaceContext)!;
-  
 
   // useEffect(() => {
   //   if (mergedCodeBlocks.length > 0) {
@@ -29,8 +31,11 @@ const WorkspaceCode: React.FC = () => {
 
   return (
     <div className="p-4 overflow-auto h-full bg-white rounded-lg shadow-md flex items-center justify-center">
-      {/* 替换为 sandpack 的编辑器 */}
-      <SandpackCodeEditor className="h-full" showTabs />
+      <div className="h-full w-full flex justify-between">
+        <SandpackFileExplorer />
+        {/* 替换为 sandpack 的编辑器 */}
+        <SandpackCodeEditor className="h-full" showTabs />
+      </div>
 
       {/* {mergedCodeBlocks.length > 0 ? (
         <MonacoEditor

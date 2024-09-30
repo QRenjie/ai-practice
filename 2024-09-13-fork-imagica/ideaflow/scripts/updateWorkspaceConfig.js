@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import DirectoryReader from "../src/utils/DirectoryReader.js";
-import sandpackFile from "../config/sandpackFile.json";
+import sandpackFile from "../config/sandpackFile.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,7 +26,7 @@ export function updateWorkspaceConfig() {
   // 将 reactTailwindFiles 转换为 SandpackFile 类型
   const sandpackFiles = Object.entries(reactTailwindFiles).reduce(
     (acc, [filePath, code]) => {
-      acc[filePath] = { ...sandpackFile, code };
+      acc[filePath] = sandpackFile(code);
       return acc;
     },
     {}

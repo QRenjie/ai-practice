@@ -7,7 +7,7 @@ import AIApiScheduler from "./AIApiScheduler";
 import prompts from "../../config/prompts.json";
 import { MessageFactory } from "./MessageFactory"; // 新增导入
 import { SandpackFile } from "@codesandbox/sandpack-react";
-import sandpackFile from "../../config/sandpackFile.json";
+import sandpackFile from "../../config/sandpackFile";
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
@@ -154,12 +154,12 @@ export class ChatController {
       if (target) {
         // 如果 target 是 string 类型, 则转成通用类型
         if (typeof target === "string") {
-          result[codeBlock.fileName] = {
-            ...sandpackFile,
+          result[codeBlock.fileName] = sandpackFile(codeBlock.content);
+        } else {
+          (result[codeBlock.fileName] as SandpackFile) = {
+            ...target,
             code: codeBlock.content,
           };
-        } else {
-          (result[codeBlock.fileName] as SandpackFile).code = codeBlock.content;
         }
       }
     });
