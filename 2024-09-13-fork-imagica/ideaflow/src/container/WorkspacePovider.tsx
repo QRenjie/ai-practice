@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import WorkspaceContext, { WorkspaceState } from "../context/WorkspaceContext";
-import { Message } from "@/types/apiTypes";
+import { CodeBlock, Message } from "@/types/apiTypes";
 import workspaceConfig from "../../config/workspace.json";
 
 const WorkspacePovider: React.FC<{
@@ -28,11 +28,12 @@ const WorkspacePovider: React.FC<{
   }, []);
 
   const updateCodeFiles = useCallback(
-    (files: WorkspaceState["code"]["files"]) => {
+    (files: WorkspaceState["code"]["files"], codeBlocks: CodeBlock[]) => {
       setState((prevState) => ({
         ...prevState,
         code: {
           ...prevState.code,
+          codeBlocks,
           files: {
             ...prevState.code.files,
             ...files,
@@ -76,15 +77,18 @@ const WorkspacePovider: React.FC<{
     }));
   }, []);
 
-  const updateConfig = useCallback((config: Partial<WorkspaceState["config"]>) => {
-    setState((prevState) => ({
-      ...prevState,
-      config: {
-        ...prevState.config,
-        ...config,
-      },
-    }));
-  }, []);
+  const updateConfig = useCallback(
+    (config: Partial<WorkspaceState["config"]>) => {
+      setState((prevState) => ({
+        ...prevState,
+        config: {
+          ...prevState.config,
+          ...config,
+        },
+      }));
+    },
+    []
+  );
 
   const toggleChatCollapse = useCallback(() => {
     setState((prevState) => ({

@@ -42,7 +42,7 @@
           "readOnly": true
         },
         "package.json": {
-          "code": "{\r\n  \"name\": \"iedaflow-react-tailwind-app\",\r\n  \"version\": \"1.0.0\",\r\n  \"private\": true,\r\n  \"dependencies\": {\r\n    \"react\": \"^18\",\r\n    \"react-dom\": \"^18\"\r\n  },\r\n  \"devDependencies\": {\r\n    \"autoprefixer\": \"^10.4.7\",\r\n    \"postcss\": \"^8\",\r\n    \"react-scripts\": \"^3.0.1\",\r\n    \"tailwindcss\": \"^3.4.1\"\r\n  },\r\n  \"scripts\": {\r\n    \"start\": \"react-scripts start\",\r\n    \"build\": \"react-scripts build\"\r\n  }\r\n}\r\n",
+          "code": "{\r\n  \"name\": \"iedaflow-react-tailwind-app\",\r\n  \"version\": \"1.0.0\",\r\n  \"private\": true,\r\n  \"dependencies\": {\r\n    \"react\": \"^18\",\r\n    \"autoprefixer\": \"^10.4.7\",\r\n    \"postcss\": \"^8\",\r\n    \"tailwindcss\": \"^3.4.1\",\r\n    \"react-dom\": \"^18\"\r\n  },\r\n  \"devDependencies\": {\r\n    \"react-scripts\": \"^3.0.1\"\r\n  },\r\n  \"scripts\": {\r\n    \"start\": \"react-scripts start\",\r\n    \"build\": \"react-scripts build\"\r\n  }\r\n}\r\n",
           "hidden": false,
           "active": false,
           "readOnly": true
@@ -60,7 +60,7 @@
           "readOnly": true
         },
         "tailwind.config.js": {
-          "code": "module.exports = {\r\n  content: [\"./src/**/*.{js,jsx,ts,tsx}\"],\r\n  theme: {\r\n    extend: {},\r\n  },\r\n  plugins: [],\r\n};\r\n",
+          "code": "module.exports = {\r\n  content: [\"./src/**/*.{js,jsx,ts,tsx}\", \"./**/*.{js,jsx,ts,tsx}\"],\r\n  theme: {\r\n    extend: {},\r\n  },\r\n  plugins: [],\r\n};\r\n",
           "hidden": false,
           "active": false,
           "readOnly": true
@@ -69,13 +69,13 @@
       "customSetup": {
         "dependencies": {
           "react": "^18",
+          "autoprefixer": "^10.4.7",
+          "postcss": "^8",
+          "tailwindcss": "^3.4.1",
           "react-dom": "^18"
         },
         "devDependencies": {
-          "autoprefixer": "^10.4.7",
-          "postcss": "^8",
-          "react-scripts": "^3.0.1",
-          "tailwindcss": "^3.4.1"
+          "react-scripts": "^3.0.1"
         }
       },
       "template": "react"

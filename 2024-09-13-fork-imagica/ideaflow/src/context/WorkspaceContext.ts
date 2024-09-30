@@ -15,9 +15,6 @@ interface UIState extends LayerState {
  */
 interface CodeState
   extends Pick<SandpackProps, "files" | "customSetup" | "template"> {
-  /**
-   * @deprecated
-   */
   codeBlock?: CodeBlock;
 }
 
@@ -81,7 +78,7 @@ export interface WorkspaceState {
 export interface WorkspaceContextType {
   state: WorkspaceState;
   setActiveTab: (tab: UIState["activeTab"]) => void;
-  updateCodeFiles: (files: CodeState["files"]) => void;
+  updateCodeFiles: (files: CodeState["files"], codeBlocks: CodeBlock[]) => void;
   addChatMessage: (message: Message) => void;
   updateMessages: (updater: (prev: Message[]) => Message[]) => void;
   updateRecommendedKeywords: (keywords: string[]) => void;

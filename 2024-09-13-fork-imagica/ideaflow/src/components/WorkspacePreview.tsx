@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { SandpackPreview } from "@codesandbox/sandpack-react";
 
 const WorkspacePreview = memo(() => {
+  
   const renderContent = () => {
     return (
       <SandpackPreview

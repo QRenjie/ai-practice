@@ -8,6 +8,7 @@ import { MessageFactory } from "./MessageFactory"; // 新增导入
 import { SandpackFile } from "@codesandbox/sandpack-react";
 import sandpackFile from "../../config/sandpackFile";
 import ApiCommonParams from "@/utils/ApiCommonParams";
+import { cloneDeep } from "lodash-es";
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
@@ -60,7 +61,10 @@ export class ChatController {
       const aiResponse = await this.aIApiScheduler.callOpenAIStream(
         new ApiCommonParams({
           model: this.context.state.config.selectedModel,
-          messages: [...this.chatMessages, this.messageFactory.createUserMessage(message)],
+          messages: [
+            ...this.chatMessages,
+            this.messageFactory.createUserMessage(message),
+          ],
           componentType: this.context.state.config.componentType,
         })
       );
@@ -140,7 +144,7 @@ export class ChatController {
   updatePreviewCodeBlocks(codeBlocks: CodeBlock[]) {
     // 将codeBlocks中的每一个codeBlock 和 files 中的每一个文件合并
 
-    const result = this.context.state.code.files || {};
+    const result = cloneDeep(this.context.state.code.files || {});
     codeBlocks.forEach((codeBlock) => {
       const target = result[codeBlock.fileName];
       if (target) {
@@ -158,7 +162,7 @@ export class ChatController {
 
     console.log("jj updatePreviewCodeBlocks", result);
 
-    this.context.updateCodeFiles(result);
+    this.context.updateCodeFiles(result, codeBlocks);
   }
 
   /**

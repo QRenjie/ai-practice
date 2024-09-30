@@ -6,6 +6,9 @@ const WorkspaceSandpackWrapper: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { state } = useContext(WorkspaceContext)!;
+
+  console.log('jj state.code',state.code);
+  
   return (
     <SandpackProvider
       className="h-full"
