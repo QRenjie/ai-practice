@@ -8,7 +8,7 @@ const WorkspacePreview = memo(() => {
       <SandpackPreview
         className="h-full w-full"
         showRefreshButton={true}
-        showOpenInCodeSandbox={false}
+        showOpenInCodeSandbox={true}
       />
     );
   };

@@ -62,13 +62,14 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "autoprefixer": "^10.4.20",
     "coffee-loader": "^5.0.0",
     "daisyui": "^4.12.10",
     "eslint": "^8",
     "eslint-config-next": "14.2.11",
-    "postcss": "^8",
+    "postcss": "^8.4.47",
     "tailwind-scrollbar": "^3.1.0",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^3.4.13",
     "typescript": "^5"
   }
 }

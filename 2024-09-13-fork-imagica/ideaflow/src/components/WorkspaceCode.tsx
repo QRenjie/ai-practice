@@ -32,7 +32,7 @@ const WorkspaceCode: React.FC = () => {
   return (
     <div className="p-4 overflow-auto h-full bg-white rounded-lg shadow-md flex items-center justify-center">
       <div className="h-full w-full flex justify-between">
-        <SandpackFileExplorer />
+        {/* <SandpackFileExplorer /> */}
         {/* 替换为 sandpack 的编辑器 */}
         <SandpackCodeEditor className="h-full" showTabs />
       </div>
