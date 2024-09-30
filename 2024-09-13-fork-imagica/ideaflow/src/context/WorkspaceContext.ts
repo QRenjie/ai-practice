@@ -5,7 +5,6 @@ import { merge, cloneDeep } from "lodash-es"; // 修改这一行
 import workspaceConfig from "../../config/workspace.json"; // 新增这一行
 import { v4 as uuidv4 } from "uuid";
 import { SandpackProps } from "@codesandbox/sandpack-react";
-import { CodeBlocks } from "@/utils/CodeBlocks";
 
 interface UIState extends LayerState {
   activeTab: "preview" | "codeHistory";
@@ -45,7 +44,7 @@ interface ConfigState {
   /**
    * 是否使用图层， 是否可以拖拉拽
    */
-  useLayer: boolean;
+  isWindowed: boolean;
 }
 
 export interface WorkspaceState {
@@ -79,6 +78,7 @@ export interface WorkspaceContextType {
   updateMessages: (updater: (prev: Message[]) => Message[]) => void;
   updateRecommendedKeywords: (keywords: string[]) => void;
   toggleChatCollapse: () => void; // 新增这一行
+  updateConfig: (config: Partial<ConfigState>) => void;
 }
 
 // 定义递归的 DeepPartial 类型
@@ -92,11 +92,6 @@ export const defaultWorkspaceState = (
   // 深复制 workspaceConfig
   const configCopy = cloneDeep(workspaceConfig.defaultConfig) as WorkspaceState;
   configCopy.id = uuidv4();
-
-  // 初始化 mergedCodeBlocks
-  configCopy.code.mergedCodeBlocks = CodeBlocks.convertFilesToCodeBlocks(
-    configCopy.code.files || {}
-  );
 
   // 使用 lodash 的 merge 方法将 configCopy 和 source 合并
   return merge(configCopy, source);

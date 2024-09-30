@@ -27,18 +27,21 @@ const WorkspacePovider: React.FC<{
     }));
   }, []);
 
-  const updateCodeFiles = useCallback((files: WorkspaceState["code"]["files"]) => {
-    setState((prevState) => ({
-      ...prevState,
-      code: {
-        ...prevState.code,
-        files: {
-          ...prevState.code.files,
-          ...files,
+  const updateCodeFiles = useCallback(
+    (files: WorkspaceState["code"]["files"]) => {
+      setState((prevState) => ({
+        ...prevState,
+        code: {
+          ...prevState.code,
+          files: {
+            ...prevState.code.files,
+            ...files,
+          },
         },
-      },
-    }));
-  }, []);
+      }));
+    },
+    []
+  );
 
   const addChatMessage = useCallback((message: Message) => {
     setState((prevState) => ({
@@ -73,6 +76,16 @@ const WorkspacePovider: React.FC<{
     }));
   }, []);
 
+  const updateConfig = useCallback((config: Partial<WorkspaceState["config"]>) => {
+    setState((prevState) => ({
+      ...prevState,
+      config: {
+        ...prevState.config,
+        ...config,
+      },
+    }));
+  }, []);
+
   const toggleChatCollapse = useCallback(() => {
     setState((prevState) => ({
       ...prevState,
@@ -92,6 +105,7 @@ const WorkspacePovider: React.FC<{
       updateMessages,
       updateRecommendedKeywords,
       toggleChatCollapse,
+      updateConfig,
     }),
     [
       state,
@@ -101,6 +115,7 @@ const WorkspacePovider: React.FC<{
       updateMessages,
       updateRecommendedKeywords,
       toggleChatCollapse,
+      updateConfig,
     ]
   );
 

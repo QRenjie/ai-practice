@@ -26,6 +26,7 @@ interface LayerProps {
   minHeight?: number;
   active?: boolean;
   title?: string;
+  disabled?: boolean;
   onClose?: () => void; // 新增
 }
 
@@ -35,6 +36,7 @@ const Layer: React.FC<LayerProps> = ({
   initialState,
   minWidth = 320,
   title = "Layer",
+  disabled,
   onClose, // 新增
 }) => {
   const {
@@ -63,20 +65,22 @@ const Layer: React.FC<LayerProps> = ({
 
   const handleDragStop: RndDragCallback = useCallback(
     (_, d) => {
+      if (disabled) return;
       setPosition({ x: d.x, y: d.y });
     },
-    [setPosition]
+    [disabled, setPosition]
   );
 
   const handleResize: RndResizeCallback = useCallback(
     (_, __, ref, ___, position) => {
+      if (disabled) return;
       setSize({
         width: ref.offsetWidth,
         height: ref.offsetHeight,
       });
       setPosition({ x: position.x, y: position.y });
     },
-    [setSize, setPosition]
+    [disabled, setSize, setPosition]
   );
 
   const handleClose = useCallback(() => {
@@ -97,6 +101,8 @@ const Layer: React.FC<LayerProps> = ({
       maxHeight={maxSize.height}
       bounds="parent"
       dragHandleClassName="draggable-handle"
+      disableDragging={disabled}
+      disableResizing={disabled}
       className={`
         shadow-2xl rounded-lg overflow-hidden
         bg-gradient-to-br from-gray-200 to-gray-300
@@ -118,15 +124,17 @@ const Layer: React.FC<LayerProps> = ({
         className="relative w-full h-full flex flex-col bg-white bg-opacity-10 backdrop-blur-sm"
         onContextMenu={(e) => e.stopPropagation()}
       >
-        <LayerHeader
-          onFit={handleFit}
-          onMinimize={handleMinimize}
-          onMaximize={handleMaximize}
-          onClose={handleClose} // 新增
-          isMinimized={isMinimized}
-          isMaximized={isMaximized}
-          title={title}
-        />
+        {!disabled && (
+          <LayerHeader
+            onFit={handleFit}
+            onMinimize={handleMinimize}
+            onMaximize={handleMaximize}
+            onClose={handleClose} // 新增
+            isMinimized={isMinimized}
+            isMaximized={isMaximized}
+            title={title}
+          />
+        )}
         <div className={`flex-1 ${isMinimized ? "hidden" : ""}`}>
           {children}
         </div>

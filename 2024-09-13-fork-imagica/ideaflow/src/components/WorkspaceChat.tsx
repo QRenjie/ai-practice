@@ -127,6 +127,7 @@ const WorkspaceChat: React.FC = () => {
       content={PopoverContent}
       onOpenChange={handleOpenChange}
       trigger="click"
+      forceRender
     >
       <div
         className={`bg-gray-100 focus-within:ring-0 transition-all duration-300 ${

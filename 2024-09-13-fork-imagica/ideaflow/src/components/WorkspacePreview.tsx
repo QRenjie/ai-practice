@@ -1,7 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import { SandpackPreview } from "@codesandbox/sandpack-react";
 
-const WorkspacePreview: React.FC = () => {
+const WorkspacePreview = memo(() => {
   const renderContent = () => {
     return (
       <SandpackPreview
@@ -17,6 +17,8 @@ const WorkspacePreview: React.FC = () => {
       {renderContent()}
     </div>
   );
-};
+});
+
+WorkspacePreview.displayName = "WorkspacePreview";
 
 export default WorkspacePreview;
