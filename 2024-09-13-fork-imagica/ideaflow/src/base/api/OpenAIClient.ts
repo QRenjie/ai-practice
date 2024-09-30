@@ -1,13 +1,13 @@
 import { AiChatResponse, ApiMessage } from "@/types/apiTypes";
 import ApiClient from "./ApiClient";
 import { CodeExtractor } from "@/utils/CodeExtractor";
-import models from "@/config/models";
-import promptsZh from "@/config/prompts.zh";
+import models from "../../../config/models.json";
+import prompts from "../../../config/prompts.json";
 import { cloneDeep } from "lodash-es";
 
 const baseChatMessage: ApiMessage = {
   role: "system",
-  content: promptsZh.coderNextjs,
+  content: prompts.coderNextjs,
 };
 
 export interface OpenAIError extends Error {

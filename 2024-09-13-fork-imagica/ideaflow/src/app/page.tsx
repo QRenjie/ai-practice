@@ -11,7 +11,7 @@ import ContextMenu, { ContextMenuRef } from "@/components/ContextMenu";
 
 export default function Home() {
   const [workspaces, setWorkspaces] = useState<WorkspaceState[]>([
-    defaultWorkspaceState({ layer: { title: "工作区 1" } }),
+    defaultWorkspaceState({ ui: { title: "工作区1" } }),
   ]);
 
   const contextMenuRef = useRef<ContextMenuRef>(null);
@@ -36,12 +36,12 @@ export default function Home() {
     setWorkspaces((prevWorkspaces) => {
       const newState = defaultWorkspaceState({
         id: `workspace${prevWorkspaces.length + 1}`,
-        layer: { title: `工作区 ${prevWorkspaces.length + 1}` },
+        ui: { title: `工作区 ${prevWorkspaces.length + 1}` },
       });
 
       // 使用 prevWorkspaces.length 计算新工作区的位置
       const newInintPosition = calculatePosition(prevWorkspaces.length);
-      newState.layer.position = newInintPosition;
+      newState.ui.position = newInintPosition;
 
       return [...prevWorkspaces, newState];
     });

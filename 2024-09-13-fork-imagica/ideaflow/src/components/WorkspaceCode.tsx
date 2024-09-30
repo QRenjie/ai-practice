@@ -1,10 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import WorkspaceContext from "../context/WorkspaceContext";
 import MonacoEditor from "@monaco-editor/react";
+import { SandpackCodeEditor } from "@codesandbox/sandpack-react";
 
 const WorkspaceCode: React.FC = () => {
   const { state, updateMergedCodeBlocks } = useContext(WorkspaceContext)!;
-  const { code: { mergedCodeBlocks } } = state;
+  const {
+    code: { mergedCodeBlocks },
+  } = state;
   const [currentCode, setCurrentCode] = useState<string>("");
   const [currentLanguage, setCurrentLanguage] = useState<string>("javascript");
 
@@ -30,7 +33,10 @@ const WorkspaceCode: React.FC = () => {
 
   return (
     <div className="p-4 overflow-auto h-full bg-white rounded-lg shadow-md flex items-center justify-center">
-      {mergedCodeBlocks.length > 0 ? (
+      {/* 替换为 sandpack 的编辑器 */}
+      <SandpackCodeEditor className="h-full" showTabs />
+
+      {/* {mergedCodeBlocks.length > 0 ? (
         <MonacoEditor
           language={currentLanguage} // 使用当前代码块的语言
           theme="vs-dark"
@@ -45,7 +51,7 @@ const WorkspaceCode: React.FC = () => {
           <h2 className="text-xl font-semibold">代码历史</h2>
           <p>没有代码历史</p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

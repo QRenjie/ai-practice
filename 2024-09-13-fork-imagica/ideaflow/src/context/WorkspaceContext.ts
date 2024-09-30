@@ -2,21 +2,21 @@ import React from "react";
 import { CodeBlock, Message } from "@/types/apiTypes";
 import { LayerState } from "@/components/Layer";
 import { merge, cloneDeep } from "lodash-es"; // 修改这一行
-import workspaceConfig from "../config/workspace.json"; // 新增这一行
+import workspaceConfig from "../../config/workspace.json"; // 新增这一行
 import { v4 as uuidv4 } from "uuid";
+import { SandpackProps } from "@codesandbox/sandpack-react";
 
-interface PreviewState {
-  codeBlock?: CodeBlock;
-}
-
-interface UIState {
+interface UIState extends LayerState {
   activeTab: "preview" | "codeHistory";
-  size: { width: number; height: number };
-  position: { x: number; y: number };
 }
 
-interface CodeState {
+/**
+ * @property {template} default: react
+ */
+interface CodeState
+  extends Pick<SandpackProps, "files" | "customSetup" | "template"> {
   mergedCodeBlocks: CodeBlock[];
+  codeBlock?: CodeBlock;
 }
 
 interface ChatState {
@@ -33,11 +33,10 @@ interface ConfigState {
 export interface WorkspaceState {
   id: string;
   ui: UIState;
-  preview: PreviewState;
+  config: ConfigState;
+
   code: CodeState;
   chat: ChatState;
-  config: ConfigState;
-  layer: LayerState;
 }
 
 export interface WorkspaceContextType {
@@ -60,7 +59,7 @@ export const defaultWorkspaceState = (
   source?: DeepPartial<WorkspaceState>
 ): WorkspaceState => {
   // 深复制 workspaceConfig
-  const configCopy = cloneDeep(workspaceConfig) as WorkspaceState;
+  const configCopy = cloneDeep(workspaceConfig.defaultConfig) as WorkspaceState;
   configCopy.id = uuidv4();
   // 使用 lodash 的 merge 方法将 configCopy 和 source 合并
   return merge(configCopy, source);

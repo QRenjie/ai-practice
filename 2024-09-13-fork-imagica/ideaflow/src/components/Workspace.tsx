@@ -16,9 +16,9 @@ const Workspace: React.FC<{
       {state.config.useLayer ? (
         <Layer
           id={state.id}
-          initialState={state.layer}
+          initialState={state.ui}
           onClose={() => onClose?.(state.id)}
-          title={state.layer.title}
+          title={state.ui.title}
         >
           <WorkspacePanel />
         </Layer>

@@ -29,6 +29,9 @@ const WorkspaceChat: React.FC = () => {
   const chatController = useCreation(() => {
     const controller = new ChatController(workspaceContext, setIsLoading);
     controller.setInputRef(inputRef);
+
+    // 初始调用一次推荐关键词
+    controller.initRecommendedKeywords();
     return controller;
   }, []);
 

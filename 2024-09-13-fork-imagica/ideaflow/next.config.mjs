@@ -1,3 +1,8 @@
+import { updateWorkspaceConfig } from "./scripts/updateWorkspaceConfig.js";
+
+// 执行更新配置的函数
+updateWorkspaceConfig();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,

@@ -1,12 +1,20 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import WorkspaceContext, { WorkspaceState } from "../context/WorkspaceContext";
 import { CodeBlock, Message } from "@/types/apiTypes";
+import workspaceConfig from "../../config/workspace.json";
 
 const WorkspacePovider: React.FC<{
   initialState: WorkspaceState;
   children: React.ReactNode;
 }> = ({ initialState, children }) => {
-  const [state, setState] = useState<WorkspaceState>(initialState);
+  const [state, setState] = useState<WorkspaceState>({
+    ...initialState,
+    code: {
+      ...initialState.code,
+      files: workspaceConfig.defaultConfig.code.files,
+      template: "react",
+    },
+  });
 
   useEffect(() => {
     setState(initialState);
@@ -22,7 +30,15 @@ const WorkspacePovider: React.FC<{
   const updatePreviewCodeBlock = useCallback((codeBlock: CodeBlock) => {
     setState((prevState) => ({
       ...prevState,
-      preview: { ...prevState.preview, codeBlock },
+      // 更新的同时将codeBlock添加到files 中的 src/MyComponent.js
+      code: {
+        ...prevState.code,
+        codeBlock,
+        files: {
+          ...prevState.code.files,
+          "App.js": codeBlock.code,
+        },
+      },
     }));
   }, []);
 

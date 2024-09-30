@@ -7,7 +7,7 @@ import { CodeBlocks } from "@/utils/CodeBlocks";
 import { CodeExtractor } from "@/utils/CodeExtractor";
 import AIApiScheduler from "./AIApiScheduler";
 import { pick } from "lodash-es";
-import promptsZh from "@/config/prompts.zh";
+import prompts from "../../config/prompts.json";
 import { codeRender } from "@/utils/CodeRender";
 
 export type ApplyData = { type: "html" | "python"; content: string };
@@ -25,7 +25,6 @@ export class ChatController {
     private setIsLoading: (isLoading: boolean) => void
   ) {
     this.aIApiScheduler = new AIApiScheduler();
-    this.initRecommendedKeywords();
   }
 
   setInputRef(ref: RefObject<HTMLTextAreaElement>) {
@@ -151,8 +150,8 @@ export class ChatController {
       const aIApiScheduler = new AIApiScheduler();
       const prompt =
         messages.length === 0
-          ? promptsZh.initRecommond
-          : promptsZh.contextPromptTemplate.replace(
+          ? prompts.initRecommond
+          : prompts.contextPromptTemplate.replace(
               "{{chatHistory}}",
               messages.map((msg) => msg.content).join("\n")
             );
