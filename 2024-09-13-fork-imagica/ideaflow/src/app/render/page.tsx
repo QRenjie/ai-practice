@@ -109,7 +109,7 @@ export default function RenderPage({
     const codeBlock: CodeBlock = JSON.parse(
       decodeURIComponent(searchParams.code)
     );
-    const { code } = codeBlock;
+    const { content: code } = codeBlock;
 
     setFiles((prevFiles) => ({
       ...prevFiles,

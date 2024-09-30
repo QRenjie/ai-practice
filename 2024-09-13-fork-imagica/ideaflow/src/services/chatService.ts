@@ -1,30 +1,27 @@
 import { WorkspaceContextType } from "./../context/WorkspaceContext";
-import React from "react";
-import { v4 as uuidv4 } from "uuid";
 import { RefObject } from "react";
-import { ApiMessage, Message } from "@/types/apiTypes";
+import { AiChatResponse, CodeBlock, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
 import { CodeExtractor } from "@/utils/CodeExtractor";
 import AIApiScheduler from "./AIApiScheduler";
-import { pick } from "lodash-es";
 import prompts from "../../config/prompts.json";
-import { codeRender } from "@/utils/CodeRender";
+import { MessageFactory } from "./MessageFactory"; // 新增导入
+import { SandpackFile } from "@codesandbox/sandpack-react";
+import sandpackFile from "../../config/sandpackFile.json";
 
 export type ApplyData = { type: "html" | "python"; content: string };
-
-function getApiMessage(messages: Message[]): ApiMessage[] {
-  return messages.map((message) => pick(message, ["role", "content"]));
-}
 
 export class ChatController {
   private inputRef: RefObject<HTMLTextAreaElement> | null = null;
   aIApiScheduler: AIApiScheduler;
+  private messageFactory: MessageFactory;
 
   constructor(
     public context: WorkspaceContextType,
     private setIsLoading: (isLoading: boolean) => void
   ) {
     this.aIApiScheduler = new AIApiScheduler();
+    this.messageFactory = new MessageFactory();
   }
 
   setInputRef(ref: RefObject<HTMLTextAreaElement>) {
@@ -39,8 +36,13 @@ export class ChatController {
     return this.context.state.chat.messages;
   }
 
-  get mergedCodeBlocks() {
-    return this.context.state.code.mergedCodeBlocks;
+  get previewAiMessage(): Message | undefined {
+    return this.chatMessages.findLast(
+      (message) => message.role === "assistant"
+    );
+  }
+  get previousAiCodeBlocks(): CodeBlock[] {
+    return this.previewAiMessage?.codeBlocks || [];
   }
 
   private formatAIResponse(response: string): string {
@@ -59,45 +61,34 @@ export class ChatController {
 
     this.setIsLoading(true);
     try {
-      const userMessage: Message = {
-        id: uuidv4(),
-        content: message,
-        role: "user",
-        type: "text",
-      };
-      this.context.addChatMessage(userMessage);
-
-      const aiResponse = await this.aIApiScheduler.callOpenAIStream(
-        message,
-        getApiMessage(this.chatMessages)
+      // 新增用户消息
+      this.context.addChatMessage(
+        this.messageFactory.createUserMessage(message)
       );
 
-      const formattedResponse = this.formatAIResponse(aiResponse.content);
+      // 调用AI接口
+      const aiResponse = await this.aIApiScheduler.callOpenAIStream(
+        message,
+        this.messageFactory.toApiMessage(this.chatMessages)
+      );
 
-      const newMessage: Message = {
-        id: aiResponse.id,
-        content: formattedResponse,
-        role: "assistant",
-        type: "markdown",
-        codeBlocks: aiResponse.codeBlocks,
-      };
+      // 创建AI消息, 并合并codeBlocks
+      const newMessage = this.createCodeBlockMessage(aiResponse);
+      console.log("jj newMessage", newMessage);
+
+      // 新增AI消息
       this.context.addChatMessage(newMessage);
 
-      await this.updateMergedCodeBlocks(newMessage);
+      // 重新应用消息
+      this.reapplyAiMessage(newMessage);
 
-      const newMessages = [...this.chatMessages, newMessage];
-      if (newMessages.length >= 2) {
-        this.fetchNewRecommendedKeywords(getApiMessage(newMessages));
+      // 获取新的推荐关键词
+      if (this.chatMessages.length >= 1) {
+        this.fetchNewRecommendedKeywords([...this.chatMessages, newMessage]);
       }
     } catch (error) {
-      this.context.addChatMessage({
-        id: uuidv4(),
-        content: `抱歉，发生了错误: ${
-          error instanceof Error ? error.message : "未知错误"
-        }`,
-        role: "assistant",
-        type: "text",
-      });
+      const errorMessage = this.messageFactory.createErrorMessage(error);
+      this.context.addChatMessage(errorMessage);
     } finally {
       this.setIsLoading(false);
       if (this.inputRef?.current) {
@@ -106,20 +97,22 @@ export class ChatController {
     }
   }
 
-  private async updateMergedCodeBlocks(message: Message): Promise<void> {
-    const previousMergedBlocks = this.mergedCodeBlocks;
-    const blocks = CodeBlocks.mergeCodeBlocks(previousMergedBlocks, message);
-    this.context.updateMergedCodeBlocks(blocks);
+  /**
+   * 创建包含codeBlocks的message
+   * @param message
+   */
+  private createCodeBlockMessage(aiResponse: AiChatResponse): Message {
+    const message = this.messageFactory.createAssistantMessage(aiResponse);
 
-    // 更新预览内容
-    try {
-      const codeBlock = await codeRender.render(blocks);
-      console.log("jj render codeBlock", codeBlock);
+    // 获取上一次的最后一条AI消息, 合并codeBlocks
+    const blocks = CodeBlocks.mergeCodeBlocks(
+      this.previousAiCodeBlocks,
+      message
+    );
 
-      this.context.updatePreviewCodeBlock(codeBlock);
-    } catch (e) {
-      console.log("jj codeblock error", e);
-    }
+    message.codeBlocks = blocks;
+
+    return message;
   }
 
   public handleKeyPress = (e: React.KeyboardEvent<Element>): void => {
@@ -137,15 +130,50 @@ export class ChatController {
     }
   };
 
-  public handleReapplyCode = (code: string): void => {
-    console.log(code);
+  /**
+   * 重新应用消息
+   * @param message
+   */
+  public reapplyAiMessage = async (message: Message): Promise<void> => {
+    if (message.role === "user") {
+      console.warn("只能重新应用ai消息");
+      return;
+    }
+
+    if (Array.isArray(message.codeBlocks)) {
+      this.updatePreviewCodeBlocks(message.codeBlocks);
+    }
   };
+
+  updatePreviewCodeBlocks(codeBlocks: CodeBlock[]) {
+    // 将codeBlocks中的每一个codeBlock 和 files 中的每一个文件合并
+
+    const result = this.context.state.code.files || {};
+    codeBlocks.forEach((codeBlock) => {
+      const target = result[codeBlock.fileName];
+      if (target) {
+        // 如果 target 是 string 类型, 则转成通用类型
+        if (typeof target === "string") {
+          result[codeBlock.fileName] = {
+            ...sandpackFile,
+            code: codeBlock.content,
+          };
+        } else {
+          (result[codeBlock.fileName] as SandpackFile).code = codeBlock.content;
+        }
+      }
+    });
+
+    console.log("jj updatePreviewCodeBlocks", result);
+
+    this.context.updateCodeFiles(result);
+  }
 
   /**
    * 当message 为空时表示初始化提示词
    * @param messages
    */
-  fetchNewRecommendedKeywords = async (messages: ApiMessage[]) => {
+  fetchNewRecommendedKeywords = async (messages: Message[]) => {
     try {
       const aIApiScheduler = new AIApiScheduler();
       const prompt =
@@ -153,7 +181,10 @@ export class ChatController {
           ? prompts.initRecommond
           : prompts.contextPromptTemplate.replace(
               "{{chatHistory}}",
-              messages.map((msg) => msg.content).join("\n")
+              this.messageFactory
+                .toApiMessage(messages)
+                .map((msg) => msg.content)
+                .join("\n")
             );
       const response = await aIApiScheduler.getRecommendedKeywords([
         { role: "user", content: prompt },

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import WorkspaceContext, { WorkspaceState } from "../context/WorkspaceContext";
-import { CodeBlock, Message } from "@/types/apiTypes";
+import { Message } from "@/types/apiTypes";
 import workspaceConfig from "../../config/workspace.json";
 
 const WorkspacePovider: React.FC<{
@@ -27,16 +27,14 @@ const WorkspacePovider: React.FC<{
     }));
   }, []);
 
-  const updatePreviewCodeBlock = useCallback((codeBlock: CodeBlock) => {
+  const updateCodeFiles = useCallback((files: WorkspaceState["code"]["files"]) => {
     setState((prevState) => ({
       ...prevState,
-      // 更新的同时将codeBlock添加到files 中的 src/MyComponent.js
       code: {
         ...prevState.code,
-        codeBlock,
         files: {
           ...prevState.code.files,
-          "App.js": codeBlock.code,
+          ...files,
         },
       },
     }));
@@ -65,16 +63,6 @@ const WorkspacePovider: React.FC<{
     []
   );
 
-  const updateMergedCodeBlocks = useCallback((blocks: CodeBlock[]) => {
-    setState((prevState) => ({
-      ...prevState,
-      code: {
-        ...prevState.code,
-        mergedCodeBlocks: blocks,
-      },
-    }));
-  }, []);
-
   const updateRecommendedKeywords = useCallback((keywords: string[]) => {
     setState((prevState) => ({
       ...prevState,
@@ -99,20 +87,18 @@ const WorkspacePovider: React.FC<{
     () => ({
       state,
       setActiveTab,
-      updatePreviewCodeBlock,
+      updateCodeFiles,
       addChatMessage,
       updateMessages,
-      updateMergedCodeBlocks,
       updateRecommendedKeywords,
       toggleChatCollapse,
     }),
     [
       state,
       setActiveTab,
-      updatePreviewCodeBlock,
+      updateCodeFiles,
       addChatMessage,
       updateMessages,
-      updateMergedCodeBlocks,
       updateRecommendedKeywords,
       toggleChatCollapse,
     ]

@@ -4,7 +4,7 @@ export interface CodeBlock {
   fileName: string;
   // html python jsx tsx
   language: string;
-  code: string;
+  content: string;
 }
 
 export interface AiChatResponse extends StreamApiProcessorType {

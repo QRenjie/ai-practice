@@ -4,32 +4,28 @@ import MonacoEditor from "@monaco-editor/react";
 import { SandpackCodeEditor } from "@codesandbox/sandpack-react";
 
 const WorkspaceCode: React.FC = () => {
-  const { state, updateMergedCodeBlocks } = useContext(WorkspaceContext)!;
-  const {
-    code: { mergedCodeBlocks },
-  } = state;
-  const [currentCode, setCurrentCode] = useState<string>("");
-  const [currentLanguage, setCurrentLanguage] = useState<string>("javascript");
+  const { state } = useContext(WorkspaceContext)!;
+  
 
-  useEffect(() => {
-    if (mergedCodeBlocks.length > 0) {
-      setCurrentCode(mergedCodeBlocks[0].code); // 假设我们只编辑第一个代码块
-      setCurrentLanguage(mergedCodeBlocks[0].language); // 设置当前语言
-    }
-  }, [mergedCodeBlocks]);
+  // useEffect(() => {
+  //   if (mergedCodeBlocks.length > 0) {
+  //     setCurrentCode(mergedCodeBlocks[0].content); // 假设我们只编辑第一个代码块
+  //     setCurrentLanguage(mergedCodeBlocks[0].language); // 设置当前语言
+  //   }
+  // }, [mergedCodeBlocks]);
 
-  const handleCodeChange = (value: string | undefined) => {
-    if (value !== undefined) {
-      setCurrentCode(value);
-      const updatedCodeContent = mergedCodeBlocks.map((block, index) => {
-        if (index === 0) {
-          return { ...block, code: value };
-        }
-        return block;
-      });
-      updateMergedCodeBlocks(updatedCodeContent);
-    }
-  };
+  // const handleCodeChange = (value: string | undefined) => {
+  //   if (value !== undefined) {
+  //     setCurrentCode(value);
+  //     const updatedCodeContent = mergedCodeBlocks.map((block, index) => {
+  //       if (index === 0) {
+  //         return { ...block, content: value };
+  //       }
+  //       return block;
+  //     });
+  //     updateMergedCodeBlocks(updatedCodeContent);
+  //   }
+  // };
 
   return (
     <div className="p-4 overflow-auto h-full bg-white rounded-lg shadow-md flex items-center justify-center">

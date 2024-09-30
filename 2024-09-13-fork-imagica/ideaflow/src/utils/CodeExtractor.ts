@@ -11,14 +11,14 @@ export class CodeExtractor {
         let match;
 
         if (CodeExtractor.isHtml(markdownContent)) {
-            return [{ fileName: '', language: 'html', code: markdownContent }];
+            return [{ fileName: '', language: 'html', content: markdownContent }];
         }
 
         while ((match = codeBlockRegex.exec(markdownContent)) !== null) {
             const language = match[1];
             const fileName = match[2] || this.extractFileName(match[3]); // 提取文件名
             const code = match[3].trim();
-            codeBlocks.push({ fileName, language, code });
+            codeBlocks.push({ fileName, language, content: code });
         }
 
         return codeBlocks;
