@@ -1,10 +1,15 @@
 import React, { useContext } from "react";
 import WorkspaceContext from "../context/WorkspaceContext";
-import { Switch } from "antd";
+import { Switch, Radio, RadioChangeEvent } from "antd";
 
 interface ConfigPanelProps {
   onKeywordSelect: (keyword: string) => void;
 }
+
+const componentTypes = [
+  { value: "react", label: "React 组件" },
+  { value: "html", label: "HTML 代码" },
+];
 
 const ConfigPanel: React.FC<ConfigPanelProps> = ({ onKeywordSelect }) => {
   const { state, updateConfig } = useContext(WorkspaceContext)!;
@@ -13,10 +18,25 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ onKeywordSelect }) => {
     updateConfig({ isWindowed: checked });
   };
 
+  const handleComponentTypeChange = (e: RadioChangeEvent) => {
+    updateConfig({ componentType: e.target.value });
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h3 className="text-lg font-semibold mb-4">ui 配置</h3>
+        <h3 className="text-lg font-semibold mb-4">组件类型</h3>
+        <Radio.Group onChange={handleComponentTypeChange} value={state.config.componentType}>
+          {componentTypes.map((type) => (
+            <Radio key={type.value} value={type.value}>
+              {type.label}
+            </Radio>
+          ))}
+        </Radio.Group>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-semibold mb-4">UI 配置</h3>
 
         <div>
           <div className="flex items-center gap-2">

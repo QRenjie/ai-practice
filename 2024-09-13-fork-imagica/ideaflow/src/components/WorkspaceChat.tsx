@@ -29,13 +29,10 @@ const WorkspaceChat: React.FC = () => {
   const chatController = useCreation(() => {
     const controller = new ChatController(workspaceContext, setIsLoading);
     controller.setInputRef(inputRef);
-    return controller;
-  }, []);
-
-  useEffect(() => {
     if (typeof window !== "undefined") {
-      chatController.initRecommendedKeywords();
+      controller.initRecommendedKeywords();
     }
+    return controller;
   }, []);
 
   useEffect(() => {

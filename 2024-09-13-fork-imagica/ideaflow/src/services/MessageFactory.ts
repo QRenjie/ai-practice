@@ -3,7 +3,7 @@ import { AiChatResponse, ApiMessage, Message } from "@/types/apiTypes";
 import { pick } from "lodash-es";
 
 export class MessageFactory {
-  toApiMessage(messages: Message[]): ApiMessage[] {
+  static toApiMessage(messages: Message[]): ApiMessage[] {
     return messages.map((message) => pick(message, ["role", "content"]));
   }
 

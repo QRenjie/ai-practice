@@ -1,12 +1,13 @@
 import { openAIClient } from "@/base/api/OpenAIClient";
+import ApiCommonParams from "@/utils/ApiCommonParams";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { messages } = await req.json();
+  const aiApiParams = (await req.json()) as ApiCommonParams;
 
   try {
-    if (Array.isArray(messages) && messages.length) {
-      const result = await openAIClient.generateKeywords({ messages });
+    if (Array.isArray(aiApiParams.messages) && aiApiParams.messages.length) {
+      const result = await openAIClient.generateKeywords(aiApiParams);
       return NextResponse.json(result);
     }
     return NextResponse.json({ keywords: [] });

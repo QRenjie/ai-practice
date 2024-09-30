@@ -1,6 +1,7 @@
-import { AiChatResponse, ApiMessage, CodeBlock } from "@/types/apiTypes";
+import { AiChatResponse, CodeBlock } from "@/types/apiTypes";
 import { openAIClient } from "@/base/api/OpenAIClient";
 import BackendApiScheduler from "./BackendApiScheduler";
+import ApiCommonParams from "@/utils/ApiCommonParams";
 
 /**
  * 前端调用后台接口的中间层
@@ -14,23 +15,16 @@ export default class AIApiScheduler {
   }
 
   // 新增使用流式请求的方法
-  async callOpenAIStream(
-    message: string,
-    messages: ApiMessage[]
-  ): Promise<AiChatResponse> {
-    const params = {
-      message,
-      history: messages,
-    };
+  async callOpenAIStream(apiParams: ApiCommonParams): Promise<AiChatResponse> {
     try {
       if (this.useBackend) {
         // 通过next后台 /api/ai-response 接口
-        const response = await this.backendApi.callOpenAIStream(params);
+        const response = await this.backendApi.callOpenAIStream(apiParams);
 
         console.log("response from backend", response);
         return response;
       } else {
-        const response = await openAIClient.generateCode(params);
+        const response = await openAIClient.generateCode(apiParams);
 
         console.log("response from openAIClient", response);
         return response;
@@ -53,21 +47,19 @@ export default class AIApiScheduler {
   }
 
   async getRecommendedKeywords(
-    messages: ApiMessage[]
+    apiParams: ApiCommonParams
   ): Promise<{ keywords: string[] }> {
     try {
-      const params = {
-        // 只保存最后20条
-        messages: messages.slice(0, 20),
-      };
       if (this.useBackend) {
         // 通过next后台 /api/ai-response 接口
-        const response = await this.backendApi.getRecommendedKeywords(params);
+        const response = await this.backendApi.getRecommendedKeywords(
+          apiParams
+        );
 
         console.log("response from backend", response);
         return response;
       } else {
-        const result = await openAIClient.generateKeywords(params);
+        const result = await openAIClient.generateKeywords(apiParams);
         console.log("response from openAIClient", result);
 
         return result;
@@ -78,7 +70,7 @@ export default class AIApiScheduler {
   }
 
   // 新增 renderTSX 方法
-  async renderTSX(codeBlock: CodeBlock): Promise<{content: string}> {
+  async renderTSX(codeBlock: CodeBlock): Promise<{ content: string }> {
     try {
       const response = await fetch("/api/render", {
         method: "POST",
@@ -93,7 +85,7 @@ export default class AIApiScheduler {
       const result = await response.json();
 
       console.log("renderTSX result", result);
-      
+
       return result;
     } catch (error) {
       console.error("渲染 TSX 错误:", error);

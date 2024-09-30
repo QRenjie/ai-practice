@@ -1,14 +1,11 @@
-import {
-  OpenAIChatParmas,
-  OpenAIGenerateKeysParams,
-} from "@/base/api/OpenAIClient";
 import { AiChatResponse, CodeBlock } from "@/types/apiTypes";
+import ApiCommonParams from "@/utils/ApiCommonParams";
 
 /**
  * 调用 Next.js 后台接口的实现类
  */
 export default class BackendApiScheduler {
-  async callOpenAIStream(params: OpenAIChatParmas): Promise<AiChatResponse> {
+  async callOpenAIStream(params: ApiCommonParams): Promise<AiChatResponse> {
     try {
       const response = await fetch("/api/ai-response", {
         method: "POST",
@@ -38,7 +35,7 @@ export default class BackendApiScheduler {
   }
 
   async getRecommendedKeywords(
-    params: OpenAIGenerateKeysParams
+    params: ApiCommonParams
   ): Promise<{ keywords: string[] }> {
     try {
       const result = await fetch("/api/recommended-keywords", {

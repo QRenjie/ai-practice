@@ -2,12 +2,12 @@ import { WorkspaceContextType } from "./../context/WorkspaceContext";
 import { RefObject } from "react";
 import { AiChatResponse, CodeBlock, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
-import { CodeExtractor } from "@/utils/CodeExtractor";
 import AIApiScheduler from "./AIApiScheduler";
 import prompts from "../../config/prompts.json";
 import { MessageFactory } from "./MessageFactory"; // 新增导入
 import { SandpackFile } from "@codesandbox/sandpack-react";
 import sandpackFile from "../../config/sandpackFile";
+import ApiCommonParams from "@/utils/ApiCommonParams";
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
@@ -45,16 +45,6 @@ export class ChatController {
     return this.previewAiMessage?.codeBlocks || [];
   }
 
-  private formatAIResponse(response: string): string {
-    const trimmedResponse = response.trim();
-
-    if (CodeExtractor.isHtml(trimmedResponse)) {
-      return `\`\`\`html\n${trimmedResponse}\n\`\`\``;
-    }
-
-    return trimmedResponse;
-  }
-
   public async handleSubmit(): Promise<void> {
     const message = this.inputRef?.current?.value || "";
     if (!message.trim()) return;
@@ -68,13 +58,15 @@ export class ChatController {
 
       // 调用AI接口
       const aiResponse = await this.aIApiScheduler.callOpenAIStream(
-        message,
-        this.messageFactory.toApiMessage(this.chatMessages)
+        new ApiCommonParams({
+          model: this.context.state.config.selectedModel,
+          messages: [...this.chatMessages, this.messageFactory.createUserMessage(message)],
+          componentType: this.context.state.config.componentType,
+        })
       );
 
       // 创建AI消息, 并合并codeBlocks
       const newMessage = this.createCodeBlockMessage(aiResponse);
-      console.log("jj newMessage", newMessage);
 
       // 新增AI消息
       this.context.addChatMessage(newMessage);
@@ -181,14 +173,17 @@ export class ChatController {
           ? prompts.initRecommond
           : prompts.contextPromptTemplate.replace(
               "{{chatHistory}}",
-              this.messageFactory
-                .toApiMessage(messages)
+              MessageFactory.toApiMessage(messages)
                 .map((msg) => msg.content)
                 .join("\n")
             );
-      const response = await aIApiScheduler.getRecommendedKeywords([
-        { role: "user", content: prompt },
-      ]);
+
+      const aiApiParams = new ApiCommonParams({
+        model: this.context.state.config.selectedModel,
+        messages: [this.messageFactory.createUserMessage(prompt)],
+      });
+
+      const response = await aIApiScheduler.getRecommendedKeywords(aiApiParams);
       if (response.keywords && response.keywords.length > 0) {
         this.context.updateRecommendedKeywords(response.keywords);
       } else {

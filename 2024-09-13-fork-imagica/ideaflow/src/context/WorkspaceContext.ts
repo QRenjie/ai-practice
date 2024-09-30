@@ -45,7 +45,15 @@ interface ConfigState {
    * 是否使用图层， 是否可以拖拉拽
    */
   isWindowed: boolean;
+  /**
+   * 组件类型
+   * 
+   * 会改变ai的提示词
+   */
+  componentType: ChatComponentType;
 }
+
+export type ChatComponentType = "react" | "html";
 
 export interface WorkspaceState {
   /**

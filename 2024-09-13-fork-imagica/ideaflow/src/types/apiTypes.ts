@@ -1,4 +1,5 @@
 import { StreamApiProcessorType } from "@/base/api/StreamProcessor";
+import { WorkspaceState } from "@/context/WorkspaceContext";
 
 export interface CodeBlock {
   fileName: string;
