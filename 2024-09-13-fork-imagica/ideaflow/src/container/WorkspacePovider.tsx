@@ -99,10 +99,10 @@ const WorkspacePovider: React.FC<{
   const resetState = useCallback((option: WorkspaceType) => {
     setState((prev) => {
       const newState = workspaceStateCreator.create(option);
-      return {
-        ...prev,
-        code: newState.code,
-      };
+
+      newState.ui.title = prev.ui.title;
+
+      return newState;
     });
   }, []);
 
