@@ -30,43 +30,43 @@
       "mergedCodeBlocks": [],
       "files": {
         "/package.json": {
-          "code": "{\n  \"name\": \"react-tailwindcss\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"dependencies\": {\n    \"react\": \"^18.3.1\",\n    \"react-dom\": \"^18.3.1\",\n    \"react-scripts\": \"5.0.1\"\n  },\n  \"scripts\": {\n    \"start\": \"react-scripts start\",\n    \"build\": \"react-scripts build\"\n  },\n  \"devDependencies\": {\n    \"autoprefixer\": \"^10.4.20\",\n    \"postcss\": \"^8.4.47\",\n    \"tailwindcss\": \"^3.4.13\"\n  }\n}\n",
+          "code": "{\r\n  \"name\": \"react-tailwindcss\",\r\n  \"version\": \"0.1.0\",\r\n  \"private\": true,\r\n  \"dependencies\": {\r\n    \"react\": \"^18.3.1\",\r\n    \"react-dom\": \"^18.3.1\",\r\n    \"react-scripts\": \"5.0.1\"\r\n  },\r\n  \"scripts\": {\r\n    \"start\": \"react-scripts start\",\r\n    \"build\": \"react-scripts build\"\r\n  },\r\n  \"devDependencies\": {\r\n    \"autoprefixer\": \"^10.4.20\",\r\n    \"postcss\": \"^8.4.47\",\r\n    \"tailwindcss\": \"^3.4.13\"\r\n  }\r\n}\r\n",
           "hidden": false,
           "active": false,
           "readOnly": true
         },
         "/postcss.config.js": {
-          "code": "module.exports = {\n  plugins: {\n    tailwindcss: {},\n    autoprefixer: {},\n  },\n}\n",
+          "code": "module.exports = {\r\n  plugins: {\r\n    tailwindcss: {},\r\n    autoprefixer: {},\r\n  },\r\n}\r\n",
           "hidden": false,
           "active": false,
           "readOnly": true
         },
         "/public/index.html": {
-          "code": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <link rel=\"icon\" href=\"%PUBLIC_URL%/favicon.ico\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <meta name=\"theme-color\" content=\"#000000\" />\n    <meta\n      name=\"description\"\n      content=\"Web site created using create-react-app\"\n    />\n    <link rel=\"apple-touch-icon\" href=\"%PUBLIC_URL%/logo192.png\" />\n    <link rel=\"manifest\" href=\"%PUBLIC_URL%/manifest.json\" />\n    <title>React App</title>\n  </head>\n  <body>\n    <noscript>You need to enable JavaScript to run this app.</noscript>\n    <div id=\"root\"></div>\n  </body>\n</html>\n",
+          "code": "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n  <head>\r\n    <meta charset=\"utf-8\" />\r\n    <link rel=\"icon\" href=\"%PUBLIC_URL%/favicon.ico\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\r\n    <meta name=\"theme-color\" content=\"#000000\" />\r\n    <meta\r\n      name=\"description\"\r\n      content=\"Web site created using create-react-app\"\r\n    />\r\n    <link rel=\"apple-touch-icon\" href=\"%PUBLIC_URL%/logo192.png\" />\r\n    <link rel=\"manifest\" href=\"%PUBLIC_URL%/manifest.json\" />\r\n    <title>React App</title>\r\n  </head>\r\n  <body>\r\n    <noscript>You need to enable JavaScript to run this app.</noscript>\r\n    <div id=\"root\"></div>\r\n  </body>\r\n</html>\r\n",
           "hidden": false,
           "active": false,
           "readOnly": true
         },
         "/src/App.js": {
-          "code": "export default function MyComponent() {\n  return (\n    <div className=\"bg-blue-100 p-4 rounded-lg\">\n      <h2 className=\"text-xl font-semibold mb-2\">My Component</h2>\n      <p className=\"text-gray-700\">This is a sample component using Tailwind CSS.</p>\n    </div>\n  );\n}",
+          "code": "export default function MyComponent() {\r\n  return (\r\n    <div className=\"bg-blue-100 p-4 rounded-lg\">\r\n      <h2 className=\"text-xl font-semibold mb-2\">My Component</h2>\r\n      <p className=\"text-gray-700\">This is a sample component using Tailwind CSS.</p>\r\n    </div>\r\n  );\r\n}",
           "hidden": false,
           "active": false,
           "readOnly": true
         },
         "/src/index.css": {
-          "code": "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n",
+          "code": "@tailwind base;\r\n@tailwind components;\r\n@tailwind utilities;\r\n",
           "hidden": false,
           "active": false,
           "readOnly": true
         },
         "/src/index.js": {
-          "code": "import React from 'react';\nimport ReactDOM from 'react-dom/client';\nimport './index.css';\nimport App from './App';\n\nconst root = ReactDOM.createRoot(document.getElementById('root'));\nroot.render(\n  <React.StrictMode>\n    <App />\n  </React.StrictMode>\n);",
+          "code": "import React from 'react';\r\nimport ReactDOM from 'react-dom/client';\r\nimport './index.css';\r\nimport App from './App';\r\n\r\nconst root = ReactDOM.createRoot(document.getElementById('root'));\r\nroot.render(\r\n  <React.StrictMode>\r\n    <App />\r\n  </React.StrictMode>\r\n);",
           "hidden": false,
           "active": false,
           "readOnly": true
         },
         "/tailwind.config.js": {
-          "code": "/** @type {import('tailwindcss').Config} */\nmodule.exports = {\n  content: [\n    \"./src/**/*.{js,jsx,ts,tsx}\",\n  ],\n  theme: {\n    extend: {},\n  },\n  plugins: [],\n};\n",
+          "code": "/** @type {import('tailwindcss').Config} */\r\nmodule.exports = {\r\n  content: [\r\n    \"./src/**/*.{js,jsx,ts,tsx}\",\r\n  ],\r\n  theme: {\r\n    extend: {},\r\n  },\r\n  plugins: [],\r\n};\r\n",
           "hidden": false,
           "active": false,
           "readOnly": true
