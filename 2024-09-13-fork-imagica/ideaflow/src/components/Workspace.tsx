@@ -13,6 +13,7 @@ const WorkspaceInner: React.FC<{
   const { state } = React.useContext(WorkspaceContext)!;
 
   const renderContent = () => {
+    // 当template为空时，表示当前工作区为自定义工作区，需要展示工作区选择器
     if (!state.code.template) {
       return <WorkspaceSelector />;
     }

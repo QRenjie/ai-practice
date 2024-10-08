@@ -1,3 +1,3 @@
 export default function App() {
-  return <h1>Hello Imagicav2 Preview</h1>;
+  return <h1>Hello   React Base</h1>;
 }

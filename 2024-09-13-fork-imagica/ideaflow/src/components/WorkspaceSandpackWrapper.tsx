@@ -33,7 +33,7 @@ const WorkspaceSandpackWrapper: React.FC<{ children: React.ReactNode }> = ({
       style={{ height: "100%" }}
       files={state.code.files}
       customSetup={state.code.customSetup}
-      template={state.code.template}
+      template={state.code.template || 'static'}
     >
       <SandpackContent>{children}</SandpackContent>
     </SandpackProvider>

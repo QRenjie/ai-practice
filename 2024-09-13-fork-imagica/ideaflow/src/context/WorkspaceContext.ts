@@ -117,7 +117,7 @@ export class WorkspaceStateCreator {
   createSelector(source?: DeepPartial<WorkspaceState>) {
     // 创建一个静态的html工作区, 为了控制选择 template
     const defaults = this.create(source, "static-html");
-    defaults.code.files = {};
+    // defaults.code.files = {};
     defaults.code.customSetup = {};
     defaults.code.template = undefined;
 

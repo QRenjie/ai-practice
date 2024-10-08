@@ -6,9 +6,9 @@ interface WorkspaceLoadingSkeletonProps {
   isLoading?: boolean;
 }
 
-const WorkspaceLoadingSkeleton: React.FC<WorkspaceLoadingSkeletonProps> = ({
-  isLoading,
-}) => {
+const WorkspaceLoadingSkeleton: React.FC<
+  WorkspaceLoadingSkeletonProps
+> = ({}) => {
   const { state } = useContext(WorkspaceContext)!;
 
   if (!state.config.isSandpackLoading) return null;
