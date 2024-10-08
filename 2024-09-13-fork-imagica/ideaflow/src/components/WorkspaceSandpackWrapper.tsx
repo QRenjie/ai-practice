@@ -7,7 +7,7 @@ const WorkspaceSandpackWrapper: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const { state } = useContext(WorkspaceContext)!;
 
-  console.log('jj state.code',state.code);
+  console.log('jj state.code.files', JSON.stringify(state.code.files));
   
   return (
     <SandpackProvider

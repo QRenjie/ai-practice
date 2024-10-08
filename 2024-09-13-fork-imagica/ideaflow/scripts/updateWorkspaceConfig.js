@@ -26,7 +26,9 @@ export function updateWorkspaceConfig() {
   // 将 reactTailwindFiles 转换为 SandpackFile 类型
   const sandpackFiles = Object.entries(reactTailwindFiles).reduce(
     (acc, [filePath, code]) => {
-      acc[filePath] = sandpackFile(code);
+      // 确保文件路径以 '/' 开头
+      const updatedFilePath = filePath.startsWith('/') ? filePath : `/${filePath}`;
+      acc[updatedFilePath] = sandpackFile(code);
       return acc;
     },
     {}
@@ -35,8 +37,8 @@ export function updateWorkspaceConfig() {
   // 更新 defaultConfig.code.files
   workspaceConfig.defaultConfig.code.files = sandpackFiles;
 
-  // 从 defaultConfig.code.files['package.json'] 中获取依赖信息
-  const packageJsonContent = JSON.parse(sandpackFiles["package.json"].code);
+  // 从 defaultConfig.code.files['/package.json'] 中获取依赖信息
+  const packageJsonContent = JSON.parse(sandpackFiles["/package.json"].code);
 
   // 更新 defaultConfig.code.customSetup
   workspaceConfig.defaultConfig.code.customSetup = {

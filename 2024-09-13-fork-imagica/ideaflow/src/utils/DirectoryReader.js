@@ -73,10 +73,13 @@ export default class DirectoryReader {
       reactTailwindDir,
       {
         excludeDirs: [
+          ".DS_Store",
+          ".gitignore",
           "node_modules",
           "dist",
           "build",
           "package-lock.json",
+          "README.md",
           "yarn.lock",
         ],
         ...options,

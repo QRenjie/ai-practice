@@ -102,7 +102,6 @@ const Layer: React.FC<LayerProps> = ({
       bounds="parent"
       dragHandleClassName="draggable-handle"
       disableDragging={disabled}
-      disableResizing={disabled}
       className={`
         shadow-2xl rounded-lg overflow-hidden
         bg-gradient-to-br from-gray-200 to-gray-300

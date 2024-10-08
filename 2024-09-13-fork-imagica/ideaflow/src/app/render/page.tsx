@@ -105,18 +105,6 @@ export default function RenderPage({
 }) {
   const [files, setFiles] = useState(BASE_FILES);
 
-  useEffect(() => {
-    const codeBlock: CodeBlock = JSON.parse(
-      decodeURIComponent(searchParams.code)
-    );
-    const { content: code } = codeBlock;
-
-    setFiles((prevFiles) => ({
-      ...prevFiles,
-      "/src/MyComponent.js": code,
-    }));
-  }, [searchParams.code]);
-
   return (
     <SandpackProvider
       template="react"
