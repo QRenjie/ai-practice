@@ -19,7 +19,7 @@ try {
 
   // 获取templates目录下的所有子目录
   const templatesDir = join(__dirname, "../templates");
-  const templateDirs = readdirSync(templatesDir).filter(file => 
+  const templateDirs = readdirSync(templatesDir).filter((file) =>
     statSync(join(templatesDir, file)).isDirectory()
   );
 
@@ -33,29 +33,40 @@ try {
     newConfig[template] =
       workspaceConfig[template] || JSON.parse(JSON.stringify(defaultConfig));
 
+    // 修改 config.coderPrompt
+    newConfig[
+      template
+    ].config.coderPrompt = `${defaultConfig.config.coderPrompt}:${template}`;
+
     // 读取模板文件
     const templateDir = join(templatesDir, template);
 
     try {
-      const templateFiles = directoryReader.readDirectory(templateDir, {
-        excludeDirs: [
-          ".DS_Store",
-          ".gitignore",
-          "node_modules",
-          "dist",
-          "build",
-          "package-lock.json",
-          "README.md",
-          "yarn.lock",
-        ],
-        useRelativePath: true
-      }, templateDir);
+      const templateFiles = directoryReader.readDirectory(
+        templateDir,
+        {
+          excludeDirs: [
+            ".DS_Store",
+            ".gitignore",
+            "node_modules",
+            "dist",
+            "build",
+            "package-lock.json",
+            "README.md",
+            "yarn.lock",
+          ],
+          useRelativePath: true,
+        },
+        templateDir
+      );
 
       // 将templateFiles转换为SandpackFile类型，并过滤掉package.json
       const sandpackFiles = Object.entries(templateFiles).reduce(
         (acc, [filePath, code]) => {
-          if (filePath !== 'package.json') {
-            const updatedFilePath = filePath.startsWith('/') ? filePath : `/${filePath}`;
+          if (filePath !== "package.json") {
+            const updatedFilePath = filePath.startsWith("/")
+              ? filePath
+              : `/${filePath}`;
             acc[updatedFilePath] = sandpackFile(code);
           }
           return acc;
@@ -67,8 +78,8 @@ try {
       newConfig[template].code.files = sandpackFiles;
 
       // 从templateFiles中的package.json获取依赖信息和template
-      if (templateFiles['package.json']) {
-        const packageJsonContent = JSON.parse(templateFiles['package.json']);
+      if (templateFiles["package.json"]) {
+        const packageJsonContent = JSON.parse(templateFiles["package.json"]);
 
         // 更新code.customSetup
         newConfig[template].code.customSetup = {
@@ -77,8 +88,13 @@ try {
         };
 
         // 更新code.template
-        if (packageJsonContent.config && packageJsonContent.config.sandpack && packageJsonContent.config.sandpack.template) {
-          newConfig[template].code.template = packageJsonContent.config.sandpack.template;
+        if (
+          packageJsonContent.config &&
+          packageJsonContent.config.sandpack &&
+          packageJsonContent.config.sandpack.template
+        ) {
+          newConfig[template].code.template =
+            packageJsonContent.config.sandpack.template;
         }
       } else {
         newConfig[template].code.customSetup = {};

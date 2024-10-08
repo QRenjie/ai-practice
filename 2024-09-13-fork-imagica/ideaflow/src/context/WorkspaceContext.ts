@@ -92,7 +92,7 @@ type DeepPartial<T> = {
 const WorkspaceContext = React.createContext<WorkspaceContextType | null>(null);
 
 export class WorkspaceStateCreator {
-  defaultKey: keyof typeof workspaceConfig = "vite-react";
+  defaultKey: keyof typeof workspaceConfig = "react-base";
 
   defaults(source?: DeepPartial<WorkspaceState>) {
     return this.create(source, this.defaultKey);

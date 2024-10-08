@@ -68,7 +68,7 @@ export default class DirectoryReader {
    * @returns {Record<string, string>} 读取的文件内容
    */
   readReactTailwind(options = { useRelativePath: true }) {
-    const reactTailwindDir = path.join(this.baseDir, "react-tailwindcss").replace(/\\/g, '/'); // 指定 React Tailwind 目录
+    const reactTailwindDir = path.join(this.baseDir, "react-base").replace(/\\/g, '/'); // 指定 React Tailwind 目录
     return this.readDirectory(
       reactTailwindDir,
       {
