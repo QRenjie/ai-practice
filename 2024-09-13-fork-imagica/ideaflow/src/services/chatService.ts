@@ -3,12 +3,12 @@ import { RefObject } from "react";
 import { AiChatResponse, CodeBlock, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
 import AIApiScheduler from "./AIApiScheduler";
-import prompts from "../../config/prompts.json";
 import { MessageFactory } from "./MessageFactory"; // 新增导入
 import { SandpackFile } from "@codesandbox/sandpack-react";
 import sandpackFile from "../../config/sandpackFile";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import { cloneDeep } from "lodash-es";
+import { locales } from "@/utils/Locales";
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
@@ -61,11 +61,11 @@ export class ChatController {
       const aiResponse = await this.aIApiScheduler.callOpenAIStream(
         new ApiCommonParams({
           model: this.context.state.config.selectedModel,
+          coderPrompt: this.context.state.config.coderPrompt,
           messages: [
             ...this.chatMessages,
             this.messageFactory.createUserMessage(message),
           ],
-          componentType: this.context.state.config.componentType,
         })
       );
 
@@ -83,6 +83,7 @@ export class ChatController {
         this.fetchNewRecommendedKeywords([...this.chatMessages, newMessage]);
       }
     } catch (error) {
+      console.error("handleSubmit error", error);
       const errorMessage = this.messageFactory.createErrorMessage(error);
       this.context.addChatMessage(errorMessage);
     } finally {
@@ -142,27 +143,33 @@ export class ChatController {
   };
 
   updatePreviewCodeBlocks(codeBlocks: CodeBlock[]) {
-    // 将codeBlocks中的每一个codeBlock 和 files 中的每一个文件合并
-
     const result = cloneDeep(this.context.state.code.files || {});
     codeBlocks.forEach((codeBlock) => {
-      const target = result[codeBlock.fileName];
+      // 确保 fileName 以 "/" 开头
+      const fileName = codeBlock.fileName.startsWith("/")
+        ? codeBlock.fileName
+        : `/${codeBlock.fileName}`;
+      const target = result[fileName];
       if (target) {
-        // 如果 target 是 string 类型, 则转成通用类型
         if (typeof target === "string") {
-          result[codeBlock.fileName] = sandpackFile(codeBlock.content);
+          result[fileName] = sandpackFile(codeBlock.content);
         } else {
-          (result[codeBlock.fileName] as SandpackFile) = {
+          (result[fileName] as SandpackFile) = {
             ...target,
             code: codeBlock.content,
           };
         }
+      } else {
+        // 如果文件不存在，创建新文件
+        result[fileName] = sandpackFile(codeBlock.content);
       }
     });
 
-    console.log("jj updatePreviewCodeBlocks", result);
+    console.log("更新预览代码块", result);
 
     this.context.updateCodeFiles(result, codeBlocks);
+
+    // TODO: 自动刷新preivew
   }
 
   /**
@@ -174,8 +181,8 @@ export class ChatController {
       const aIApiScheduler = new AIApiScheduler();
       const prompt =
         messages.length === 0
-          ? prompts.initRecommond
-          : prompts.contextPromptTemplate.replace(
+          ? locales.get("locale:initRecommond")
+          : locales.get("locale:contextPromptTemplate").replace(
               "{{chatHistory}}",
               MessageFactory.toApiMessage(messages)
                 .map((msg) => msg.content)

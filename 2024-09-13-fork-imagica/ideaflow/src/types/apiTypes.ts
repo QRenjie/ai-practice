@@ -1,7 +1,9 @@
 import { StreamApiProcessorType } from "@/base/api/StreamProcessor";
-import { WorkspaceState } from "@/context/WorkspaceContext";
 
 export interface CodeBlock {
+  /**
+   * 文件名，没有 / 开头
+   */
   fileName: string;
   // html python jsx tsx
   language: string;

@@ -2,9 +2,6 @@ import { AiChatResponse, ApiMessage } from "@/types/apiTypes";
 import ApiClient from "./ApiClient";
 import { CodeExtractor } from "@/utils/CodeExtractor";
 import models from "../../../config/models.json";
-import { cloneDeep } from "lodash-es";
-import { PromptSelector } from "@/services/PromptSelector";
-import { ChatComponentType } from "@/context/WorkspaceContext";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 
 export interface OpenAIError extends Error {
@@ -17,7 +14,6 @@ export interface OpenAIChatParmas {
   model?: string;
   message: string;
   history?: ApiMessage[];
-  componentType: "react" | "html"; // 新增这一行
 }
 
 export interface OpenAIGenerateKeysParams {
@@ -25,14 +21,6 @@ export interface OpenAIGenerateKeysParams {
 }
 class OpenAIClient extends ApiClient {
   defualtModel = models.turbo;
-
-  private extendsCoder(
-    messages?: ApiMessage[],
-    componentType?: ChatComponentType
-  ): ApiMessage[] {
-    const baseMessage = PromptSelector.getPrompt(componentType);
-    return [cloneDeep(baseMessage), ...(messages || [])];
-  }
 
   // 生成代码的对话
   async generateCode(

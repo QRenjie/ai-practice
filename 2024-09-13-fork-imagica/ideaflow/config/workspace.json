@@ -1,12 +1,12 @@
 {
-  "defaultConfig": {
+  "react-tailwindcss": {
     "id": "",
     "config": {
       "selectedModel": "gpt-3.5-turbo",
       "recommendedKeywords": [],
       "isChatCollapsed": false,
       "isWindowed": true,
-      "componentType": "react"
+      "coderPrompt": "locale:coderPrompt"
     },
     "ui": {
       "activeTab": "preview",
@@ -29,12 +29,6 @@
     "code": {
       "mergedCodeBlocks": [],
       "files": {
-        "/package.json": {
-          "code": "{\r\n  \"name\": \"react-tailwindcss\",\r\n  \"version\": \"0.1.0\",\r\n  \"private\": true,\r\n  \"dependencies\": {\r\n    \"react\": \"^18.3.1\",\r\n    \"react-dom\": \"^18.3.1\",\r\n    \"react-scripts\": \"5.0.1\"\r\n  },\r\n  \"scripts\": {\r\n    \"start\": \"react-scripts start\",\r\n    \"build\": \"react-scripts build\"\r\n  },\r\n  \"devDependencies\": {\r\n    \"autoprefixer\": \"^10.4.20\",\r\n    \"postcss\": \"^8.4.47\",\r\n    \"tailwindcss\": \"^3.4.13\"\r\n  }\r\n}\r\n",
-          "hidden": false,
-          "active": false,
-          "readOnly": true
-        },
         "/postcss.config.js": {
           "code": "module.exports = {\r\n  plugins: {\r\n    tailwindcss: {},\r\n    autoprefixer: {},\r\n  },\r\n}\r\n",
           "hidden": false,
@@ -85,6 +79,99 @@
         }
       },
       "template": "react"
+    },
+    "chat": {
+      "messages": []
+    }
+  },
+  "vite-react": {
+    "id": "",
+    "config": {
+      "selectedModel": "gpt-3.5-turbo",
+      "recommendedKeywords": [],
+      "isChatCollapsed": false,
+      "isWindowed": true,
+      "coderPrompt": "locale:coderPrompt:vite-react"
+    },
+    "ui": {
+      "activeTab": "preview",
+      "title": "",
+      "size": {
+        "width": 480,
+        "height": 600
+      },
+      "position": {
+        "x": 20,
+        "y": 20
+      },
+      "isMaximized": false,
+      "isMinimized": false,
+      "maxSize": {
+        "width": "100%",
+        "height": "100%"
+      }
+    },
+    "code": {
+      "mergedCodeBlocks": [],
+      "files": {
+        "/App.jsx": {
+          "code": "import React from 'react';\r\n\r\nexport default function App() {\r\n  return (\r\n    <div className=\"min-h-screen bg-gray-100 flex items-center justify-center\">\r\n      <h1 className=\"text-4xl font-bold text-blue-600\">\r\n        Hello, Vite React + Tailwind CSS!\r\n      </h1>\r\n    </div>\r\n  );\r\n}",
+          "hidden": false,
+          "active": false,
+          "readOnly": true
+        },
+        "/index.html": {
+          "code": "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n  <head>\r\n    <meta charset=\"UTF-8\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\r\n    <title>Vite App</title>\r\n  </head>\r\n  <body>\r\n    <div id=\"root\"></div>\r\n    <script type=\"module\" src=\"/index.jsx\"></script>\r\n  </body>\r\n</html>",
+          "hidden": false,
+          "active": false,
+          "readOnly": true
+        },
+        "/index.jsx": {
+          "code": "import { StrictMode } from \"react\";\r\nimport { createRoot } from \"react-dom/client\";\r\nimport \"./styles.css\";\r\n\r\nimport App from \"./App\";\r\n\r\nconst root = createRoot(document.getElementById(\"root\"));\r\nroot.render(\r\n  <StrictMode>\r\n    <App />\r\n  </StrictMode>\r\n);",
+          "hidden": false,
+          "active": false,
+          "readOnly": true
+        },
+        "/postcss.config.js": {
+          "code": "module.exports = {\r\n  plugins: {\r\n    tailwindcss: {},\r\n    autoprefixer: {},\r\n  },\r\n};\r\n",
+          "hidden": false,
+          "active": false,
+          "readOnly": true
+        },
+        "/styles.css": {
+          "code": "@tailwind base;\r\n@tailwind components;\r\n@tailwind utilities;",
+          "hidden": false,
+          "active": false,
+          "readOnly": true
+        },
+        "/tailwind.config.js": {
+          "code": "/** @type {import('tailwindcss').Config} */\r\nmodule.exports = {\r\n  content: [\"./**/*.{js,jsx,ts,tsx}\"],\r\n  theme: {\r\n    extend: {},\r\n  },\r\n  plugins: [],\r\n};\r\n",
+          "hidden": false,
+          "active": false,
+          "readOnly": true
+        },
+        "/vite.config.js": {
+          "code": "import { defineConfig } from 'vite'\r\nimport react from '@vitejs/plugin-react'\r\nimport tailwindcss from 'tailwindcss'\r\nimport autoprefixer from 'autoprefixer'\r\n\r\nexport default defineConfig({\r\n  plugins: [react()],\r\n  css: {\r\n    postcss: {\r\n      plugins: [\r\n        tailwindcss,\r\n        autoprefixer,\r\n      ],\r\n    },\r\n  },\r\n})",
+          "hidden": false,
+          "active": false,
+          "readOnly": true
+        }
+      },
+      "customSetup": {
+        "dependencies": {
+          "tailwindcss": "^3.4.3",
+          "postcss": "^8.4.4",
+          "autoprefixer": "^10.4.19",
+          "react": "^18.2.0",
+          "react-dom": "^18.2.0"
+        },
+        "devDependencies": {
+          "@vitejs/plugin-react": "3.1.0",
+          "vite": "4.1.4",
+          "esbuild-wasm": "0.17.12"
+        }
+      },
+      "template": "vite-react"
     },
     "chat": {
       "messages": []

@@ -3,15 +3,15 @@
 import { useCallback, useRef, useState } from "react";
 import LayerProvider from "../container/LayerProvider";
 import {
-  defaultWorkspaceState,
   WorkspaceState,
+  workspaceStateCreator,
 } from "@/context/WorkspaceContext";
 import Workspace from "@/components/Workspace";
 import ContextMenu, { ContextMenuRef } from "@/components/ContextMenu";
 
 export default function Home() {
   const [workspaces, setWorkspaces] = useState<WorkspaceState[]>([
-    defaultWorkspaceState({ ui: { title: "工作区1" } }),
+    workspaceStateCreator.create({ ui: { title: "工作区1" } }),
   ]);
 
   const contextMenuRef = useRef<ContextMenuRef>(null);
@@ -34,7 +34,7 @@ export default function Home() {
 
   const addWorkspace = useCallback(() => {
     setWorkspaces((prevWorkspaces) => {
-      const newState = defaultWorkspaceState({
+      const newState = workspaceStateCreator.defaults({
         id: `workspace${prevWorkspaces.length + 1}`,
         ui: { title: `工作区 ${prevWorkspaces.length + 1}` },
       });

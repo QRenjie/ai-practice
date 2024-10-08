@@ -7,15 +7,13 @@ const WorkspaceSandpackWrapper: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const { state } = useContext(WorkspaceContext)!;
 
-  console.log('jj state.code.files', JSON.stringify(state.code.files));
-  
   return (
     <SandpackProvider
       className="h-full"
       style={{ height: "100%" }}
       files={state.code.files}
       customSetup={state.code.customSetup}
-      template="react" // 将这里改为固定的 "react"
+      template={state.code.template}
     >
       <SandpackLayout className="h-full w-full">{children}</SandpackLayout>
     </SandpackProvider>

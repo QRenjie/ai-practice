@@ -1,11 +1,12 @@
 import React from "react";
 import { CodeBlock, Message } from "@/types/apiTypes";
 import { LayerState } from "@/components/Layer";
-import { merge, cloneDeep } from "lodash-es"; // 修改这一行
+import { merge } from "lodash-es"; // 修改这一行
 import workspaceConfig from "../../config/workspace.json"; // 新增这一行
 import { v4 as uuidv4 } from "uuid";
 import { SandpackProps } from "@codesandbox/sandpack-react";
 
+type LocaleKey = string;
 interface UIState extends LayerState {
   activeTab: "preview" | "codeHistory";
 }
@@ -42,15 +43,12 @@ interface ConfigState {
    * 是否使用图层， 是否可以拖拉拽
    */
   isWindowed: boolean;
-  /**
-   * 组件类型
-   * 
-   * 会改变ai的提示词
-   */
-  componentType: ChatComponentType;
-}
 
-export type ChatComponentType = "react" | "html";
+  /**
+   * 代码生成提示词, locale:coderPrompt:[template]
+   */
+  coderPrompt: LocaleKey;
+}
 
 export interface WorkspaceState {
   /**
@@ -91,17 +89,30 @@ type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>;
 };
 
-export const defaultWorkspaceState = (
-  source?: DeepPartial<WorkspaceState>
-): WorkspaceState => {
-  // 深复制 workspaceConfig
-  const configCopy = cloneDeep(workspaceConfig.defaultConfig) as WorkspaceState;
-  configCopy.id = uuidv4();
-
-  // 使用 lodash 的 merge 方法将 configCopy 和 source 合并
-  return merge(configCopy, source);
-};
-
 const WorkspaceContext = React.createContext<WorkspaceContextType | null>(null);
+
+export class WorkspaceStateCreator {
+  defaultKey: keyof typeof workspaceConfig = "vite-react";
+
+  defaults(source?: DeepPartial<WorkspaceState>) {
+    return this.create(source, this.defaultKey);
+  }
+
+  create(
+    source?: DeepPartial<WorkspaceState>,
+    key: keyof typeof workspaceConfig = this.defaultKey
+  ): WorkspaceState {
+    const config = workspaceConfig[key] as WorkspaceState | undefined;
+    if (!config) {
+      throw new Error(`Workspace config not found for key: ${key}`);
+    }
+
+    return merge({}, config, source, {
+      id: source?.id || uuidv4(),
+    });
+  }
+}
+
+export const workspaceStateCreator = new WorkspaceStateCreator();
 
 export default WorkspaceContext;

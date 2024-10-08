@@ -11,7 +11,7 @@ const WorkspacePovider: React.FC<{
     ...initialState,
     code: {
       ...initialState.code,
-      files: workspaceConfig.defaultConfig.code.files,
+      files: workspaceConfig['react-tailwindcss'].code.files,
       template: "react",
     },
   });

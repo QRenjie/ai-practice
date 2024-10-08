@@ -16,9 +16,14 @@ export class MessageFactory {
     };
   }
 
-  createAssistantMessage(
-    aiResponse: AiChatResponse
-  ): Message {
+  createSystemApiMessage(content: string): ApiMessage {
+    return {
+      content,
+      role: "system",
+    };
+  }
+
+  createAssistantMessage(aiResponse: AiChatResponse): Message {
     return {
       id: aiResponse.id,
       content: aiResponse.content,

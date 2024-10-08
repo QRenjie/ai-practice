@@ -1,7 +1,4 @@
-import { updateWorkspaceConfig } from "./scripts/updateWorkspaceConfig.js";
-
-// 执行更新配置的函数
-updateWorkspaceConfig();
+import "./scripts/generateWorkspaceConfig.mjs";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

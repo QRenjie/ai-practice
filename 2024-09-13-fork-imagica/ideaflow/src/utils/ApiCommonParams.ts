@@ -1,8 +1,7 @@
-import { ChatComponentType } from "@/context/WorkspaceContext";
 import models from "../../config/models.json";
 import { MessageFactory } from "@/services/MessageFactory";
 import { ApiMessage, Message } from "@/types/apiTypes";
-import { PromptSelector } from "@/services/PromptSelector";
+import { locales } from "./Locales";
 
 export default class ApiCommonParams {
   model: string;
@@ -12,23 +11,26 @@ export default class ApiCommonParams {
   constructor({
     model,
     messages,
-    componentType,
     stream = true,
+    coderPrompt,
   }: {
     model?: string;
     messages?: Message[];
-    componentType?: ChatComponentType;
     stream?: boolean;
+    coderPrompt?: string;
   } = {}) {
     this.stream = stream;
     this.model = model || models.turbo;
     this.messages = messages ? MessageFactory.toApiMessage(messages) : [];
 
     // 处理提示词
-    // 如果componentType不为空，则将componentType对应的prompt添加到messages数组的最前面
-    if (componentType) {
+    if (coderPrompt) {
+      console.log('jj coderPrompt', coderPrompt);
+      
+      const messageFactory = new MessageFactory();
+
       this.messages = [
-        PromptSelector.getPrompt(componentType),
+        messageFactory.createSystemApiMessage(locales.get(coderPrompt)),
         ...this.messages,
       ];
     }
