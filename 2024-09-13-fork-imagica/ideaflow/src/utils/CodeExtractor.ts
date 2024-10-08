@@ -26,8 +26,21 @@ export class CodeExtractor {
 
     private static extractFileName(code: string): string {
         const firstLine = code.split('\n')[0]; // 获取代码的第一行
-        const match = firstLine.match(/\/\/\s+(.+?)\s*$/); // 匹配 // 后的文件名
-        return match ? match[1].trim() : ''; // 返回文件名或空字符串
+        let match;
+
+        // 匹配 JavaScript/TypeScript 风格的注释
+        match = firstLine.match(/\/\/\s+(.+?)\s*$/);
+        if (match) return match[1].trim();
+
+        // 匹配 HTML 风格的注释
+        match = firstLine.match(/<!--\s*(.+?)\s*-->/);
+        if (match) return match[1].trim();
+
+        // 匹配 CSS 风格的注释
+        match = firstLine.match(/\/\*\s*(.+?)\s*\*\//);
+        if (match) return match[1].trim();
+
+        return ''; // 如果没有匹配到任何注释，返回空字符串
     }
 
     static isHtml(markdownContent: string): boolean {
