@@ -1,11 +1,13 @@
 {
   "react-base": {
     "id": "",
+    "meta": {},
     "config": {
       "selectedModel": "gpt-3.5-turbo",
       "recommendedKeywords": [],
       "isChatCollapsed": false,
       "isWindowed": true,
+      "isSandpackLoading": true,
       "coderPrompt": "locale:coderPrompt:react-base"
     },
     "ui": {
@@ -64,11 +66,13 @@
   },
   "static-html": {
     "id": "",
+    "meta": {},
     "config": {
       "selectedModel": "gpt-3.5-turbo",
       "recommendedKeywords": [],
       "isChatCollapsed": false,
       "isWindowed": true,
+      "isSandpackLoading": true,
       "coderPrompt": "locale:coderPrompt:static-html"
     },
     "ui": {
@@ -111,11 +115,13 @@
   },
   "vite-react": {
     "id": "",
+    "meta": {},
     "config": {
       "selectedModel": "gpt-3.5-turbo",
       "recommendedKeywords": [],
       "isChatCollapsed": false,
       "isWindowed": true,
+      "isSandpackLoading": true,
       "coderPrompt": "locale:coderPrompt:vite-react"
     },
     "ui": {

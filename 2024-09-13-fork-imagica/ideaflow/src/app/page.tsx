@@ -11,7 +11,7 @@ import ContextMenu, { ContextMenuRef } from "@/components/ContextMenu";
 
 export default function Home() {
   const [workspaces, setWorkspaces] = useState<WorkspaceState[]>([
-    workspaceStateCreator.create({ ui: { title: "工作区1" } }),
+    workspaceStateCreator.createSelector({ ui: { title: "工作区1" } }),
   ]);
 
   const contextMenuRef = useRef<ContextMenuRef>(null);
@@ -34,8 +34,7 @@ export default function Home() {
 
   const addWorkspace = useCallback(() => {
     setWorkspaces((prevWorkspaces) => {
-      const newState = workspaceStateCreator.defaults({
-        id: `workspace${prevWorkspaces.length + 1}`,
+      const newState = workspaceStateCreator.createSelector({
         ui: { title: `工作区 ${prevWorkspaces.length + 1}` },
       });
 

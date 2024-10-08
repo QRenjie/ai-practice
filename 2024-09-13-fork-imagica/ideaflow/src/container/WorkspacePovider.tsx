@@ -1,20 +1,16 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import WorkspaceContext, { WorkspaceState } from "../context/WorkspaceContext";
+import WorkspaceContext, {
+  WorkspaceState,
+  workspaceStateCreator,
+  WorkspaceType,
+} from "../context/WorkspaceContext";
 import { CodeBlock, Message } from "@/types/apiTypes";
-import workspaceConfig from "../../config/workspace.json";
 
 const WorkspacePovider: React.FC<{
   initialState: WorkspaceState;
   children: React.ReactNode;
 }> = ({ initialState, children }) => {
-  const [state, setState] = useState<WorkspaceState>({
-    ...initialState,
-    code: {
-      ...initialState.code,
-      files: workspaceConfig['react-base'].code.files,
-      template: "react",
-    },
-  });
+  const [state, setState] = useState<WorkspaceState>(initialState);
 
   useEffect(() => {
     setState(initialState);
@@ -100,6 +96,14 @@ const WorkspacePovider: React.FC<{
     }));
   }, []);
 
+  const resetState = useCallback(
+    (option: WorkspaceType) => {
+      const newState = workspaceStateCreator.create(state, option);
+      setState(newState);
+    },
+    [state]
+  );
+
   const contextValue = useMemo(
     () => ({
       state,
@@ -110,6 +114,7 @@ const WorkspacePovider: React.FC<{
       updateRecommendedKeywords,
       toggleChatCollapse,
       updateConfig,
+      resetState,
     }),
     [
       state,
@@ -120,6 +125,7 @@ const WorkspacePovider: React.FC<{
       updateRecommendedKeywords,
       toggleChatCollapse,
       updateConfig,
+      resetState,
     ]
   );
 

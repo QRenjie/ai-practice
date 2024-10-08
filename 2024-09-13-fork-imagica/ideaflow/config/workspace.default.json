@@ -1,10 +1,12 @@
 {
   "id": "",
+  "meta": {},
   "config": {
     "selectedModel": "gpt-3.5-turbo",
     "recommendedKeywords": [],
     "isChatCollapsed": false,
     "isWindowed": true,
+    "isSandpackLoading": true,
     "coderPrompt": "locale:coderPrompt"
   },
   "ui": {

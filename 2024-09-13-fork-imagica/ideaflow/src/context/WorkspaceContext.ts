@@ -6,6 +6,12 @@ import workspaceConfig from "../../config/workspace.json"; // 新增这一行
 import { v4 as uuidv4 } from "uuid";
 import { SandpackProps } from "@codesandbox/sandpack-react";
 
+export type WorkspaceType = keyof typeof workspaceConfig;
+export const workspaceOptions = Object.keys(workspaceConfig).map((key) => ({
+  label: key,
+  value: key,
+}));
+
 type LocaleKey = string;
 interface UIState extends LayerState {
   activeTab: "preview" | "codeHistory";
@@ -45,16 +51,29 @@ interface ConfigState {
   isWindowed: boolean;
 
   /**
+   * 是否加载中
+   */
+  isSandpackLoading: boolean;
+
+  /**
    * 代码生成提示词, locale:coderPrompt:[template]
    */
   coderPrompt: LocaleKey;
 }
 
+export interface MetaState {
+  /**
+   * 更新时间
+   */
+  updatedAt?: number;
+}
 export interface WorkspaceState {
   /**
    * 唯一标识
    */
   id: string;
+
+  meta: MetaState;
   /**
    * 用户界面状态
    */
@@ -82,6 +101,7 @@ export interface WorkspaceContextType {
   updateRecommendedKeywords: (keywords: string[]) => void;
   toggleChatCollapse: () => void; // 新增这一行
   updateConfig: (config: Partial<ConfigState>) => void;
+  resetState: (option: WorkspaceType) => void; // 新增这一行
 }
 
 // 定义递归的 DeepPartial 类型
@@ -92,7 +112,17 @@ type DeepPartial<T> = {
 const WorkspaceContext = React.createContext<WorkspaceContextType | null>(null);
 
 export class WorkspaceStateCreator {
-  defaultKey: keyof typeof workspaceConfig = "static-html";
+  defaultKey: WorkspaceType = "static-html";
+
+  createSelector(source?: DeepPartial<WorkspaceState>) {
+    // 创建一个静态的html工作区, 为了控制选择 template
+    const defaults = this.create(source, "static-html");
+    defaults.code.files = {};
+    defaults.code.customSetup = {};
+    defaults.code.template = undefined;
+
+    return defaults;
+  }
 
   defaults(source?: DeepPartial<WorkspaceState>) {
     return this.create(source, this.defaultKey);
@@ -100,7 +130,7 @@ export class WorkspaceStateCreator {
 
   create(
     source?: DeepPartial<WorkspaceState>,
-    key: keyof typeof workspaceConfig = this.defaultKey
+    key: WorkspaceType = this.defaultKey
   ): WorkspaceState {
     const config = workspaceConfig[key] as WorkspaceState | undefined;
     if (!config) {

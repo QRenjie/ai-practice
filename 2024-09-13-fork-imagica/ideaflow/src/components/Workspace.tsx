@@ -1,7 +1,8 @@
-import React, { useContext } from "react";
-import WorkspaceContext, { WorkspaceState } from "../context/WorkspaceContext";
+import React from "react";
+import WorkspaceContext, { WorkspaceState } from "@/context/WorkspaceContext";
 import WorkspacePovider from "../container/WorkspacePovider";
 import WorkspacePanel from "./WorkspacePanel";
+import WorkspaceSelector from "./WorkspaceSelector"; // 新增导入
 import dynamic from "next/dynamic";
 
 const Layer = dynamic(() => import("./Layer"));
@@ -9,7 +10,14 @@ const Layer = dynamic(() => import("./Layer"));
 const WorkspaceInner: React.FC<{
   onClose?: (id: string) => void;
 }> = ({ onClose }) => {
-  const { state } = useContext(WorkspaceContext)!;
+  const { state } = React.useContext(WorkspaceContext)!;
+
+  const renderContent = () => {
+    if (!state.code.template) {
+      return <WorkspaceSelector />;
+    }
+    return <WorkspacePanel />;
+  };
 
   return (
     <Layer
@@ -19,7 +27,7 @@ const WorkspaceInner: React.FC<{
       title={state.ui.title}
       disabled={!state.config.isWindowed}
     >
-      <WorkspacePanel />
+      {renderContent()}
     </Layer>
   );
 };
