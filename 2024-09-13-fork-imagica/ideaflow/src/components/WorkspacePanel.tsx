@@ -5,11 +5,31 @@ import WorkspaceCode from "./WorkspaceCode"; // 新增导入
 import WorkspaceContext from "@/context/WorkspaceContext";
 import WorkspaceSandpackWrapper from "./WorkspaceSandpackWrapper";
 import WorkspaceLoadingSkeleton from "./WorkspaceLoadingSkeleton";
-
+import { PreviewPublisher } from "@/utils/PreviewPublisher";
+import { message } from "antd";
 const WorkspacePanel: React.FC = () => {
   const { state, setActiveTab } = useContext(WorkspaceContext)!;
+  const [messageApi] = message.useMessage();
 
   const { isSandpackLoading } = state.config;
+
+  const handlePublish = async () => {
+    const previewUrl = await PreviewPublisher.publish(state);
+    if (previewUrl) {
+      const fullUrl = `${window.location.origin}${previewUrl}`;
+      messageApi.info(
+        <span>
+          您可以通过以下链接访问预览
+          <a href={fullUrl} target="_blank" rel="noopener noreferrer">
+            预览
+          </a>
+        </span>
+      );
+    } else {
+      messageApi.error("发布预览失败, 请稍后重试。");
+    }
+  };
+
   return (
     <WorkspaceSandpackWrapper>
       <div
@@ -35,6 +55,13 @@ const WorkspacePanel: React.FC = () => {
             >
               代码
             </TabButton>
+            <button
+              className="px-4 py-2 bg-green-500 text-white hover:bg-green-600 transition-colors duration-300"
+              onClick={handlePublish}
+              disabled={isSandpackLoading}
+            >
+              发布预览
+            </button>
           </div>
           <div className="flex-1 overflow-hidden relative">
             <div

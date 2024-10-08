@@ -3,16 +3,15 @@ import "./scripts/generateWorkspaceConfig.mjs";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // 移除以下行
-  // webpack: (config) => {
-  //   config.externals = [...config.externals, { canvas: "canvas" }];
-  //   return config;
-  // },
   async rewrites() {
     return [
       {
         source: "/api/:path*",
         destination: "/api/:path*",
+      },
+      {
+        source: '/previews/:path*',
+        destination: '/previews/:path*',
       },
     ];
   },

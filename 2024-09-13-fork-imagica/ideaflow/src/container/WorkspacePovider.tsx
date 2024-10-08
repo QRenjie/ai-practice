@@ -96,13 +96,15 @@ const WorkspacePovider: React.FC<{
     }));
   }, []);
 
-  const resetState = useCallback(
-    (option: WorkspaceType) => {
-      const newState = workspaceStateCreator.create(state, option);
-      setState(newState);
-    },
-    [state]
-  );
+  const resetState = useCallback((option: WorkspaceType) => {
+    setState((prev) => {
+      const newState = workspaceStateCreator.create(option);
+      return {
+        ...prev,
+        code: newState.code,
+      };
+    });
+  }, []);
 
   const contextValue = useMemo(
     () => ({
