@@ -15,6 +15,7 @@ const WorkspacePanel: React.FC = () => {
 
   const handlePublish = async () => {
     const previewUrl = await PreviewPublisher.publish(state);
+    console.log("jj previewUrl", previewUrl);
     if (previewUrl) {
       const fullUrl = `${window.location.origin}${previewUrl}`;
       messageApi.info(
