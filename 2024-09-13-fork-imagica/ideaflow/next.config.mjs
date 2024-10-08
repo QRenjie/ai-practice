@@ -6,17 +6,11 @@ updateWorkspaceConfig();
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // swcMinify: true,
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        module: false,
-      };
-    }
-    return config;
-  },
+  // 移除以下行
+  // webpack: (config) => {
+  //   config.externals = [...config.externals, { canvas: "canvas" }];
+  //   return config;
+  // },
   async rewrites() {
     return [
       {

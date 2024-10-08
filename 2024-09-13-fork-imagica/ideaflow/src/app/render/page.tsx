@@ -1,131 +1,66 @@
 "use client";
 
-import { CodeBlock } from "@/types/apiTypes";
-import React, { useEffect, useState } from "react";
-import {
-  SandpackProvider,
-  SandpackLayout,
-  SandpackPreview,
-} from "@codesandbox/sandpack-react";
+import React from "react";
+import { Sandpack } from "@codesandbox/sandpack-react";
 
-const BASE_FILES = {
-  "/src/index.js": `
+const files = {
+  "/App.jsx": `
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-`,
-  "/src/App.js": `
-import MyComponent from './MyComponent';
-
-function App() {
+export default function App() {
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Welcome to My React App</h1>
-      <MyComponent />
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <h1 className="text-4xl font-bold text-blue-600">
+        Hello, React + Tailwind CSS!
+      </h1>
     </div>
   );
 }
-
-export default App;
 `,
-  "/src/index.css": `
+  "/styles.css": `
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 `,
-  "/src/MyComponent.js": `
-export default function MyComponent() {
-  return (
-    <div className="bg-blue-100 p-4 rounded-lg">
-      <h2 className="text-xl font-semibold mb-2">My Component</h2>
-      <p className="text-gray-700">This is a sample component using Tailwind CSS.</p>
-    </div>
-  );
-}
-`,
-  "/public/index.html": `
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
-</html>
-`,
-  "/tailwind.config.js": `
-module.exports = {
-  content: [
-    './src/**/*.{js,jsx,ts,tsx}',
-  ],
-  theme: {
-    extend: {},
+  "/postcss.config.js": {
+    code: "module.exports = {\n  plugins: {\n    tailwindcss: {},\n    autoprefixer: {},\n  },\n}\n",
   },
-  plugins: [],
-}
-`,
-  "/package.json": `
-{
-  "name": "react-tailwind-app",
-  "version": "1.0.0",
-  "dependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3"
+  "/tailwind.config.js": {
+    code: "/** @type {import('tailwindcss').Config} */\nmodule.exports = {\n  content: [\n    \"./**/*.{js,jsx,ts,tsx}\",\n  ],\n  theme: {\n    extend: {},\n  },\n  plugins: [],\n};\n",
   },
-  "devDependencies": {
-    "autoprefixer": "^10.4.7",
-    "postcss": "^8.4.14",
-    "tailwindcss": "^3.1.6"
+  "/vite.config.js": `
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from 'tailwindcss'
+import autoprefixer from 'autoprefixer'
+
+export default defineConfig({
+  plugins: [react()],
+  css: {
+    postcss: {
+      plugins: [
+        tailwindcss,
+        autoprefixer,
+      ],
+    },
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
-  }
-}
+})
 `,
 };
 
-export default function RenderPage({
-  searchParams,
-}: {
-  searchParams: { code: string };
-}) {
-  const [files, setFiles] = useState(BASE_FILES);
-
+export default function RenderPage() {
   return (
-    <SandpackProvider
-      template="react"
-      files={files}
+    <Sandpack
+      template="vite-react"
       customSetup={{
         dependencies: {
-          react: "^17.0.2",
-          "react-dom": "^17.0.2",
-          "react-scripts": "4.0.3",
-          tailwindcss: "^3.1.6",
-          autoprefixer: "^10.4.7",
-          postcss: "^8.4.14",
+          "tailwindcss": "^3.4.3",
+          "postcss": "^8.4.4",
+          "autoprefixer": "^10.4.19",
         },
       }}
-    >
-      <SandpackLayout>
-        <SandpackPreview
-          showRefreshButton={false}
-          showOpenInCodeSandbox={false}
-        />
-      </SandpackLayout>
-    </SandpackProvider>
+      files={files}
+      theme="light"
+    />
   );
 }
