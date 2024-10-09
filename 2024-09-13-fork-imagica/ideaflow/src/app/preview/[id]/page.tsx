@@ -4,6 +4,7 @@ import {
   SandpackProvider,
 } from "@codesandbox/sandpack-react";
 import { PreviewPublisher } from "../../../utils/PreviewPublisher";
+import { redirect } from 'next/navigation';
 
 export default async function PreviewPage({
   searchParams,
@@ -11,12 +12,26 @@ export default async function PreviewPage({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const data = searchParams.data as string;
-  const content = PreviewPublisher.decryptWorkspaceState(data);
+  
+  if (!data) {
+    redirect('/404');
+  }
+
+  let content;
+  try {
+    content = PreviewPublisher.decryptWorkspaceState(data);
+  } catch (error) {
+    console.error('解析预览数据失败:', error);
+    redirect('/404');
+  }
+
+  if (!content || !content.code || !content.code.files || !content.code.template) {
+    redirect('/404');
+  }
 
   return (
     <SandpackProvider
       files={content.code.files}
-      customSetup={content.code.customSetup}
       template={content.code.template}
     >
       <SandpackLayout className="w-full h-screen">

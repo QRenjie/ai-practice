@@ -9,7 +9,6 @@ import { PreviewPublisher } from "@/utils/PreviewPublisher";
 import { message } from "antd";
 const WorkspacePanel: React.FC = () => {
   const { state, setActiveTab } = useContext(WorkspaceContext)!;
-  const [messageApi] = message.useMessage();
 
   const { isSandpackLoading } = state.config;
 
@@ -18,16 +17,21 @@ const WorkspacePanel: React.FC = () => {
     console.log("jj previewUrl", previewUrl);
     if (previewUrl) {
       const fullUrl = `${window.location.origin}${previewUrl}`;
-      messageApi.info(
+      message.success(
         <span>
-          您可以通过以下链接访问预览
-          <a href={fullUrl} target="_blank" rel="noopener noreferrer">
-            预览
+          预览链接已生成：
+          <a
+            href={fullUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-700 underline"
+          >
+            点击查看预览
           </a>
         </span>
       );
     } else {
-      messageApi.error("发布预览失败, 请稍后重试。");
+      message.error("发布预览失败，请稍后重试。");
     }
   };
 
