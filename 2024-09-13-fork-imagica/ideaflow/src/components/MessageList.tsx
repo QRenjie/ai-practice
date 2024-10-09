@@ -29,7 +29,7 @@ const MessageItem = memo<{ message: Message; chatController: ChatController }>(
           <AIResponse
             text={message.content}
             copyToClipboard={chatController.copyToClipboard}
-            reapplyCode={() => chatController.handleReapplyCode(message.content)}
+            reapplyCode={() => chatController.reapplyAiMessage(message)}
           />
         )}
       </div>

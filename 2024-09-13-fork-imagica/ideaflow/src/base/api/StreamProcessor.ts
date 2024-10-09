@@ -1,3 +1,5 @@
+import JSONUtil from "@/utils/JSONUtil";
+
 export type StreamApiProcessorType = {
   id: string;
   content: string;
@@ -65,7 +67,7 @@ export class StreamProcessor {
           break;
         }
         try {
-          const parsed = JSON.parse(data);
+          const parsed = JSONUtil.parse(data);
           const content = parsed.choices[0]?.delta?.content || "";
           processedContent += content;
           onChunk?.(content);

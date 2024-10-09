@@ -1,5 +1,9 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import WorkspaceContext, { WorkspaceState } from "../context/WorkspaceContext";
+import WorkspaceContext, {
+  WorkspaceState,
+  workspaceStateCreator,
+  WorkspaceType,
+} from "../context/WorkspaceContext";
 import { CodeBlock, Message } from "@/types/apiTypes";
 
 const WorkspacePovider: React.FC<{
@@ -19,12 +23,22 @@ const WorkspacePovider: React.FC<{
     }));
   }, []);
 
-  const updatePreviewCodeBlock = useCallback((codeBlock: CodeBlock) => {
-    setState((prevState) => ({
-      ...prevState,
-      preview: { ...prevState.preview, codeBlock },
-    }));
-  }, []);
+  const updateCodeFiles = useCallback(
+    (files: WorkspaceState["code"]["files"], codeBlocks: CodeBlock[]) => {
+      setState((prevState) => ({
+        ...prevState,
+        code: {
+          ...prevState.code,
+          codeBlocks,
+          files: {
+            ...prevState.code.files,
+            ...files,
+          },
+        },
+      }));
+    },
+    []
+  );
 
   const addChatMessage = useCallback((message: Message) => {
     setState((prevState) => ({
@@ -49,16 +63,6 @@ const WorkspacePovider: React.FC<{
     []
   );
 
-  const updateMergedCodeBlocks = useCallback((blocks: CodeBlock[]) => {
-    setState((prevState) => ({
-      ...prevState,
-      code: {
-        ...prevState.code,
-        mergedCodeBlocks: blocks,
-      },
-    }));
-  }, []);
-
   const updateRecommendedKeywords = useCallback((keywords: string[]) => {
     setState((prevState) => ({
       ...prevState,
@@ -68,6 +72,19 @@ const WorkspacePovider: React.FC<{
       },
     }));
   }, []);
+
+  const updateConfig = useCallback(
+    (config: Partial<WorkspaceState["config"]>) => {
+      setState((prevState) => ({
+        ...prevState,
+        config: {
+          ...prevState.config,
+          ...config,
+        },
+      }));
+    },
+    []
+  );
 
   const toggleChatCollapse = useCallback(() => {
     setState((prevState) => ({
@@ -79,26 +96,38 @@ const WorkspacePovider: React.FC<{
     }));
   }, []);
 
+  const resetState = useCallback((option: WorkspaceType) => {
+    setState((prev) => {
+      const newState = workspaceStateCreator.create(option);
+
+      newState.ui.title = prev.ui.title;
+
+      return newState;
+    });
+  }, []);
+
   const contextValue = useMemo(
     () => ({
       state,
       setActiveTab,
-      updatePreviewCodeBlock,
+      updateCodeFiles,
       addChatMessage,
       updateMessages,
-      updateMergedCodeBlocks,
       updateRecommendedKeywords,
       toggleChatCollapse,
+      updateConfig,
+      resetState,
     }),
     [
       state,
       setActiveTab,
-      updatePreviewCodeBlock,
+      updateCodeFiles,
       addChatMessage,
       updateMessages,
-      updateMergedCodeBlocks,
       updateRecommendedKeywords,
       toggleChatCollapse,
+      updateConfig,
+      resetState,
     ]
   );
 

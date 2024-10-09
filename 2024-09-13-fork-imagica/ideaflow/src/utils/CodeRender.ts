@@ -1,16 +1,21 @@
-import AIApiScheduler from "@/services/AIApiScheduler";
+import AIApiScheduler, { aiApiScheduler } from "@/services/AIApiScheduler";
 import { CodeBlock } from "@/types/apiTypes";
 
 export default class CodeRender {
-  static vaildFileTypes = ["html", "python", "jsx", "tsx"];
+  static vaildFileTypes = ["html", "python", "jsx", "tsx", "javascript", "css", "typescript"];
   private aIApiScheduler: AIApiScheduler;
 
   constructor() {
-    this.aIApiScheduler = new AIApiScheduler();
+    this.aIApiScheduler = aiApiScheduler
   }
 
   isTsx(block?: CodeBlock): boolean {
-    return block?.language === "tsx" || block?.language === "jsx";
+    return !!(
+      block?.language === "tsx" ||
+      block?.language === "jsx" ||
+      block?.fileName.includes(".tsx") ||
+      block?.fileName.includes(".jsx")
+    );
   }
 
   render(blocks: CodeBlock[]): Promise<CodeBlock> {
@@ -24,13 +29,14 @@ export default class CodeRender {
     }
 
     if (this.isTsx(codeBlock)) {
-      // 将tsx组件代码，转换为jsx组件代码
-      return this.aIApiScheduler.renderTSX(codeBlock).then(({ content }) => {
-        return {
-          ...codeBlock,
-          code: content,
-        };
-      });
+      // // 将tsx组件代码，转换为jsx组件代码
+      // return this.aIApiScheduler.renderTSX(codeBlock).then(({ content }) => {
+      //   return {
+      //     ...codeBlock,
+      //     code: content,
+      //   };
+      // });
+      return Promise.resolve(codeBlock);
     } else if (codeBlock.language === "python") {
       return this.aIApiScheduler
         .execPythonCode(codeBlock)

@@ -1,0 +1,4 @@
+.hiddenAddress :global(.sp-preview-container) :global(.sp-preview-actions),
+.hiddenAddress :global(.sp-preview-container) :global(.sp-bridge-frame) {
+  display: none !important;
+}

@@ -1,31 +1,28 @@
 import { WorkspaceContextType } from "./../context/WorkspaceContext";
-import React from "react";
-import { v4 as uuidv4 } from "uuid";
 import { RefObject } from "react";
-import { ApiMessage, Message } from "@/types/apiTypes";
+import { AiChatResponse, CodeBlock, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
-import { CodeExtractor } from "@/utils/CodeExtractor";
-import AIApiScheduler from "./AIApiScheduler";
-import { pick } from "lodash-es";
-import promptsZh from "@/config/prompts.zh";
-import { codeRender } from "@/utils/CodeRender";
+import AIApiScheduler, { aiApiScheduler } from "./AIApiScheduler";
+import { MessageFactory } from "./MessageFactory"; // 新增导入
+import { SandpackFile } from "@codesandbox/sandpack-react";
+import sandpackFile from "../../config/sandpackFile";
+import ApiCommonParams from "@/utils/ApiCommonParams";
+import { cloneDeep } from "lodash-es";
+import { locales } from "@/utils/Locales";
 
 export type ApplyData = { type: "html" | "python"; content: string };
-
-function getApiMessage(messages: Message[]): ApiMessage[] {
-  return messages.map((message) => pick(message, ["role", "content"]));
-}
 
 export class ChatController {
   private inputRef: RefObject<HTMLTextAreaElement> | null = null;
   aIApiScheduler: AIApiScheduler;
+  private messageFactory: MessageFactory;
 
   constructor(
     public context: WorkspaceContextType,
     private setIsLoading: (isLoading: boolean) => void
   ) {
-    this.aIApiScheduler = new AIApiScheduler();
-    this.initRecommendedKeywords();
+    this.aIApiScheduler = aiApiScheduler
+    this.messageFactory = new MessageFactory();
   }
 
   setInputRef(ref: RefObject<HTMLTextAreaElement>) {
@@ -40,18 +37,13 @@ export class ChatController {
     return this.context.state.chat.messages;
   }
 
-  get mergedCodeBlocks() {
-    return this.context.state.code.mergedCodeBlocks;
+  get previewAiMessage(): Message | undefined {
+    return this.chatMessages.findLast(
+      (message) => message.role === "assistant"
+    );
   }
-
-  private formatAIResponse(response: string): string {
-    const trimmedResponse = response.trim();
-
-    if (CodeExtractor.isHtml(trimmedResponse)) {
-      return `\`\`\`html\n${trimmedResponse}\n\`\`\``;
-    }
-
-    return trimmedResponse;
+  get previousAiCodeBlocks(): CodeBlock[] {
+    return this.previewAiMessage?.codeBlocks || [];
   }
 
   public async handleSubmit(): Promise<void> {
@@ -60,45 +52,40 @@ export class ChatController {
 
     this.setIsLoading(true);
     try {
-      const userMessage: Message = {
-        id: uuidv4(),
-        content: message,
-        role: "user",
-        type: "text",
-      };
-      this.context.addChatMessage(userMessage);
-
-      const aiResponse = await this.aIApiScheduler.callOpenAIStream(
-        message,
-        getApiMessage(this.chatMessages)
+      // 新增用户消息
+      this.context.addChatMessage(
+        this.messageFactory.createUserMessage(message)
       );
 
-      const formattedResponse = this.formatAIResponse(aiResponse.content);
+      // 调用AI接口
+      const aiResponse = await this.aIApiScheduler.callOpenAIStream(
+        new ApiCommonParams({
+          model: this.context.state.config.selectedModel,
+          coderPrompt: this.context.state.config.coderPrompt,
+          messages: [
+            ...this.chatMessages,
+            this.messageFactory.createUserMessage(message),
+          ],
+        })
+      );
 
-      const newMessage: Message = {
-        id: aiResponse.id,
-        content: formattedResponse,
-        role: "assistant",
-        type: "markdown",
-        codeBlocks: aiResponse.codeBlocks,
-      };
+      // 创建AI消息, 并合并codeBlocks
+      const newMessage = this.createCodeBlockMessage(aiResponse);
+
+      // 新增AI消息
       this.context.addChatMessage(newMessage);
 
-      await this.updateMergedCodeBlocks(newMessage);
+      // 重新应用消息
+      this.reapplyAiMessage(newMessage);
 
-      const newMessages = [...this.chatMessages, newMessage];
-      if (newMessages.length >= 2) {
-        this.fetchNewRecommendedKeywords(getApiMessage(newMessages));
+      // 获取新的推荐关键词
+      if (this.chatMessages.length >= 1) {
+        this.fetchNewRecommendedKeywords([...this.chatMessages, newMessage]);
       }
     } catch (error) {
-      this.context.addChatMessage({
-        id: uuidv4(),
-        content: `抱歉，发生了错误: ${
-          error instanceof Error ? error.message : "未知错误"
-        }`,
-        role: "assistant",
-        type: "text",
-      });
+      console.error("handleSubmit error", error);
+      const errorMessage = this.messageFactory.createErrorMessage(error);
+      this.context.addChatMessage(errorMessage);
     } finally {
       this.setIsLoading(false);
       if (this.inputRef?.current) {
@@ -107,20 +94,22 @@ export class ChatController {
     }
   }
 
-  private async updateMergedCodeBlocks(message: Message): Promise<void> {
-    const previousMergedBlocks = this.mergedCodeBlocks;
-    const blocks = CodeBlocks.mergeCodeBlocks(previousMergedBlocks, message);
-    this.context.updateMergedCodeBlocks(blocks);
+  /**
+   * 创建包含codeBlocks的message
+   * @param message
+   */
+  private createCodeBlockMessage(aiResponse: AiChatResponse): Message {
+    const message = this.messageFactory.createAssistantMessage(aiResponse);
 
-    // 更新预览内容
-    try {
-      const codeBlock = await codeRender.render(blocks);
-      console.log("jj render codeBlock", codeBlock);
+    // 获取上一次的最后一条AI消息, 合并codeBlocks
+    const blocks = CodeBlocks.mergeCodeBlocks(
+      this.previousAiCodeBlocks,
+      message
+    );
 
-      this.context.updatePreviewCodeBlock(codeBlock);
-    } catch (e) {
-      console.log("jj codeblock error", e);
-    }
+    message.codeBlocks = blocks;
+
+    return message;
   }
 
   public handleKeyPress = (e: React.KeyboardEvent<Element>): void => {
@@ -138,27 +127,73 @@ export class ChatController {
     }
   };
 
-  public handleReapplyCode = (code: string): void => {
-    console.log(code);
+  /**
+   * 重新应用消息
+   * @param message
+   */
+  public reapplyAiMessage = async (message: Message): Promise<void> => {
+    if (message.role === "user") {
+      console.warn("只能重新应用ai消息");
+      return;
+    }
+
+    if (Array.isArray(message.codeBlocks)) {
+      this.updatePreviewCodeBlocks(message.codeBlocks);
+    }
   };
+
+  updatePreviewCodeBlocks(codeBlocks: CodeBlock[]) {
+    const result = cloneDeep(this.context.state.code.files || {});
+    codeBlocks.forEach((codeBlock) => {
+      // 确保 fileName 以 "/" 开头
+      const fileName = codeBlock.fileName.startsWith("/")
+        ? codeBlock.fileName
+        : `/${codeBlock.fileName}`;
+      const target = result[fileName];
+      if (target) {
+        if (typeof target === "string") {
+          result[fileName] = sandpackFile(codeBlock.content);
+        } else {
+          (result[fileName] as SandpackFile) = {
+            ...target,
+            code: codeBlock.content,
+          };
+        }
+      } else {
+        // 如果文件不存在，创建新文件
+        result[fileName] = sandpackFile(codeBlock.content);
+      }
+    });
+
+    console.log("更新预览代码块", result);
+
+    this.context.updateCodeFiles(result, codeBlocks);
+
+    // TODO: 自动刷新preivew
+  }
 
   /**
    * 当message 为空时表示初始化提示词
    * @param messages
    */
-  fetchNewRecommendedKeywords = async (messages: ApiMessage[]) => {
+  fetchNewRecommendedKeywords = async (messages: Message[]) => {
     try {
-      const aIApiScheduler = new AIApiScheduler();
       const prompt =
         messages.length === 0
-          ? promptsZh.initRecommond
-          : promptsZh.contextPromptTemplate.replace(
+          ? locales.get("locale:initRecommond")
+          : locales.get("locale:contextPromptTemplate").replace(
               "{{chatHistory}}",
-              messages.map((msg) => msg.content).join("\n")
+              MessageFactory.toApiMessage(messages)
+                .map((msg) => msg.content)
+                .join("\n")
             );
-      const response = await aIApiScheduler.getRecommendedKeywords([
-        { role: "user", content: prompt },
-      ]);
+
+      const aiApiParams = new ApiCommonParams({
+        model: this.context.state.config.selectedModel,
+        messages: [this.messageFactory.createUserMessage(prompt)],
+      });
+
+      const response = await this.aIApiScheduler.getRecommendedKeywords(aiApiParams);
       if (response.keywords && response.keywords.length > 0) {
         this.context.updateRecommendedKeywords(response.keywords);
       } else {

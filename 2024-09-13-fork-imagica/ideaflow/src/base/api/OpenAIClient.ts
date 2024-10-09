@@ -1,14 +1,8 @@
 import { AiChatResponse, ApiMessage } from "@/types/apiTypes";
 import ApiClient from "./ApiClient";
 import { CodeExtractor } from "@/utils/CodeExtractor";
-import models from "@/config/models";
-import promptsZh from "@/config/prompts.zh";
-import { cloneDeep } from "lodash-es";
-
-const baseChatMessage: ApiMessage = {
-  role: "system",
-  content: promptsZh.coderHTML,
-};
+import models from "../../../config/models.json";
+import ApiCommonParams from "@/utils/ApiCommonParams";
 
 export interface OpenAIError extends Error {
   response?: {
@@ -28,26 +22,15 @@ export interface OpenAIGenerateKeysParams {
 class OpenAIClient extends ApiClient {
   defualtModel = models.turbo;
 
-  private extendsCoder(messages?: ApiMessage[]): ApiMessage[] {
-    return [cloneDeep(baseChatMessage), ...(messages || [])];
-  }
-
   // 生成代码的对话
-  async generateCode({
-    model,
-    history,
-    message,
-  }: OpenAIChatParmas): Promise<AiChatResponse> {
-    history = this.extendsCoder([
-      ...(history || []),
-      { role: "user", content: message },
-    ]);
-
+  async generateCode(
+    apiCommonParams: ApiCommonParams
+  ): Promise<AiChatResponse> {
     try {
       const result = await this.postStream("/chat/completions", {
-        model: model || this.defualtModel,
-        messages: history,
-        stream: true,
+        model: apiCommonParams.model,
+        messages: apiCommonParams.messages,
+        stream: apiCommonParams.stream,
       });
 
       if (!result || !result.content) {
@@ -64,14 +47,15 @@ class OpenAIClient extends ApiClient {
     }
   }
 
-  async generateKeywords({
-    messages,
-  }: OpenAIGenerateKeysParams): Promise<{ keywords: string[] }> {
+  async generateKeywords(
+    apiParams: ApiCommonParams
+  ): Promise<{ keywords: string[] }> {
     try {
       const result = await this.postStream("/chat/completions", {
-        model: models.gpt4,
-        messages: this.extendsCoder(messages),
-        stream: true,
+        model: apiParams.model,
+        // 只取最后20条, 减少token消耗
+        messages: apiParams.messages.slice(0, 20),
+        stream: apiParams.stream,
       });
 
       const keywords = result.content

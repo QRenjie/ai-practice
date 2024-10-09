@@ -29,6 +29,9 @@ const WorkspaceChat: React.FC = () => {
   const chatController = useCreation(() => {
     const controller = new ChatController(workspaceContext, setIsLoading);
     controller.setInputRef(inputRef);
+    if (typeof window !== "undefined") {
+      controller.initRecommendedKeywords();
+    }
     return controller;
   }, []);
 
@@ -121,6 +124,7 @@ const WorkspaceChat: React.FC = () => {
       content={PopoverContent}
       onOpenChange={handleOpenChange}
       trigger="click"
+      forceRender
     >
       <div
         className={`bg-gray-100 focus-within:ring-0 transition-all duration-300 ${

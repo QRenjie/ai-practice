@@ -1,32 +1,16 @@
 {
   "id": "",
+  "meta": {},
   "config": {
     "selectedModel": "gpt-3.5-turbo",
     "recommendedKeywords": [],
     "isChatCollapsed": false,
-    "useLayer": true
+    "isWindowed": true,
+    "isSandpackLoading": true,
+    "coderPrompt": "locale:coderPrompt"
   },
   "ui": {
     "activeTab": "preview",
-    "size": {
-      "width": 600,
-      "height": 600
-    },
-    "position": {
-      "x": 20,
-      "y": 20
-    }
-  },
-  "preview": {
-    "content": ""
-  },
-  "code": {
-    "mergedCodeBlocks": []
-  },
-  "chat": {
-    "messages": []
-  },
-  "layer": {
     "title": "",
     "size": {
       "width": 480,
@@ -42,5 +26,14 @@
       "width": "100%",
       "height": "100%"
     }
+  },
+  "code": {
+    "mergedCodeBlocks": [],
+    "files": {},
+    "customSetup": {},
+    "template": "react"
+  },
+  "chat": {
+    "messages": []
   }
 }
