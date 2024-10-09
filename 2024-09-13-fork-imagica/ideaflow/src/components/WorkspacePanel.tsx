@@ -6,10 +6,11 @@ import WorkspaceContext from "@/context/WorkspaceContext";
 import WorkspaceSandpackWrapper from "./WorkspaceSandpackWrapper";
 import WorkspaceLoadingSkeleton from "./WorkspaceLoadingSkeleton";
 import { PreviewPublisher } from "@/utils/PreviewPublisher";
+import { exportManager } from "@/utils/ExportManager"; // 新增导入
 import { message } from "antd";
+
 const WorkspacePanel: React.FC = () => {
   const { state, setActiveTab } = useContext(WorkspaceContext)!;
-
   const { isSandpackLoading } = state.config;
 
   const handlePublish = async () => {
@@ -33,6 +34,10 @@ const WorkspacePanel: React.FC = () => {
     } else {
       message.error("发布预览失败，请稍后重试。");
     }
+  };
+
+  const handleExport = () => {
+    exportManager.exportProject(state.code);
   };
 
   return (
@@ -66,6 +71,13 @@ const WorkspacePanel: React.FC = () => {
               disabled={isSandpackLoading}
             >
               发布预览
+            </button>
+            <button
+              className="px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-300 ml-2"
+              onClick={handleExport}
+              disabled={isSandpackLoading}
+            >
+              导出
             </button>
           </div>
           <div className="flex-1 overflow-hidden relative">

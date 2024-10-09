@@ -1,4 +1,4 @@
-import AIApiScheduler from "@/services/AIApiScheduler";
+import AIApiScheduler, { aiApiScheduler } from "@/services/AIApiScheduler";
 import { CodeBlock } from "@/types/apiTypes";
 
 export default class CodeRender {
@@ -6,7 +6,7 @@ export default class CodeRender {
   private aIApiScheduler: AIApiScheduler;
 
   constructor() {
-    this.aIApiScheduler = new AIApiScheduler();
+    this.aIApiScheduler = aiApiScheduler
   }
 
   isTsx(block?: CodeBlock): boolean {

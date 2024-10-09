@@ -3,6 +3,7 @@ import { openAIClient } from "@/base/api/OpenAIClient";
 import BackendApiScheduler from "./BackendApiScheduler";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import JSONUtil from "@/utils/JSONUtil";
+import { WorkspaceState } from "@/context/WorkspaceContext";
 
 /**
  * 前端调用后台接口的中间层
@@ -93,4 +94,35 @@ export default class AIApiScheduler {
       throw error;
     }
   }
+
+  // 修改 buildPreview 方法
+  async buildPreview(state: WorkspaceState["code"]): Promise<Response> {
+    const response = await fetch("/api/build-preview", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSONUtil.stringify(state),
+    });
+
+    if (!response.ok) {
+      throw new Error("构建失败");
+    }
+
+    return response;
+  }
+
+  // 修改 getFileNameFromResponse 方法
+  getFileNameFromResponse(response: Response): string {
+    const contentDisposition = response.headers.get('Content-Disposition');
+    if (contentDisposition) {
+      const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+      if (fileNameMatch) {
+        return fileNameMatch[1];
+      }
+    }
+    return 'build.zip';
+  }
 }
+
+export const aiApiScheduler = new AIApiScheduler();

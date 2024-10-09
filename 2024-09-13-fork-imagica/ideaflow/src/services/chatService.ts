@@ -2,7 +2,7 @@ import { WorkspaceContextType } from "./../context/WorkspaceContext";
 import { RefObject } from "react";
 import { AiChatResponse, CodeBlock, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
-import AIApiScheduler from "./AIApiScheduler";
+import AIApiScheduler, { aiApiScheduler } from "./AIApiScheduler";
 import { MessageFactory } from "./MessageFactory"; // 新增导入
 import { SandpackFile } from "@codesandbox/sandpack-react";
 import sandpackFile from "../../config/sandpackFile";
@@ -21,7 +21,7 @@ export class ChatController {
     public context: WorkspaceContextType,
     private setIsLoading: (isLoading: boolean) => void
   ) {
-    this.aIApiScheduler = new AIApiScheduler();
+    this.aIApiScheduler = aiApiScheduler
     this.messageFactory = new MessageFactory();
   }
 
@@ -178,7 +178,6 @@ export class ChatController {
    */
   fetchNewRecommendedKeywords = async (messages: Message[]) => {
     try {
-      const aIApiScheduler = new AIApiScheduler();
       const prompt =
         messages.length === 0
           ? locales.get("locale:initRecommond")
@@ -194,7 +193,7 @@ export class ChatController {
         messages: [this.messageFactory.createUserMessage(prompt)],
       });
 
-      const response = await aIApiScheduler.getRecommendedKeywords(aiApiParams);
+      const response = await this.aIApiScheduler.getRecommendedKeywords(aiApiParams);
       if (response.keywords && response.keywords.length > 0) {
         this.context.updateRecommendedKeywords(response.keywords);
       } else {

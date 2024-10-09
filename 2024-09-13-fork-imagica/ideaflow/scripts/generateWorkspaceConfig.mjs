@@ -4,21 +4,13 @@ import { fileURLToPath } from "url";
 import DirectoryReader from "../src/utils/DirectoryReader.js";
 import sandpackFile from "../config/sandpackFile.js";
 import JSONUtil from "../src/utils/JSONUtil.js";
-
+import templates from "../config/templates.json";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const excludeDirs = [
-  ".DS_Store",
-  ".gitignore",
-  "node_modules",
-  "dist",
-  "build",
-  "package-lock.json",
-  "README.md",
-  "yarn.lock",
-];
+
+const excludeDirs = templates.generateExcludeDirs;
 // 隐藏的文件, 这些文件不会在workspace中显示, 也不会参与项目构建
-const hiddenFiles = ["package.json"];
+const hiddenFiles = templates.hiddenFiles;
 
 try {
   // 读取默认配置
