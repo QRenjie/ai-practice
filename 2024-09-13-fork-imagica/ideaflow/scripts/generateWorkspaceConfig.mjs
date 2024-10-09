@@ -3,19 +3,20 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import DirectoryReader from "../src/utils/DirectoryReader.js";
 import sandpackFile from "../config/sandpackFile.js";
+import JSONUtil from "../src/utils/JSONUtil.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 try {
   // 读取默认配置
-  const defaultConfig = JSON.parse(
+  const defaultConfig = JSONUtil.parse(
     readFileSync(join(__dirname, "../config/workspace.default.json"), "utf8")
   );
 
   // 读取现有的workspace配置
   const workspaceConfigPath = join(__dirname, "../config/workspace.json");
-  const workspaceConfig = JSON.parse(readFileSync(workspaceConfigPath, "utf8"));
+  const workspaceConfig = JSONUtil.parse(readFileSync(workspaceConfigPath, "utf8"));
 
   // 获取templates目录下的所有子目录
   const templatesDir = join(__dirname, "../templates");
@@ -31,7 +32,8 @@ try {
   templateDirs.forEach((template) => {
     // 如果workspace中存在对应的key,使用它,否则使用默认配置
     newConfig[template] =
-      workspaceConfig[template] || JSON.parse(JSON.stringify(defaultConfig));
+      workspaceConfig[template] ||
+      JSONUtil.parse(JSONUtil.stringify(defaultConfig));
 
     // 修改 config.coderPrompt
     newConfig[
@@ -79,7 +81,9 @@ try {
 
       // 从templateFiles中的package.json获取依赖信息和template
       if (templateFiles["package.json"]) {
-        const packageJsonContent = JSON.parse(templateFiles["package.json"]);
+        const packageJsonContent = JSONUtil.parse(
+          templateFiles["package.json"]
+        );
 
         // 更新code.customSetup
         newConfig[template].code.customSetup = {
@@ -105,7 +109,7 @@ try {
   });
 
   // 直接更新workspace.json文件
-  writeFileSync(workspaceConfigPath, JSON.stringify(newConfig, null, 2));
+  writeFileSync(workspaceConfigPath, JSONUtil.stringify(newConfig, null, 2));
   console.log("workspace.json 生成成功");
 } catch (error) {
   console.error("workspace.json 生成失败:", error);

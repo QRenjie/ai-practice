@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { StreamApiProcessorType, streamProcessor } from "./StreamProcessor";
 import { v4 as uuidv4 } from "uuid";
+import JSONUtil from "@/utils/JSONUtil";
 export default class ApiClient {
   private axiosInstance: AxiosInstance;
   token: string = "";
@@ -42,7 +43,7 @@ export default class ApiClient {
             "Content-Type": "application/json",
             authorization: `Bearer ${this.token}`,
           },
-          body: JSON.stringify(data),
+          body: JSONUtil.stringify(data),
           ...config,
         }
       );

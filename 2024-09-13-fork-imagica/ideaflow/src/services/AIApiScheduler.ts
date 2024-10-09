@@ -2,6 +2,7 @@ import { AiChatResponse, CodeBlock } from "@/types/apiTypes";
 import { openAIClient } from "@/base/api/OpenAIClient";
 import BackendApiScheduler from "./BackendApiScheduler";
 import ApiCommonParams from "@/utils/ApiCommonParams";
+import JSONUtil from "@/utils/JSONUtil";
 
 /**
  * 前端调用后台接口的中间层
@@ -42,7 +43,7 @@ export default class AIApiScheduler {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(codeBlock),
+      body: JSONUtil.stringify(codeBlock),
     }).then((response) => response.json());
   }
 
@@ -77,7 +78,7 @@ export default class AIApiScheduler {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(codeBlock),
+        body: JSONUtil.stringify(codeBlock),
       });
       if (!response.ok) {
         throw new Error("网络响应不正常");

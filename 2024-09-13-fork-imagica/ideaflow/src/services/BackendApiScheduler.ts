@@ -1,5 +1,6 @@
 import { AiChatResponse, CodeBlock } from "@/types/apiTypes";
 import ApiCommonParams from "@/utils/ApiCommonParams";
+import JSONUtil from "@/utils/JSONUtil";
 
 /**
  * 调用 Next.js 后台接口的实现类
@@ -12,7 +13,7 @@ export default class BackendApiScheduler {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(params),
+        body: JSONUtil.stringify(params),
       }).then((res) => res.json());
 
       console.log("response from backend", response);
@@ -30,7 +31,7 @@ export default class BackendApiScheduler {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(codeBlock),
+      body: JSONUtil.stringify(codeBlock),
     }).then((response) => response.json());
   }
 
@@ -43,7 +44,7 @@ export default class BackendApiScheduler {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(params),
+        body: JSONUtil.stringify(params),
       }).then((res) => res.json());
 
       console.log("result", result);
