@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import DirectoryReader from "../src/utils/DirectoryReader.js";
 import sandpackFile from "../config/sandpackFile.js";
 import JSONUtil from "../src/utils/JSONUtil.js";
-import templates from "../config/templates.json";
+import templates from "../config/templates.json" assert { type: "json" };
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
