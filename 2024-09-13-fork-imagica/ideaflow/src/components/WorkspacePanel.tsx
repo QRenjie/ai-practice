@@ -8,6 +8,7 @@ import WorkspaceLoadingSkeleton from "./WorkspaceLoadingSkeleton";
 import { PreviewPublisher } from "@/utils/PreviewPublisher";
 import { exportManager } from "@/utils/ExportManager"; // 新增导入
 import { message } from "antd";
+import { workspaceManager } from "@/utils/WorkspaceManager";
 
 const WorkspacePanel: React.FC = () => {
   const { state, setActiveTab } = useContext(WorkspaceContext)!;
@@ -38,6 +39,16 @@ const WorkspacePanel: React.FC = () => {
 
   const handleExport = () => {
     exportManager.exportProject(state.code);
+  };
+
+  // 新增保存函数
+  const handleSave = async () => {
+    try {
+      await workspaceManager.save(state);
+      message.success("工作区保存成功");
+    } catch (error) {
+      message.error("保存失败，请稍后重试");
+    }
   };
 
   return (
@@ -78,6 +89,14 @@ const WorkspacePanel: React.FC = () => {
               disabled={isSandpackLoading}
             >
               导出
+            </button>
+            {/* 新增保存按钮 */}
+            <button
+              className="px-4 py-2 bg-purple-500 text-white hover:bg-purple-600 transition-colors duration-300 ml-2"
+              onClick={handleSave}
+              disabled={isSandpackLoading}
+            >
+              保存
             </button>
           </div>
           <div className="flex-1 overflow-hidden relative">

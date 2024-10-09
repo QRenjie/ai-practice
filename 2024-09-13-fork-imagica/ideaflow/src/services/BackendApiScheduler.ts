@@ -1,3 +1,4 @@
+import { WorkspaceState } from "@/context/WorkspaceContext";
 import { AiChatResponse, CodeBlock } from "@/types/apiTypes";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import JSONUtil from "@/utils/JSONUtil";
@@ -53,5 +54,35 @@ export default class BackendApiScheduler {
       console.error("获取关键词错误:", error);
       throw error;
     }
+  }
+
+  /**
+   * 构建工作区
+   * @param state
+   * @returns
+   */
+  async buildPreview(state: WorkspaceState["code"]): Promise<Response> {
+    return fetch("/api/build-preview", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSONUtil.stringify(state),
+    }).then((res) => res.json());
+  }
+
+  /**
+   * 保存工作区
+   * @param state
+   * @returns
+   */
+  async saveWorkspace(state: WorkspaceState): Promise<void> {
+    return fetch("/api/save-workspace", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSONUtil.stringify(state),
+    }).then((res) => res.json());
   }
 }

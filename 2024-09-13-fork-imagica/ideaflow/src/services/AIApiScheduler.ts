@@ -16,7 +16,11 @@ export default class AIApiScheduler {
     this.backendApi = new BackendApiScheduler();
   }
 
-  // 新增使用流式请求的方法
+  /**
+   * 调用 OpenAI 接口
+   * @param apiParams 
+   * @returns 
+   */
   async callOpenAIStream(apiParams: ApiCommonParams): Promise<AiChatResponse> {
     try {
       if (this.useBackend) {
@@ -48,6 +52,11 @@ export default class AIApiScheduler {
     }).then((response) => response.json());
   }
 
+  /**
+   * 获取推荐关键词
+   * @param apiParams 
+   * @returns 
+   */
   async getRecommendedKeywords(
     apiParams: ApiCommonParams
   ): Promise<{ keywords: string[] }> {
@@ -71,39 +80,9 @@ export default class AIApiScheduler {
     }
   }
 
-  // 新增 renderTSX 方法
-  async renderTSX(codeBlock: CodeBlock): Promise<{ content: string }> {
-    try {
-      const response = await fetch("/api/render", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSONUtil.stringify(codeBlock),
-      });
-      if (!response.ok) {
-        throw new Error("网络响应不正常");
-      }
-      const result = await response.json();
-
-      console.log("renderTSX result", result);
-
-      return result;
-    } catch (error) {
-      console.error("渲染 TSX 错误:", error);
-      throw error;
-    }
-  }
-
   // 修改 buildPreview 方法
   async buildPreview(state: WorkspaceState["code"]): Promise<Response> {
-    const response = await fetch("/api/build-preview", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSONUtil.stringify(state),
-    });
+    const response = await this.backendApi.buildPreview(state);
 
     if (!response.ok) {
       throw new Error("构建失败");
@@ -114,14 +93,25 @@ export default class AIApiScheduler {
 
   // 修改 getFileNameFromResponse 方法
   getFileNameFromResponse(response: Response): string {
-    const contentDisposition = response.headers.get('Content-Disposition');
+    const contentDisposition = response.headers.get("Content-Disposition");
     if (contentDisposition) {
       const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/i);
       if (fileNameMatch) {
         return fileNameMatch[1];
       }
     }
-    return 'build.zip';
+    return "build.zip";
+  }
+
+  async saveWorkspace(state: WorkspaceState): Promise<boolean> {
+    try {
+      await this.backendApi.saveWorkspace(state);
+
+      return true;
+    } catch (error) {
+      console.error("保存工作区时出错:", error);
+      return false;
+    }
   }
 }
 
