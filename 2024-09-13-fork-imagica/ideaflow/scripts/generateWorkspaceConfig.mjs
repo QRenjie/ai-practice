@@ -4,13 +4,18 @@ import { fileURLToPath } from "url";
 import DirectoryReader from "../src/utils/DirectoryReader.js";
 import sandpackFile from "../config/sandpackFile.js";
 import JSONUtil from "../src/utils/JSONUtil.js";
-import templates from "../config/templates.json" assert { type: "json" };
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const excludeDirs = templates.generateExcludeDirs;
-// 隐藏的文件, 这些文件不会在workspace中显示, 也不会参与项目构建
-const hiddenFiles = templates.hiddenFiles;
+// 新增: 读取templates.json
+const templatesJSON = JSONUtil.parse(
+  readFileSync(join(__dirname, "../config/templates.json"), "utf8")
+);
+
+// 修改: 使用templatesJSON中的配置
+const excludeDirs = templatesJSON.generateExcludeDirs;
+const hiddenFiles = templatesJSON.hiddenFiles;
 
 try {
   // 读取默认配置
