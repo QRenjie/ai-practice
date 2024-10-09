@@ -58,7 +58,6 @@ export default class ApiClient {
         onChunk
       );
 
-      console.log(" post stream response", response, result);
       return result;
     } catch (error) {
       console.error("API流式请求错误:", error);

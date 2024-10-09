@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 const Layer = dynamic(() => import("./Layer"));
 
 const WorkspaceInner: React.FC<{
-  onClose?: (id: string) => void;
+  onClose?: () => void;
 }> = ({ onClose }) => {
   const { state } = React.useContext(WorkspaceContext)!;
 
@@ -24,7 +24,7 @@ const WorkspaceInner: React.FC<{
     <Layer
       id={state.id}
       initialState={state.ui}
-      onClose={() => onClose?.(state.id)}
+      onClose={onClose}
       title={state.ui.title}
       disabled={!state.config.isWindowed}
     >
@@ -40,7 +40,7 @@ const Workspace: React.FC<{
 }> = ({ state, onClose }) => {
   return (
     <WorkspacePovider key={state.id} initialState={state}>
-      <WorkspaceInner onClose={onClose} />
+      <WorkspaceInner onClose={() => onClose?.(state.id)} />
     </WorkspacePovider>
   );
 };
