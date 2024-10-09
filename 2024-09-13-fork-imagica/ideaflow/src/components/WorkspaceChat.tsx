@@ -1,12 +1,11 @@
 import React, {
-  useContext,
   useRef,
   useState,
   useCallback,
   useEffect,
   useMemo,
 } from "react";
-import WorkspaceContext from "../context/WorkspaceContext";
+import { useWorkspaceStoreState } from "../context/WorkspaceContext";
 import { ChatController } from "../services/chatService";
 import MessageList from "./MessageList";
 import ConfigPanel from "./ConfigPanel";
@@ -18,16 +17,15 @@ import Popover from "./common/Popover";
 import { useCreation } from "ahooks";
 
 const WorkspaceChat: React.FC = () => {
-  const workspaceContext = useContext(WorkspaceContext)!;
+  const [state, workspaceStore] = useWorkspaceStoreState();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { state } = workspaceContext;
   const [openPanel, setOpenPanel] = useState<"none" | "messages" | "config">(
     "none"
   );
 
   const chatController = useCreation(() => {
-    const controller = new ChatController(workspaceContext, setIsLoading);
+    const controller = new ChatController(workspaceStore, setIsLoading);
     controller.setInputRef(inputRef);
     if (typeof window !== "undefined") {
       controller.initRecommendedKeywords();
@@ -36,8 +34,8 @@ const WorkspaceChat: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    chatController.context = workspaceContext;
-  }, [chatController, state, workspaceContext]);
+    chatController.context = workspaceStore;
+  }, [chatController, state, workspaceStore]);
 
   const handleTogglePanel = useCallback((panel: "messages" | "config") => {
     setOpenPanel((prev) => (prev === panel ? "none" : panel));

@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import WorkspaceContext from "../context/WorkspaceContext";
+import React from "react";
+import { useWorkspaceStoreState } from "../context/WorkspaceContext";
 import { Switch } from "antd";
 
 interface ConfigPanelProps {
@@ -7,10 +7,10 @@ interface ConfigPanelProps {
 }
 
 const ConfigPanel: React.FC<ConfigPanelProps> = ({ onKeywordSelect }) => {
-  const { state, updateConfig } = useContext(WorkspaceContext)!;
+  const [state, workspaceStore] = useWorkspaceStoreState();
 
   const handleWindowedChange = (checked: boolean) => {
-    updateConfig({ isWindowed: checked });
+    workspaceStore.updateConfig({ isWindowed: checked });
   };
 
   return (

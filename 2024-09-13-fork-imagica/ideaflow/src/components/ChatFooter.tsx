@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import WorkspaceContext from "@/context/WorkspaceContext";
+import React from "react";
+import WorkspaceContext, { useWorkspaceStoreState } from "@/context/WorkspaceContext";
 import {
   FiSettings,
   FiMessageSquare,
@@ -18,14 +18,14 @@ interface ChatFooterProps {
 }
 
 export function CollapseChatFooterButton() {
-  const { state, toggleChatCollapse } = useContext(WorkspaceContext)!;
+  const [state, workspaceStore] = useWorkspaceStoreState();
 
   return (
     <button
       className={`rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 flex items-center justify-center ${
         state.config.isChatCollapsed ? "w-6 h-6" : "w-7 h-7"
       }`}
-      onClick={toggleChatCollapse}
+      onClick={workspaceStore.toggleChatCollapse}
       title={state.config.isChatCollapsed ? "展开聊天" : "折叠聊天"}
       type="button"
     >
@@ -40,7 +40,7 @@ export function ChatFooterActions({
   handleSubmit,
   isLoading,
 }: ChatFooterProps) {
-  const { state } = useContext(WorkspaceContext)!;
+  const [state] = useWorkspaceStoreState();
 
   const sizeClass = state.config.isChatCollapsed ? "w-6 h-6" : "w-7 h-7";
 
@@ -104,7 +104,7 @@ export function ChatFooterActions({
 
 function ChatFooter(props: ChatFooterProps) {
   const { onKeywordSelect } = props;
-  const { state } = useContext(WorkspaceContext)!;
+  const [state] = useWorkspaceStoreState();
   const recommendedKeywords = state.config.recommendedKeywords;
 
   return (

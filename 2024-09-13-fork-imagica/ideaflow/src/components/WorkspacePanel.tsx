@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
+import React from "react";
 import WorkspacePreview from "./WorkspacePreview";
 import WorkspaceChat from "./WorkspaceChat";
 import WorkspaceCode from "./WorkspaceCode"; // 新增导入
-import WorkspaceContext from "@/context/WorkspaceContext";
+import { useWorkspaceStoreState } from "@/context/WorkspaceContext";
 import WorkspaceSandpackWrapper from "./WorkspaceSandpackWrapper";
 import WorkspaceLoadingSkeleton from "./WorkspaceLoadingSkeleton";
 import { PreviewPublisher } from "@/utils/PreviewPublisher";
 import { message } from "antd";
 const WorkspacePanel: React.FC = () => {
-  const { state, setActiveTab } = useContext(WorkspaceContext)!;
+  const [state, workspaceStore] = useWorkspaceStoreState();
   const [messageApi] = message.useMessage();
 
   const { isSandpackLoading } = state.config;
@@ -44,14 +44,14 @@ const WorkspacePanel: React.FC = () => {
           <div className="flex border-b bg-blue-200">
             <TabButton
               active={state.ui.activeTab === "preview"}
-              onClick={() => setActiveTab("preview")}
+              onClick={() => workspaceStore.setActiveTab("preview")}
               disabled={isSandpackLoading}
             >
               预览
             </TabButton>
             <TabButton
               active={state.ui.activeTab === "codeHistory"}
-              onClick={() => setActiveTab("codeHistory")}
+              onClick={() => workspaceStore.setActiveTab("codeHistory")}
               disabled={isSandpackLoading}
             >
               代码
@@ -91,7 +91,7 @@ const WorkspacePanel: React.FC = () => {
         <div className={`border-t bg-blue-200 transition-all duration-300`}>
           <WorkspaceChat />
         </div>
-        <WorkspaceLoadingSkeleton />
+        {/* <WorkspaceLoadingSkeleton /> */}
       </div>
     </WorkspaceSandpackWrapper>
   );

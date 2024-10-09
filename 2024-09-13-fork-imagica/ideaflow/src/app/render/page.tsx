@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Sandpack } from "@codesandbox/sandpack-react";
-import { workspaceStateCreator } from "@/context/WorkspaceContext";
+import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
 
 const worspacestate = workspaceStateCreator.create();
 export default function RenderPage() {

@@ -1,5 +1,8 @@
 import React from "react";
-import WorkspaceContext, { WorkspaceState } from "@/context/WorkspaceContext";
+import {
+  useWorkspaceStoreState,
+  WorkspaceState,
+} from "@/context/WorkspaceContext";
 import WorkspacePovider from "../container/WorkspacePovider";
 import WorkspacePanel from "./WorkspacePanel";
 import WorkspaceSelector from "./WorkspaceSelector"; // 新增导入
@@ -10,7 +13,7 @@ const Layer = dynamic(() => import("./Layer"));
 const WorkspaceInner: React.FC<{
   onClose?: (id: string) => void;
 }> = ({ onClose }) => {
-  const { state } = React.useContext(WorkspaceContext)!;
+  const [state] = useWorkspaceStoreState();
 
   const renderContent = () => {
     // 当template为空时，表示当前工作区为自定义工作区，需要展示工作区选择器

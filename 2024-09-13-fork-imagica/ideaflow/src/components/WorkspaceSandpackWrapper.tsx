@@ -1,4 +1,4 @@
-import WorkspaceContext from "@/context/WorkspaceContext";
+import WorkspaceContext, { useWorkspaceStoreState } from "@/context/WorkspaceContext";
 import {
   SandpackLayout,
   SandpackProvider,
@@ -32,8 +32,7 @@ const SandpackContent: React.FC<{ children: React.ReactNode }> = ({
 const WorkspaceSandpackWrapper: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { state } = useContext(WorkspaceContext)!;
-
+  const [state] = useWorkspaceStoreState();
   return (
     <SandpackProvider
       className="h-full"

@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Skeleton } from "antd";
-import WorkspaceContext from "@/context/WorkspaceContext";
+import { useWorkspaceStoreState } from "@/context/WorkspaceContext";
 
 interface WorkspaceLoadingSkeletonProps {
   isLoading?: boolean;
@@ -9,8 +9,8 @@ interface WorkspaceLoadingSkeletonProps {
 const WorkspaceLoadingSkeleton: React.FC<
   WorkspaceLoadingSkeletonProps
 > = ({}) => {
-  const { state } = useContext(WorkspaceContext)!;
-
+  const [state] = useWorkspaceStoreState();
+  console.log('state', state);
   if (!state.config.isSandpackLoading) return null;
 
   return (

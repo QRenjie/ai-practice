@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { CodeBlock, Message } from "@/types/apiTypes";
 import { LayerState } from "@/components/Layer";
-import { merge } from "lodash-es"; // 修改这一行
 import workspaceConfig from "../../config/workspace.json"; // 新增这一行
-import { v4 as uuidv4 } from "uuid";
 import { SandpackProps } from "@codesandbox/sandpack-react";
+import { WorkspaceStore } from "@/store/WorkspaceStore";
+import { useSliceStore } from "@qlover/slice-store-react";
 
 export type WorkspaceType = keyof typeof workspaceConfig;
 export const workspaceOptions = Object.keys(workspaceConfig).map((key) => ({
@@ -19,7 +19,7 @@ interface UIState extends LayerState {
 
 /**
  * @property {template} default: react
- * 
+ *
  * customSetup: 被启用，使用package.json 直接替换，他会导致拖慢项目启动
  */
 interface CodeState
@@ -106,45 +106,13 @@ export interface WorkspaceContextType {
   resetState: (option: WorkspaceType) => void; // 新增这一行
 }
 
-// 定义递归的 DeepPartial 类型
-type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>;
-};
-
-const WorkspaceContext = React.createContext<WorkspaceContextType | null>(null);
-
-export class WorkspaceStateCreator {
-  defaultKey: WorkspaceType = "static-html";
-
-  createSelector(source?: DeepPartial<WorkspaceState>) {
-    // 创建一个静态的html工作区, 为了控制选择 template
-    const defaults = this.create("static-html", source);
-    // defaults.code.files = {};
-    defaults.code.customSetup = {};
-    defaults.code.template = undefined;
-
-    return defaults;
-  }
-
-  defaults(source?: DeepPartial<WorkspaceState>) {
-    return this.create(this.defaultKey, source);
-  }
-
-  create(
-    key: WorkspaceType = this.defaultKey,
-    source?: DeepPartial<WorkspaceState>,
-  ): WorkspaceState {
-    const config = workspaceConfig[key] as WorkspaceState | undefined;
-    if (!config) {
-      throw new Error(`Workspace config not found for key: ${key}`);
-    }
-
-    return merge({}, config, source, {
-      id: source?.id || uuidv4(),
-    });
-  }
-}
-
-export const workspaceStateCreator = new WorkspaceStateCreator();
+const WorkspaceContext = React.createContext<WorkspaceStore | null>(null);
 
 export default WorkspaceContext;
+
+export function useWorkspaceStoreState(): [WorkspaceState, WorkspaceStore] {
+  const workspaceStore = useContext(WorkspaceContext)!;
+  const state = useSliceStore(workspaceStore);
+  console.log('store state', state);
+  return [state, workspaceStore];
+}

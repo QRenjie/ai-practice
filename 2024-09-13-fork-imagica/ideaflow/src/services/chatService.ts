@@ -9,6 +9,7 @@ import sandpackFile from "../../config/sandpackFile";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import { cloneDeep } from "lodash-es";
 import { locales } from "@/utils/Locales";
+import { WorkspaceStore } from "@/store/WorkspaceStore";
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
@@ -18,7 +19,7 @@ export class ChatController {
   private messageFactory: MessageFactory;
 
   constructor(
-    public context: WorkspaceContextType,
+    public context: WorkspaceStore,
     private setIsLoading: (isLoading: boolean) => void
   ) {
     this.aIApiScheduler = new AIApiScheduler();

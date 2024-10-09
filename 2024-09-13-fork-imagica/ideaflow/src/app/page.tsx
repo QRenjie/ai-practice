@@ -2,12 +2,10 @@
 
 import { useCallback, useRef, useState } from "react";
 import LayerProvider from "../container/LayerProvider";
-import {
-  WorkspaceState,
-  workspaceStateCreator,
-} from "@/context/WorkspaceContext";
+import { WorkspaceState } from "@/context/WorkspaceContext";
 import Workspace from "@/components/Workspace";
 import ContextMenu, { ContextMenuRef } from "@/components/ContextMenu";
+import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
 
 export default function Home() {
   const [workspaces, setWorkspaces] = useState<WorkspaceState[]>([
