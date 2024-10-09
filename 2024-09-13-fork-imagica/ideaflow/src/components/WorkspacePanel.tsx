@@ -95,7 +95,8 @@ const WorkspacePanel: React.FC = () => {
         <div className={`border-t bg-blue-200 transition-all duration-300`}>
           <WorkspaceChat />
         </div>
-        <WorkspaceLoadingSkeleton />
+
+        {isSandpackLoading && <WorkspaceLoadingSkeleton />}
       </div>
     </WorkspaceSandpackWrapper>
   );

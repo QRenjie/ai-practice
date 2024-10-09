@@ -1,6 +1,5 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Skeleton } from "antd";
-import WorkspaceContext from "@/context/WorkspaceContext";
 
 interface WorkspaceLoadingSkeletonProps {
   isLoading?: boolean;
@@ -9,10 +8,6 @@ interface WorkspaceLoadingSkeletonProps {
 const WorkspaceLoadingSkeleton: React.FC<
   WorkspaceLoadingSkeletonProps
 > = ({}) => {
-  const { state } = useContext(WorkspaceContext)!;
-
-  if (!state.config.isSandpackLoading) return null;
-
   return (
     <div className="absolute inset-0 bg-white bg-opacity-95 flex flex-col z-50 p-4">
       <div className="text-2xl font-bold text-gray-700 mb-4">
