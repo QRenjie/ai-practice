@@ -6,8 +6,8 @@ const WorkspacePreview = memo(() => {
     <div className="w-full h-full overflow-auto bg-white shadow-md flex items-center justify-center relative">
       <SandpackPreview
         className="h-full w-full"
-        showRefreshButton={false}
-        showRestartButton={true}
+        showRefreshButton={true}
+        showRestartButton={false}
         showOpenInCodeSandbox={false}
       />
     </div>

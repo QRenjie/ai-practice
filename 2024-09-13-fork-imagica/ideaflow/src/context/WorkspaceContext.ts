@@ -19,6 +19,8 @@ interface UIState extends LayerState {
 
 /**
  * @property {template} default: react
+ * 
+ * customSetup: 被启用，使用package.json 直接替换，他会导致拖慢项目启动
  */
 interface CodeState
   extends Pick<SandpackProps, "files" | "customSetup" | "template"> {

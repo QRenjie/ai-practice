@@ -7,6 +7,18 @@ import JSONUtil from "../src/utils/JSONUtil.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const excludeDirs = [
+  ".DS_Store",
+  ".gitignore",
+  "node_modules",
+  "dist",
+  "build",
+  "package-lock.json",
+  "README.md",
+  "yarn.lock",
+];
+// 隐藏的文件, 这些文件不会在workspace中显示, 也不会参与项目构建
+const hiddenFiles = ["package.json"];
 
 try {
   // 读取默认配置
@@ -16,7 +28,9 @@ try {
 
   // 读取现有的workspace配置
   const workspaceConfigPath = join(__dirname, "../config/workspace.json");
-  const workspaceConfig = JSONUtil.parse(readFileSync(workspaceConfigPath, "utf8"));
+  const workspaceConfig = JSONUtil.parse(
+    readFileSync(workspaceConfigPath, "utf8")
+  );
 
   // 获取templates目录下的所有子目录
   const templatesDir = join(__dirname, "../templates");
@@ -24,7 +38,7 @@ try {
     statSync(join(templatesDir, file)).isDirectory()
   );
 
-  const directoryReader = new DirectoryReader(templatesDir);
+  const directoryReader = new DirectoryReader(templatesDir, excludeDirs);
 
   // 生成新的配置
   const newConfig = {};
@@ -47,30 +61,24 @@ try {
       const templateFiles = directoryReader.readDirectory(
         templateDir,
         {
-          excludeDirs: [
-            ".DS_Store",
-            ".gitignore",
-            "node_modules",
-            "dist",
-            "build",
-            "package-lock.json",
-            "README.md",
-            "yarn.lock",
-          ],
           useRelativePath: true,
         },
         templateDir
       );
 
-      // 将templateFiles转换为SandpackFile类型，并过滤掉package.json
+      // 将templateFiles转换为SandpackFile类型
       const sandpackFiles = Object.entries(templateFiles).reduce(
         (acc, [filePath, code]) => {
-          if (filePath !== "package.json") {
-            const updatedFilePath = filePath.startsWith("/")
-              ? filePath
-              : `/${filePath}`;
-            acc[updatedFilePath] = sandpackFile(code);
+          const updatedFilePath = filePath.startsWith("/")
+            ? filePath
+            : `/${filePath}`;
+          acc[updatedFilePath] = sandpackFile(code);
+
+          // 如果filePath在hiddenFiles中, 则将hidden设置为true
+          if (hiddenFiles.includes(filePath)) {
+            acc[updatedFilePath].hidden = true;
           }
+
           return acc;
         },
         {}

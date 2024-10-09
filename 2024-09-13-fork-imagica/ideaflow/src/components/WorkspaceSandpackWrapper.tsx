@@ -9,15 +9,22 @@ import { useContext, useEffect } from "react";
 const SandpackContent: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { sandpack } = useSandpack();
+  const { listen } = useSandpack();
   const { updateConfig } = useContext(WorkspaceContext)!;
 
   useEffect(() => {
-    // 当sandpack.status === "running"时，表示sandpack已经初始化完成
-    if (sandpack.status === "running") {
-      updateConfig({ isSandpackLoading: false });
-    }
-  }, [sandpack.status, updateConfig]);
+    // connected stdout console resize done urlchange resize
+    const subscription = listen(({ type }) => {
+      console.log('jj type',type);
+      
+      if (type === "done") {
+        updateConfig({ isSandpackLoading: false });
+      }
+    });
+    return () => {
+      subscription();
+    };
+  }, [listen, updateConfig]);
 
   return <SandpackLayout className="h-full w-full">{children}</SandpackLayout>;
 };
@@ -32,8 +39,8 @@ const WorkspaceSandpackWrapper: React.FC<{ children: React.ReactNode }> = ({
       className="h-full"
       style={{ height: "100%" }}
       files={state.code.files}
-      customSetup={state.code.customSetup}
-      template={state.code.template || 'static'}
+      // customSetup={state.code.customSetup}
+      template={state.code.template || "static"}
     >
       <SandpackContent>{children}</SandpackContent>
     </SandpackProvider>
