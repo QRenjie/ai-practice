@@ -41,7 +41,7 @@ export default function Home() {
         </header>
 
         <main className="py-8">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-6">��索</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-6">探索</h1>
           <Tabs tabs={tabs} defaultActiveKey="public" />
         </main>
 

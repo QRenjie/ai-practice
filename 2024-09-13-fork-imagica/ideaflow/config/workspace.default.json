@@ -1,6 +1,14 @@
 {
   "id": "",
-  "meta": {},
+  "meta": {
+    "updatedAt": 0,
+    "image": "",
+    "public": false,
+    "user": {
+      "name": "",
+      "avatar": ""
+    }
+  },
   "config": {
     "selectedModel": "gpt-3.5-turbo",
     "recommendedKeywords": [],

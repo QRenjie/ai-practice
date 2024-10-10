@@ -1,4 +1,4 @@
-import { WorkspaceState } from "@/context/WorkspaceContext";
+import { WorkspaceState } from "@/types/workspace";
 import Image from "next/image";
 import { useState } from "react";
 
