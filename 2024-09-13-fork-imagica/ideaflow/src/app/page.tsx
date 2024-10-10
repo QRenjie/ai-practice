@@ -1,80 +1,59 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
-import LayerProvider from "../container/LayerProvider";
-import {
-  WorkspaceState,
-  workspaceStateCreator,
-} from "@/context/WorkspaceContext";
-import Workspace from "@/components/Workspace";
-import ContextMenu, { ContextMenuRef } from "@/components/ContextMenu";
+import Link from "next/link";
+import rootConfig from "../../config/root.json";
+import WorkspacesGallery from "../components/WorkspacesGallery";
+import { WorkspaceState } from "@/context/WorkspaceContext";
+import Tabs from "../components/common/Tabs";
+
+// 这里应该从后端或状态管理中获取实际的项目列表
+const publicWorkspaces: WorkspaceState[] = [];
+const myWorkspaces: WorkspaceState[] = [];
 
 export default function Home() {
-  const [workspaces, setWorkspaces] = useState<WorkspaceState[]>([
-    workspaceStateCreator.createSelector({ ui: { title: "工作区1" } }),
-  ]);
-
-  const contextMenuRef = useRef<ContextMenuRef>(null);
-
-  const calculatePosition = useCallback((index: number) => {
-    const offset = 30; // 每个新 Layer 的偏移量
-    const x = offset * index;
-    const y = offset * index;
-
-    // 获取屏幕宽度和高度
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
-
-    // 确保新窗口不会超出屏幕范围
-    const maxX = screenWidth - 320; // 假设窗口宽度为320
-    const maxY = screenHeight - 240; // 假设窗口高度为240
-
-    return { x: Math.min(x, maxX), y: Math.min(y, maxY) };
-  }, []);
-
-  const addWorkspace = useCallback(() => {
-    setWorkspaces((prevWorkspaces) => {
-      const newState = workspaceStateCreator.createSelector({
-        ui: { title: `工作区 ${prevWorkspaces.length + 1}` },
-      });
-
-      // 使用 prevWorkspaces.length 计算新工作区的位置
-      const newInintPosition = calculatePosition(prevWorkspaces.length);
-      newState.ui.position = newInintPosition;
-
-      return [...prevWorkspaces, newState];
-    });
-  }, [calculatePosition]);
-
-  const closeWorkspace = useCallback((id: string) => {
-    setWorkspaces((prevWorkspaces) =>
-      prevWorkspaces.filter((workspace) => workspace.id !== id)
-    );
-  }, []);
-
-  const handleContextMenu = useCallback((event: React.MouseEvent) => {
-    event.preventDefault();
-    contextMenuRef.current?.open({ x: event.clientX, y: event.clientY });
-  }, []);
+  const tabs = [
+    {
+      key: 'public',
+      label: '公开',
+      children: <WorkspacesGallery workspaces={publicWorkspaces} itemsPerPage={12} />
+    },
+    {
+      key: 'my',
+      label: '我的',
+      children: <WorkspacesGallery workspaces={myWorkspaces} itemsPerPage={12} />
+    },
+  ];
 
   return (
-    <div
-      className="h-screen bg-gradient-to-r from-blue-100 to-blue-300 relative"
-      data-testid="Home"
-      onContextMenu={handleContextMenu}
-    >
-      <ContextMenu ref={contextMenuRef} onAddWorkspace={addWorkspace} />
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <header className="flex flex-col sm:flex-row justify-between items-center py-4">
+          <div className="text-2xl font-bold mb-4 sm:mb-0">
+            {rootConfig.name}
+          </div>
+          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <button className="px-4 py-2 bg-black text-white rounded-full w-full sm:w-auto">
+              New Generation
+            </button>
+            <button className="w-full sm:w-auto">Feedback</button>
+            <div className="w-8 h-8 bg-blue-500 rounded-full"></div>
+          </div>
+        </header>
 
-      <LayerProvider>
-        {workspaces.map((workspace, index) => (
-          <Workspace
-            key={workspace.id}
-            index={index}
-            state={workspace}
-            onClose={closeWorkspace}
-          />
-        ))}
-      </LayerProvider>
+        <main className="py-8">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-6">探索</h1>
+          <Tabs tabs={tabs} defaultActiveKey="public" />
+        </main>
+
+        <footer className="py-4 flex flex-col sm:flex-row justify-between items-center">
+          <div className="flex flex-wrap justify-center sm:justify-start space-x-4 mb-4 sm:mb-0">
+            <Link href="/faq">FAQ</Link>
+            <Link href="/terms">Terms</Link>
+            <Link href="/ai-policy">AI Policy</Link>
+            <Link href="/privacy">Privacy</Link>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }

@@ -68,6 +68,19 @@ export interface MetaState {
    * 更新时间
    */
   updatedAt?: number;
+
+  /**
+   * 图片
+   */
+  image?: string;
+
+  /**
+   * 用户信息
+   */
+  user?: {
+    avatar: string;
+    name: string;
+  };
 }
 export interface WorkspaceState {
   /**
