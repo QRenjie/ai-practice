@@ -87,9 +87,9 @@ export default class BackendApiScheduler {
   }
 
   async getWorkspaces(params: {
-    public?: boolean;
+    type?: "public" | "my" | "all";
   }): Promise<WorkspaceState[]> {
-    const searchParams = `?type=${!params.public ? "my" : "public"}`;
+    const searchParams = `?type=${params.type}`;
 
     return fetch(`/api/get-workspaces${searchParams}`).then((res) =>
       res.json()

@@ -1,29 +1,38 @@
-"use client";
-
 import Link from "next/link";
 import rootConfig from "../../config/root.json";
-import WorkspacesGallery from "../components/WorkspacesGallery";
-import { WorkspaceState } from "@/types/workspace";
-import Tabs from "../components/common/Tabs";
+import DataGetter from "@/utils/DataGetter";
+import Tabs from "@/components/common/Tabs";
 
-// 这里应该从后端或状态管理中获取实际的项目列表
-const publicWorkspaces: WorkspaceState[] = [];
-const myWorkspaces: WorkspaceState[] = [];
+// 定义一个异步函数来获取工作区数据
+import WorkspacesGallery from "@/components/ssr/WorkspacesGallery";
+// 服务端渲染请求api没有源地址，所以直接访问静态资源
+async function getWorkspaces() {
+  const publicWorkspaces = DataGetter.getWorkspaces("public");
+  const myWorkspaces = DataGetter.getWorkspaces("my");
 
-export default function Home() {
+  return {
+    publicWorkspaces,
+    myWorkspaces,
+  };
+}
+
+// 将 Home 组件保持为异步组件
+export default async function Home() {
+  const { publicWorkspaces, myWorkspaces } = await getWorkspaces();
   const tabs = [
     {
-      key: 'public',
-      label: '公开',
-      children: <WorkspacesGallery workspaces={publicWorkspaces} itemsPerPage={12} />
+      key: "public",
+      label: "公开",
+      children: <WorkspacesGallery workspaces={publicWorkspaces} />,
     },
     {
-      key: 'my',
-      label: '我的',
-      children: <WorkspacesGallery workspaces={myWorkspaces} itemsPerPage={12} />
+      key: "my",
+      label: "我的",
+      children: <WorkspacesGallery workspaces={myWorkspaces} />,
     },
   ];
 
+  // 组件的其余部分保持不变
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,4 +65,11 @@ export default function Home() {
       </div>
     </div>
   );
+}
+
+// 添加 generateStaticParams 函数以启用静态生成
+export async function generateStaticParams() {
+  // 这里我们不需要生成任何动态路由参数，因为这是一个静态页面
+  // 但是我们需要这个函数来触发静态生成
+  return [];
 }

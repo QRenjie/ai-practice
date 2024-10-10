@@ -1,16 +1,12 @@
 import { readFileSync, writeFileSync, readdirSync, statSync } from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+import { join } from "path";
 import DirectoryReader from "../src/utils/DirectoryReader.js";
 import sandpackFile from "../config/sandpackFile.js";
 import JSONUtil from "../src/utils/JSONUtil.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+import { ROOT_PATH } from "../config/path.js";
 // 新增: 读取templates.json
 const templatesJSON = JSONUtil.parse(
-  readFileSync(join(__dirname, "../config/templates.json"), "utf8")
+  readFileSync(join(ROOT_PATH, "config/templates.json"), "utf8")
 );
 
 // 修改: 使用templatesJSON中的配置
@@ -20,17 +16,17 @@ const hiddenFiles = templatesJSON.hiddenFiles;
 try {
   // 读取默认配置
   const defaultConfig = JSONUtil.parse(
-    readFileSync(join(__dirname, "../config/workspace.default.json"), "utf8")
+    readFileSync(join(ROOT_PATH, "config/workspace.default.json"), "utf8")
   );
 
   // 读取现有的workspace配置
-  const workspaceConfigPath = join(__dirname, "../config/workspace.json");
+  const workspaceConfigPath = join(ROOT_PATH, "config/workspace.json");
   const workspaceConfig = JSONUtil.parse(
     readFileSync(workspaceConfigPath, "utf8")
   );
 
   // 获取templates目录下的所有子目录
-  const templatesDir = join(__dirname, "../templates");
+  const templatesDir = join(ROOT_PATH, "templates");
   const templateDirs = readdirSync(templatesDir).filter((file) =>
     statSync(join(templatesDir, file)).isDirectory()
   );

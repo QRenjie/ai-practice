@@ -25,7 +25,7 @@ async function handleSaveWorkspace(state: WorkspaceState) {
 
     // 定义保存路径
     const savePath = path.join(process.cwd(), ".data");
-    const fileName = "workspace.personal.json";
+    const fileName = "workspaces.json";
     const filePath = path.join(savePath, fileName);
 
     // 确保保存目录存在

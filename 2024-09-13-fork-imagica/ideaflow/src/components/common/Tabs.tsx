@@ -13,7 +13,7 @@ interface TabsProps {
 }
 
 const Tabs: React.FC<TabsProps> = ({ tabs, defaultActiveKey }) => {
-  return <AntdTabs defaultActiveKey={defaultActiveKey} items={tabs} />;
+  return <AntdTabs animated defaultActiveKey={defaultActiveKey} items={tabs} />;
 };
 
 export default Tabs;

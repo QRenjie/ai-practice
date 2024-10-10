@@ -114,7 +114,7 @@ export default class AIApiScheduler {
     }
   }
 
-  async getWorkspaces(params: { public?: boolean }): Promise<WorkspaceState[]> {
+  async getWorkspaces(params: { type?: 'public' | 'my'| 'all' }): Promise<WorkspaceState[]> {
     return this.backendApi.getWorkspaces(params);
   }
 }
