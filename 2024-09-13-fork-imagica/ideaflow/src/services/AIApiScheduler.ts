@@ -3,7 +3,7 @@ import { openAIClient } from "@/base/api/OpenAIClient";
 import BackendApiScheduler from "./BackendApiScheduler";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import JSONUtil from "@/utils/JSONUtil";
-import { WorkspaceState } from "@/context/WorkspaceContext";
+import { WorkspaceState } from "@/types/workspace";
 
 /**
  * 前端调用后台接口的中间层

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import rootConfig from "../../config/root.json";
 import WorkspacesGallery from "../components/WorkspacesGallery";
-import { WorkspaceState } from "@/context/WorkspaceContext";
+import { WorkspaceState } from "@/types/workspace";
 import Tabs from "../components/common/Tabs";
 
 // 这里应该从后端或状态管理中获取实际的项目列表
@@ -41,7 +41,7 @@ export default function Home() {
         </header>
 
         <main className="py-8">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-6">探索</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-6">��索</h1>
           <Tabs tabs={tabs} defaultActiveKey="public" />
         </main>
 

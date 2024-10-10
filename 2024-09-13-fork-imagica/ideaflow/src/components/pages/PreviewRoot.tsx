@@ -4,7 +4,7 @@ import { SandpackPreview, SandpackProvider } from "@codesandbox/sandpack-react";
 import SandpackContent from "@/components/SandpackContent";
 import { useCallback, useState } from "react";
 import { SandpackMessage } from "@codesandbox/sandpack-client";
-import { WorkspaceState } from "@/context/WorkspaceContext";
+import { WorkspaceState } from "@/types/workspace";
 import dynamic from "next/dynamic";
 import DynamicLoading from "../DynamicLoading";
 

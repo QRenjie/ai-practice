@@ -1,4 +1,4 @@
-import { WorkspaceState } from "@/context/WorkspaceContext";
+import { WorkspaceState } from "@/types/workspace";
 import { aiApiScheduler } from "@/services/AIApiScheduler";
 
 export class WorkspaceManager {

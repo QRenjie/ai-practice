@@ -1,6 +1,6 @@
-import { WorkspaceState, workspaceStateCreator } from "@/context/WorkspaceContext";
+import { workspaceStateCreator } from "@/context/WorkspaceContext";
 import { ContextMenuRef } from "@/components/ContextMenu";
-
+import { WorkspaceState } from "@/types/workspace";
 export class CreatorPageController {
   private workspaces: WorkspaceState[] = [];
   private contextMenuRef: React.RefObject<ContextMenuRef> | null = null;

@@ -1,9 +1,10 @@
 import React from "react";
-import WorkspaceContext, { WorkspaceState } from "@/context/WorkspaceContext";
+import { WorkspaceState } from "@/types/workspace";
 import WorkspacePovider from "../container/WorkspacePovider";
 import WorkspacePanel from "./WorkspacePanel";
 import WorkspaceSelector from "./WorkspaceSelector"; // 新增导入
 import dynamic from "next/dynamic";
+import WorkspaceContext from "@/context/WorkspaceContext";
 
 const Layer = dynamic(() => import("./Layer"));
 

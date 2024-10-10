@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
 import ContextMenu, { ContextMenuRef } from "@/components/ContextMenu";
 import Workspace from "@/components/Workspace";
 import LayerProvider from "@/container/LayerProvider";
-import { WorkspaceState, workspaceStateCreator } from "@/context/WorkspaceContext";
+import { workspaceStateCreator } from "@/context/WorkspaceContext";
 import { CreatorPageController } from "@/services/CreatorPageController";
+import { WorkspaceState } from "@/types/workspace";
 import { useState, useMemo, useRef, useEffect } from "react";
 
 export default function Creator() {

@@ -1,4 +1,4 @@
-import { WorkspaceState } from "@/context/WorkspaceContext";
+import { WorkspaceState } from "@/types/workspace";
 import { message } from "antd";
 import AIApiScheduler, { aiApiScheduler } from "@/services/AIApiScheduler";
 

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isPlainObject, isString } from "lodash-es";
 import { SandpackFile } from "@codesandbox/sandpack-react";
-import { WorkspaceState } from "@/context/WorkspaceContext";
 import archiver from "archiver";
 import workspaceConfig from "../../../../config/workspace.json";
+import { WorkspaceState } from "@/types/workspace";
 
 // 添加模板名称到目录的映射
 const templateToDirectoryMap: Record<string, string> = {

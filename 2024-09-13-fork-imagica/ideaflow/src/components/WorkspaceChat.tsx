@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import WorkspaceContext from "../context/WorkspaceContext";
+import WorkspaceContext from "@/context/WorkspaceContext";
 import { ChatController } from "../services/chatService";
 import MessageList from "./MessageList";
 import ConfigPanel from "./ConfigPanel";

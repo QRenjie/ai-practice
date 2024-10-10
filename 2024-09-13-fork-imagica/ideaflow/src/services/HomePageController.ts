@@ -1,4 +1,5 @@
-import { WorkspaceState, workspaceStateCreator } from "@/context/WorkspaceContext";
+import { WorkspaceState } from "@/types/workspace";
+import { workspaceStateCreator } from "@/context/WorkspaceContext";
 import { ContextMenuRef } from "@/components/ContextMenu";
 
 export class HomePageController {
