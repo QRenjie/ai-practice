@@ -18,8 +18,8 @@ export default class AIApiScheduler {
 
   /**
    * 调用 OpenAI 接口
-   * @param apiParams 
-   * @returns 
+   * @param apiParams
+   * @returns
    */
   async callOpenAIStream(apiParams: ApiCommonParams): Promise<AiChatResponse> {
     try {
@@ -54,8 +54,8 @@ export default class AIApiScheduler {
 
   /**
    * 获取推荐关键词
-   * @param apiParams 
-   * @returns 
+   * @param apiParams
+   * @returns
    */
   async getRecommendedKeywords(
     apiParams: ApiCommonParams
@@ -112,6 +112,10 @@ export default class AIApiScheduler {
       console.error("保存工作区时出错:", error);
       return false;
     }
+  }
+
+  async getWorkspaces(params: { type?: 'public' | 'my'| 'all' }): Promise<WorkspaceState[]> {
+    return this.backendApi.getWorkspaces(params);
   }
 }
 

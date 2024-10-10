@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { WorkspaceState, WorkspaceType } from "@/types/workspace";
-import WorkspaceContext, { workspaceStateCreator } from "@/context/WorkspaceContext";
+import WorkspaceContext from "@/context/WorkspaceContext";
 import { CodeBlock, Message } from "@/types/apiTypes";
+import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
 
 const WorkspacePovider: React.FC<{
   initialState: WorkspaceState;

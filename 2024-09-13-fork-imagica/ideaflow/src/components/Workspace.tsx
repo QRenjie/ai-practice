@@ -6,7 +6,9 @@ import WorkspaceSelector from "./WorkspaceSelector"; // 新增导入
 import dynamic from "next/dynamic";
 import WorkspaceContext from "@/context/WorkspaceContext";
 
-const Layer = dynamic(() => import("./Layer"));
+const Layer = dynamic(() => import("./Layer"), {
+  ssr: false,
+});
 
 const WorkspaceInner: React.FC<{
   onClose?: () => void;

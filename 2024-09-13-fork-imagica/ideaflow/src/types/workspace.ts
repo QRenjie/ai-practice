@@ -68,6 +68,11 @@ export interface MetaState {
   image?: string;
 
   /**
+   * 是否
+   */
+  public: boolean
+
+  /**
    * 用户信息
    */
   user?: {

@@ -1,12 +1,20 @@
 {
   "react-base": {
     "id": "",
-    "meta": {},
+    "meta": {
+      "updatedAt": 0,
+      "image": "",
+      "public": false,
+      "user": {
+        "name": "",
+        "avatar": ""
+      }
+    },
     "config": {
       "selectedModel": "gpt-3.5-turbo",
       "recommendedKeywords": [],
       "isChatCollapsed": false,
-      "isWindowed": true,
+      "isWindowed": false,
       "isSandpackLoading": true,
       "coderPrompt": "locale:coderPrompt:react-base"
     },
@@ -14,12 +22,12 @@
       "activeTab": "preview",
       "title": "",
       "size": {
-        "width": 480,
-        "height": 600
+        "width": "100%",
+        "height": "100%"
       },
       "position": {
-        "x": 20,
-        "y": 20
+        "x": 0,
+        "y": 0
       },
       "isMaximized": false,
       "isMinimized": false,
@@ -72,12 +80,20 @@
   },
   "static-html": {
     "id": "",
-    "meta": {},
+    "meta": {
+      "updatedAt": 0,
+      "image": "",
+      "public": false,
+      "user": {
+        "name": "",
+        "avatar": ""
+      }
+    },
     "config": {
       "selectedModel": "gpt-3.5-turbo",
       "recommendedKeywords": [],
       "isChatCollapsed": false,
-      "isWindowed": true,
+      "isWindowed": false,
       "isSandpackLoading": true,
       "coderPrompt": "locale:coderPrompt:static-html"
     },
@@ -85,12 +101,12 @@
       "activeTab": "preview",
       "title": "",
       "size": {
-        "width": 480,
-        "height": 600
+        "width": "100%",
+        "height": "100%"
       },
       "position": {
-        "x": 20,
-        "y": 20
+        "x": 0,
+        "y": 0
       },
       "isMaximized": false,
       "isMinimized": false,
@@ -127,12 +143,20 @@
   },
   "vite-react": {
     "id": "",
-    "meta": {},
+    "meta": {
+      "updatedAt": 0,
+      "image": "",
+      "public": false,
+      "user": {
+        "name": "",
+        "avatar": ""
+      }
+    },
     "config": {
       "selectedModel": "gpt-3.5-turbo",
       "recommendedKeywords": [],
       "isChatCollapsed": false,
-      "isWindowed": true,
+      "isWindowed": false,
       "isSandpackLoading": true,
       "coderPrompt": "locale:coderPrompt:vite-react"
     },
@@ -140,12 +164,12 @@
       "activeTab": "preview",
       "title": "",
       "size": {
-        "width": 480,
-        "height": 600
+        "width": "100%",
+        "height": "100%"
       },
       "position": {
-        "x": 20,
-        "y": 20
+        "x": 0,
+        "y": 0
       },
       "isMaximized": false,
       "isMinimized": false,

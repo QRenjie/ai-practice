@@ -1,11 +1,19 @@
 {
   "id": "",
-  "meta": {},
+  "meta": {
+    "updatedAt": 0,
+    "image": "",
+    "public": false,
+    "user": {
+      "name": "",
+      "avatar": ""
+    }
+  },
   "config": {
     "selectedModel": "gpt-3.5-turbo",
     "recommendedKeywords": [],
     "isChatCollapsed": false,
-    "isWindowed": true,
+    "isWindowed": false,
     "isSandpackLoading": true,
     "coderPrompt": "locale:coderPrompt"
   },
@@ -13,8 +21,8 @@
     "activeTab": "preview",
     "title": "",
     "size": {
-      "width": 480,
-      "height": 600
+      "width": "100%",
+      "height": "100%"
     },
     "position": {
       "x": 20,

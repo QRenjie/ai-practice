@@ -1,4 +1,4 @@
-import { workspaceStateCreator } from "@/context/WorkspaceContext";
+import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
 import { ContextMenuRef } from "@/components/ContextMenu";
 import { WorkspaceState } from "@/types/workspace";
 export class CreatorPageController {

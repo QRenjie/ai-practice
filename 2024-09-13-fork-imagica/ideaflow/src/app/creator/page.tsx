@@ -1,47 +1,40 @@
-"use client";
-
-import ContextMenu, { ContextMenuRef } from "@/components/ContextMenu";
-import Workspace from "@/components/Workspace";
-import LayerProvider from "@/container/LayerProvider";
-import { workspaceStateCreator } from "@/context/WorkspaceContext";
-import { CreatorPageController } from "@/services/CreatorPageController";
 import { WorkspaceState } from "@/types/workspace";
-import { useState, useMemo, useRef, useEffect } from "react";
+import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
+import { notFound } from "next/navigation";
+import dynamic from "next/dynamic";
+import LoadingSkeleton from "@/components/ssr/LoadingSkeleton";
 
-export default function Creator() {
-  const [workspaces, setWorkspaces] = useState<WorkspaceState[]>([
-    workspaceStateCreator.createSelector({ ui: { title: "工作区1" } }),
-  ]);
+const CreatorRoot = dynamic(() => import("@/components/pages/CreatorRoot"), {
+  loading: LoadingSkeleton,
+  ssr: false,
+});
 
-  const controller = useMemo(() => new CreatorPageController(), []);
-  const contextMenuRef = useRef<ContextMenuRef>(null);
+export default async function Creator({
+  searchParams,
+}: {
+  searchParams: { template?: string };
+}) {
+  let workspaceType = searchParams.template;
+  let workspace: WorkspaceState | null = null;
+  if (!workspaceType || !workspaceStateCreator.isTemplate(workspaceType)) {
+    workspaceType = workspaceStateCreator.defaultKey;
+  }
 
-  useEffect(() => {
-    controller.setWorkspaces(workspaces, setWorkspaces);
-    controller.setContextMenuRef(contextMenuRef);
-  }, [controller, workspaces]);
+  if (workspaceStateCreator.isTemplate(workspaceType)) {
+    workspace = workspaceStateCreator.create(workspaceType, {
+      ui: { title: "Untitled" },
+    });
+  } else {
+    console.warn("is not valid template:", workspaceType);
+    notFound();
+  }
 
   return (
     <div
       className="h-screen bg-gradient-to-r from-blue-100 to-blue-300 relative"
       data-testid="CreatorPage"
-      onContextMenu={controller.handleContextMenu}
     >
-      <ContextMenu
-        ref={contextMenuRef}
-        onAddWorkspace={controller.addWorkspace}
-      />
-
-      <LayerProvider>
-        {workspaces.map((workspace, index) => (
-          <Workspace
-            key={workspace.id}
-            index={index}
-            state={workspace}
-            onClose={controller.closeWorkspace}
-          />
-        ))}
-      </LayerProvider>
+      <CreatorRoot workspace={workspace} />
     </div>
   );
 }

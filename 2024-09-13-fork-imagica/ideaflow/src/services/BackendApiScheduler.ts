@@ -85,4 +85,14 @@ export default class BackendApiScheduler {
       body: JSONUtil.stringify(state),
     }).then((res) => res.json());
   }
+
+  async getWorkspaces(params: {
+    type?: "public" | "my" | "all";
+  }): Promise<WorkspaceState[]> {
+    const searchParams = `?type=${params.type}`;
+
+    return fetch(`/api/get-workspaces${searchParams}`).then((res) =>
+      res.json()
+    );
+  }
 }

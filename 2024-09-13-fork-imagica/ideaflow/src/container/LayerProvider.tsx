@@ -8,7 +8,7 @@ const LayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <ActiveLayerContext.Provider value={{ activeLayer, setActiveLayer }}>
-      <div className="relative w-full h-full">{chidren}</div>
+      {chidren}
     </ActiveLayerContext.Provider>
   );
 };
