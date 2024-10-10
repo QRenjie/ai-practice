@@ -67,7 +67,7 @@ const WorkspaceChat: React.FC = () => {
       // handleTogglePanel("config");
       chatController.handleSubmit();
     }
-  }, []);
+  }, [chatController]);
 
   const handleOpenChange = useCallback((open: boolean) => {
     if (!open) {
