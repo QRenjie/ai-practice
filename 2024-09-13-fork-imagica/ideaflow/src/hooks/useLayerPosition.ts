@@ -4,9 +4,16 @@ import debounce from "lodash-es/debounce";
 
 type Size = { width: number | string; height: number | string };
 
+const DEFAULT_WIDTH = 800; // 默认宽度
+const DEFAULT_HEIGHT = 600; // 默认高度
+
 const useLayerPosition = (initialState: LayerState) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [state, setState] = useState<LayerState>(initialState);
+  const [defaultSize, setDefaultSize] = useState<Size>({
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT,
+  });
 
   const setSize = useCallback((size: Size) => {
     setState((prevState) => ({ ...prevState, size }));
@@ -28,95 +35,98 @@ const useLayerPosition = (initialState: LayerState) => {
     setState((prevState) => ({ ...prevState, maxSize }));
   }, []);
 
+  const calculateDefaultSize = useCallback(() => {
+    const maxWidth = window.innerWidth * 0.8;
+    const maxHeight = window.innerHeight * 0.8;
+    return {
+      width: Math.min(DEFAULT_WIDTH, maxWidth),
+      height: Math.min(DEFAULT_HEIGHT, maxHeight),
+    };
+  }, []);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const updateMaxSize = () => {
-        // 可能存在偏移，使用100%
-        setMaxSize({ width: '100%', height: '100%' });
+      const updateSizes = () => {
+        setMaxSize({ width: window.innerWidth, height: window.innerHeight });
+        setDefaultSize(calculateDefaultSize());
         if (state.isMaximized) {
           setSize({ width: window.innerWidth, height: window.innerHeight });
           setPosition({ x: 0, y: 0 });
         }
       };
 
-      const debouncedUpdateMaxSize = debounce(updateMaxSize, 80);
+      const debouncedUpdateSizes = debounce(updateSizes, 80);
 
-      updateMaxSize();
+      updateSizes();
 
-      window.addEventListener("resize", debouncedUpdateMaxSize);
-      return () => window.removeEventListener("resize", debouncedUpdateMaxSize);
+      window.addEventListener("resize", debouncedUpdateSizes);
+      return () => window.removeEventListener("resize", debouncedUpdateSizes);
     }
-  }, [state.isMaximized, setMaxSize, setSize, setPosition]);
+  }, [
+    state.isMaximized,
+    setMaxSize,
+    setSize,
+    setPosition,
+    calculateDefaultSize,
+  ]);
 
   const handleMaximize = useCallback(() => {
     setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 300); // 动画持续时间
+    setTimeout(() => setIsAnimating(false), 300);
 
     if (state.isMaximized) {
-      setSize(initialState.size);
-      setPosition(initialState.position);
+      setSize(defaultSize);
+      setPosition({
+        x: (window.innerWidth - (defaultSize.width as number)) / 2,
+        y: (window.innerHeight - (defaultSize.height as number)) / 2,
+      });
     } else {
-      setSize({ width: state.maxSize.width, height: state.maxSize.height });
+      setSize({ width: window.innerWidth, height: window.innerHeight });
       setPosition({ x: 0, y: 0 });
     }
     setIsMaximized(!state.isMaximized);
     setIsMinimized(false);
   }, [
     state.isMaximized,
-    state.maxSize,
-    initialState.size,
-    initialState.position,
+    defaultSize,
     setSize,
     setPosition,
     setIsMaximized,
     setIsMinimized,
-    setIsAnimating,
   ]);
 
   const handleMinimize = useCallback(() => {
     setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 300); // 动画持续时间
+    setTimeout(() => setIsAnimating(false), 300);
 
     if (state.isMinimized) {
-      setSize(initialState.size);
+      setSize(defaultSize);
     } else {
-      setSize({ width: initialState.size.width, height: 40 });
+      setSize({ width: defaultSize.width, height: 40 });
     }
     setIsMinimized(!state.isMinimized);
     setIsMaximized(false);
-  }, [
-    state.isMinimized,
-    initialState.size,
-    setSize,
-    setIsMinimized,
-    setIsMaximized,
-    setIsAnimating,
-  ]);
+  }, [state.isMinimized, defaultSize, setSize, setIsMinimized, setIsMaximized]);
 
   const handleFit = useCallback(() => {
     setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 300); // 动画持续时间
+    setTimeout(() => setIsAnimating(false), 300);
 
-    setSize(initialState.size);
-    setPosition(initialState.position);
+    setSize(defaultSize);
+    setPosition({
+      x: (window.innerWidth - (defaultSize.width as number)) / 2,
+      y: (window.innerHeight - (defaultSize.height as number)) / 2,
+    });
     setIsMaximized(false);
     setIsMinimized(false);
-  }, [
-    initialState.size,
-    initialState.position,
-    setSize,
-    setPosition,
-    setIsMaximized,
-    setIsMinimized,
-    setIsAnimating,
-  ]);
+  }, [defaultSize, setSize, setPosition, setIsMaximized, setIsMinimized]);
 
   return {
     size: state.size,
     position: state.position,
     isMaximized: state.isMaximized,
     isMinimized: state.isMinimized,
-    isAnimating: isAnimating,
+    isAnimating,
     maxSize: state.maxSize,
     setSize,
     setPosition,
