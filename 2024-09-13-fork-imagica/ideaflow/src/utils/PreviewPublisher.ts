@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { WorkspaceState } from '../context/WorkspaceContext';
 import LZString from 'lz-string';
 import JSONUtil from '@/utils/JSONUtil';
+import { WorkspaceState } from '@/types/workspace';
 export class PreviewPublisher {
   static publish(workspaceState: WorkspaceState): string {
     const previewId = uuidv4();

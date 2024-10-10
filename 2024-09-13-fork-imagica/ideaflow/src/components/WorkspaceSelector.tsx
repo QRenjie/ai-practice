@@ -1,6 +1,6 @@
 import React from "react";
-import WorkspaceContext, { workspaceOptions, WorkspaceType } from "@/context/WorkspaceContext";
-
+import WorkspaceContext, { workspaceOptions } from "@/context/WorkspaceContext";
+import { WorkspaceType } from "@/types/workspace";
 
 const WorkspaceSelector: React.FC = () => {
   const { resetState } = React.useContext(WorkspaceContext)!;

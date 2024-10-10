@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "eslint": "eslint src --ext .ts,.tsx,.js,.jsx",
     "gen:workspace": "node ./scripts/generateWorkspaceConfig.mjs"
   },
   "type": "module",

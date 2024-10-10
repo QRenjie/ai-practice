@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
-import { WorkspaceState } from "@/types/workspace";
+import { MetaState, WorkspaceState } from "@/types/workspace";
 
 export async function POST(req: NextRequest) {
   const state = await req.json();
@@ -19,7 +19,7 @@ async function handleSaveWorkspace(state: WorkspaceState) {
 
     // 更新 meta 信息
     if (!state.meta) {
-      state.meta = {};
+      state.meta = {} as MetaState;
     }
     state.meta.updatedAt = new Date().getTime();
 
