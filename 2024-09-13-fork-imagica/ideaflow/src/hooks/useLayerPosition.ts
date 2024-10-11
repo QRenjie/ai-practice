@@ -32,7 +32,7 @@ const useLayerPosition = (initialState: LayerState) => {
     if (typeof window !== "undefined") {
       const updateMaxSize = () => {
         // 可能存在偏移，使用100%
-        setMaxSize({ width: '100%', height: '100%' });
+        setMaxSize({ width: "100%", height: "100%" });
         if (state.isMaximized) {
           setSize({ width: window.innerWidth, height: window.innerHeight });
           setPosition({ x: 0, y: 0 });

@@ -24,6 +24,7 @@ export interface WorkspaceContextType {
   toggleChatCollapse: () => void; // 新增这一行
   updateConfig: (config: Partial<ConfigState>) => void;
   resetState: (option: WorkspaceType) => void; // 新增这一行
+  toggleWindowed: () => void; // 新增这一行
 }
 
 const WorkspaceContext = React.createContext<WorkspaceContextType | null>(null);

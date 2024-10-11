@@ -3,6 +3,7 @@ import { WorkspaceState, WorkspaceType } from "@/types/workspace";
 import WorkspaceContext from "@/context/WorkspaceContext";
 import { CodeBlock, Message } from "@/types/apiTypes";
 import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
+import { merge } from "lodash-es";
 
 const WorkspacePovider: React.FC<{
   initialState: WorkspaceState;
@@ -104,6 +105,21 @@ const WorkspacePovider: React.FC<{
     });
   }, []);
 
+  const toggleWindowed = useCallback(() => {
+    setState((prevState) =>
+      merge({}, prevState, {
+        config: {
+          isWindowed: !prevState.config.isWindowed,
+        },
+        ui: {
+          size: prevState.config.isWindowed
+            ? { width: "100%", height: "100%" }
+            : undefined,
+        },
+      })
+    );
+  }, []);
+
   const contextValue = useMemo(
     () => ({
       state,
@@ -115,6 +131,7 @@ const WorkspacePovider: React.FC<{
       toggleChatCollapse,
       updateConfig,
       resetState,
+      toggleWindowed,
     }),
     [
       state,
@@ -126,6 +143,7 @@ const WorkspacePovider: React.FC<{
       toggleChatCollapse,
       updateConfig,
       resetState,
+      toggleWindowed,
     ]
   );
 
