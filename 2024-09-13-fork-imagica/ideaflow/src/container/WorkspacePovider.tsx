@@ -3,32 +3,34 @@ import { WorkspaceState } from "@/types/workspace";
 import WorkspaceContext from "@/context/WorkspaceContext";
 import { WorkspaceController } from "@/controllers/workspaceController";
 import { useCreation } from "ahooks";
+import { WorkspaceStore } from "@/store/WorkspaceStore";
+import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
 
 const WorkspacePovider: React.FC<{
   initialState: WorkspaceState;
   children: React.ReactNode;
 }> = ({ initialState, children }) => {
-  const [state, setState] = useState<WorkspaceState>(initialState);
 
-  const controller = useCreation(
-    () => new WorkspaceController(state, setState),
+  const store = useCreation(
+    () => new WorkspaceStore(workspaceStateCreator),
     []
+  );
+  const controller = useCreation(
+    () => new WorkspaceController(store),
+    [store]
   );
 
   useEffect(() => {
-    setState(initialState);
+    store.emit(initialState);
   }, [initialState]);
 
-  useEffect(() => {
-    controller.state = state;
-  }, [controller, state]);
 
   const contextValue = useMemo(
     () => ({
-      state,
+      state: store.state,
       controller,
     }),
-    [controller, state]
+    [controller, store.state]
   );
 
   return (

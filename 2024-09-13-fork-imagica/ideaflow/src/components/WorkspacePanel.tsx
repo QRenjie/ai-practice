@@ -6,9 +6,13 @@ import WorkspaceContext from "@/context/WorkspaceContext";
 import WorkspaceSandpackWrapper from "./WorkspaceSandpackWrapper";
 import WorkspaceLoadingSkeleton from "./WorkspaceLoadingSkeleton";
 import { WorkspaceActions } from "./WorkspaceActions";
+import { useSliceStore } from "@qlover/slice-store-react";
 
 const WorkspacePanel: React.FC = () => {
-  const { state, controller } = useContext(WorkspaceContext)!;
+  const { controller } = useContext(WorkspaceContext)!;
+
+  const state = useSliceStore(controller.store);
+  
   const { isSandpackLoading } = state.config;
 
   return (

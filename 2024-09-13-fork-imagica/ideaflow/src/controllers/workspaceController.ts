@@ -2,15 +2,17 @@ import { WorkspaceState, WorkspaceType } from "@/types/workspace";
 import { CodeBlock, Message } from "@/types/apiTypes";
 import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
 import { merge } from "lodash-es";
+import { WorkspaceStore } from "@/store/WorkspaceStore";
 
 export class WorkspaceController {
-  constructor(
-    public state: WorkspaceState,
-    private setState: React.Dispatch<React.SetStateAction<WorkspaceState>>
-  ) {}
+  constructor(public store: WorkspaceStore) {}
+
+  get state() {
+    return this.store.state;
+  }
 
   setActiveTab = (tab: WorkspaceState["ui"]["activeTab"]) => {
-    this.setState((prevState) => ({
+    this.store.setState((prevState) => ({
       ...prevState,
       ui: { ...prevState.ui, activeTab: tab },
     }));
@@ -20,7 +22,7 @@ export class WorkspaceController {
     files: WorkspaceState["code"]["files"],
     codeBlocks: CodeBlock[]
   ) => {
-    this.setState((prevState) => ({
+    this.store.setState((prevState) => ({
       ...prevState,
       code: {
         ...prevState.code,
@@ -34,7 +36,7 @@ export class WorkspaceController {
   };
 
   addChatMessage = (message: Message) => {
-    this.setState((prevState) => ({
+    this.store.setState((prevState) => ({
       ...prevState,
       chat: {
         ...prevState.chat,
@@ -44,7 +46,7 @@ export class WorkspaceController {
   };
 
   updateMessages = (updater: (prev: Message[]) => Message[]) => {
-    this.setState((prevState) => ({
+    this.store.setState((prevState) => ({
       ...prevState,
       chat: {
         ...prevState.chat,
@@ -54,7 +56,7 @@ export class WorkspaceController {
   };
 
   updateRecommendedKeywords = (keywords: string[]) => {
-    this.setState((prevState) => ({
+    this.store.setState((prevState) => ({
       ...prevState,
       config: {
         ...prevState.config,
@@ -64,7 +66,7 @@ export class WorkspaceController {
   };
 
   updateConfig = (config: Partial<WorkspaceState["config"]>) => {
-    this.setState((prevState) => ({
+    this.store.setState((prevState) => ({
       ...prevState,
       config: {
         ...prevState.config,
@@ -74,7 +76,7 @@ export class WorkspaceController {
   };
 
   toggleChatCollapse = () => {
-    this.setState((prevState) => ({
+    this.store.setState((prevState) => ({
       ...prevState,
       config: {
         ...prevState.config,
@@ -84,7 +86,7 @@ export class WorkspaceController {
   };
 
   resetState = (option: WorkspaceType) => {
-    this.setState((prev) => {
+    this.store.setState((prev) => {
       const newState = workspaceStateCreator.create(option);
       newState.ui.title = prev.ui.title;
       return newState;
@@ -92,7 +94,7 @@ export class WorkspaceController {
   };
 
   toggleWindowed = () => {
-    this.setState((prevState) =>
+    this.store.setState((prevState) =>
       merge({}, prevState, {
         config: {
           isWindowed: !prevState.config.isWindowed,

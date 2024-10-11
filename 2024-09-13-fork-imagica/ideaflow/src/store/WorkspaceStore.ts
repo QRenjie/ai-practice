@@ -16,4 +16,14 @@ export class WorkspaceStore extends SliceStore<WorkspaceState> {
   merge(source: DeepPartial<WorkspaceState>) {
     this.emit(merge({}, this.state, source));
   }
+
+  setState(
+    state: WorkspaceState | ((prevState: WorkspaceState) => WorkspaceState)
+  ) {
+    if (typeof state === "function") {
+      this.emit(state(this.state));
+    } else {
+      this.emit(state);
+    }
+  }
 }
