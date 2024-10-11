@@ -7,6 +7,7 @@ import WorkspaceSandpackWrapper from "./WorkspaceSandpackWrapper";
 import WorkspaceLoadingSkeleton from "./WorkspaceLoadingSkeleton";
 import ResizablePanel from "@/components/common/ResizablePanel";
 import clsx from "clsx";
+import WorkspaceHeader from "./WorkspaceHeader";
 
 const WorkspacePanel: React.FC = () => {
   const { state } = useContext(WorkspaceContext)!;
@@ -26,9 +27,7 @@ const WorkspacePanel: React.FC = () => {
         )}
       >
         {/* 顶部操作区 */}
-        {/* <div className="flex justify-between items-center bg-blue-200 p-2">
-          <h2 className="text-lg font-semibold">工作区</h2>
-        </div> */}
+        <WorkspaceHeader />
 
         <div
           data-testid="ResizablePanel"
@@ -39,7 +38,11 @@ const WorkspacePanel: React.FC = () => {
           {/* 主要内容区 */}
           <ResizablePanel
             // 保持和骨架屏一致
-            size={{ width: "68%" }}
+            size={
+              state.ui.activeTab === "preview"
+                ? { width: "68%" }
+                : { width: "100%" }
+            }
             minSize={{ width: "10%" }}
             rightComponent={<WorkspaceCode />}
           >

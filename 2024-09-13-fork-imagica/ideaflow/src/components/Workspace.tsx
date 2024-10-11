@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { WorkspaceState } from "@/types/workspace";
 import WorkspacePovider from "../container/WorkspacePovider";
 import WorkspacePanel from "./WorkspacePanel";
@@ -13,7 +13,7 @@ const Layer = dynamic(() => import("./Layer"), {
 const WorkspaceInner: React.FC<{
   onClose?: () => void;
 }> = ({ onClose }) => {
-  const { state } = React.useContext(WorkspaceContext)!;
+  const { state } = useContext(WorkspaceContext)!;
 
   const renderContent = () => {
     // 当template为空时，表示当前工作区为自定义工作区，需要展示工作区选择器
@@ -32,6 +32,8 @@ const WorkspaceInner: React.FC<{
       disabled={!state.config.isWindowed}
       // 为了给sandpack设置高度为100%, 否则只能通过 style 修改
       // className="flex flex-col"
+      // renderHeader={WorkspaceHeader}
+      renderHeader={() => null}
     >
       {renderContent()}
     </Layer>

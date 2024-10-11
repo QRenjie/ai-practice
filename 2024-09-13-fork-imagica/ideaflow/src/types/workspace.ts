@@ -7,7 +7,7 @@ export type WorkspaceType = keyof typeof import("../../config/workspace.json");
 export type LocaleKey = string;
 
 export interface UIState extends LayerState {
-  activeTab: "preview" | "codeHistory";
+  activeTab: "preview" | "code";
 }
 
 /**
