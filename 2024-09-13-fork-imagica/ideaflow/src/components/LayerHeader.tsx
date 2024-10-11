@@ -1,15 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { FiMaximize2, FiMinimize2, FiX, FiMinus } from "react-icons/fi";
 import clsx from "clsx";
+import { LayerContext } from "@/context/LayerContext";
+import { title } from "process";
 
 interface LayerHeaderProps {
-  onFit: () => void;
-  onMinimize: () => void;
-  onMaximize: () => void;
-  onClose?: () => void;
-  isMinimized: boolean;
-  isMaximized: boolean;
-  title?: string;
   className?: string;
 }
 
@@ -25,20 +20,15 @@ const IconButton: React.FC<{
   </button>
 );
 
-const LayerHeader: React.FC<LayerHeaderProps> = ({
-  onFit,
-  onMinimize,
-  onMaximize,
-  onClose,
-  isMaximized,
-  title,
-  className,
-}) => {
+const LayerHeader: React.FC<LayerHeaderProps> = ({ className }) => {
+  const { state, handleFit, handleMaximize, handleMinimize, onClose } =
+    useContext(LayerContext)!;
+
   const handleDoubleClick = () => {
-    if (isMaximized) {
-      onFit();
+    if (state?.isMaximized) {
+      handleFit();
     } else {
-      onMaximize();
+      handleMaximize();
     }
   };
 
@@ -53,11 +43,11 @@ const LayerHeader: React.FC<LayerHeaderProps> = ({
     >
       <span className="text-gray-700 font-semibold">{title}</span>
       <div className="flex space-x-2">
-        <IconButton onClick={onMinimize}>
+        <IconButton onClick={handleMinimize}>
           <FiMinus />
         </IconButton>
-        <IconButton onClick={onMaximize}>
-          {isMaximized ? <FiMinimize2 /> : <FiMaximize2 />}
+        <IconButton onClick={handleMaximize}>
+          {state?.isMaximized ? <FiMinimize2 /> : <FiMaximize2 />}
         </IconButton>
         <IconButton onClick={onClose}>
           <FiX />

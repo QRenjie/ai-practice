@@ -22,16 +22,11 @@ export interface LayerState {
 function LayerInner({ children }: { children?: React.ReactNode }) {
   const {
     minWidth,
-    title,
     disabled,
     className,
-    onClose,
     state,
     isAnimating,
     layerId,
-    handleMaximize,
-    handleMinimize,
-    handleFit,
     handleClick,
     handleDragStop,
     handleResize,
@@ -77,16 +72,7 @@ function LayerInner({ children }: { children?: React.ReactNode }) {
           className="relative h-full flex flex-col"
           data-activelyayer={activeLayer === layerId}
         >
-          <LayerHeader
-            className={draggableHandleClassName}
-            onFit={handleFit}
-            onMinimize={handleMinimize}
-            onMaximize={handleMaximize}
-            onClose={onClose} // 新增
-            isMinimized={state.isMinimized}
-            isMaximized={state.isMaximized}
-            title={title}
-          />
+          <LayerHeader className={draggableHandleClassName} />
           <div
             data-testid="LayerBdoy"
             className={clsx("flex-1 overflow-y-auto", className, {
