@@ -30,6 +30,8 @@ const WorkspaceInner: React.FC<{
       onClose={onClose}
       title={state.ui.title}
       disabled={!state.config.isWindowed}
+      // 为了给sandpack设置高度为100%, 否则只能通过 style 修改
+      // className="flex flex-col"
     >
       {renderContent()}
     </Layer>

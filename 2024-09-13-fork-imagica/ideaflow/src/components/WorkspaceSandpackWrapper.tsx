@@ -4,9 +4,11 @@ import { useCallback, useContext } from "react";
 import SandpackContent from "./SandpackContent";
 import { SandpackMessage } from "@codesandbox/sandpack-client";
 
-const WorkspaceSandpackWrapper: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const WorkspaceSandpackWrapper: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}> = ({ children, className, style }) => {
   const { state, controller } = useContext(WorkspaceContext)!;
 
   const onChangeMessage = useCallback(
@@ -21,16 +23,12 @@ const WorkspaceSandpackWrapper: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <SandpackProvider
-      className="h-full"
-      style={{ height: "100%" }}
+      style={style}
       files={state.code.files}
-      // customSetup={state.code.customSetup}
       template={state.code.template || "static"}
+      // customSetup={state.code.customSetup}
     >
-      <SandpackContent
-        className="w-full h-full"
-        onChangeMessage={onChangeMessage}
-      >
+      <SandpackContent className={className} onChangeMessage={onChangeMessage}>
         {children}
       </SandpackContent>
     </SandpackProvider>

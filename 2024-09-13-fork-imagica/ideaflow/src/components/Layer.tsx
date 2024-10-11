@@ -1,14 +1,15 @@
-import React, { useContext, useRef, useCallback } from "react";
-import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
+import React, { useContext } from "react";
+import { Rnd } from "react-rnd";
 import LayerHeader from "./LayerHeader";
-import ActiveLayerContext from "../context/ActiveLayerContext"; // 更新导入路径
-import useLayerPosition from "../hooks/useLayerPosition"; // 使用自定义钩子
-
-// 静态计数器
-let layerCounter = 0;
+import {
+  LayerContext,
+  LayerProps,
+  LayerProvider,
+} from "../context/LayerContext"; // 更新导入路径
+import clsx from "clsx";
 
 type Size = { width: number | string; height: number | string };
-
+const draggableHandleClassName = "draggable-handle";
 export interface LayerState {
   title: string;
   size: Size;
@@ -18,131 +19,92 @@ export interface LayerState {
   maxSize: Size;
 }
 
-interface LayerProps {
-  id?: string; // 将 id 属性变为可选
-  children: React.ReactNode;
-  initialState: LayerState;
-  minWidth?: number;
-  minHeight?: number;
-  active?: boolean;
-  title?: string;
-  disabled?: boolean;
-  onClose?: () => void; // 新增
-}
-
-const Layer: React.FC<LayerProps> = ({
-  id,
-  children,
-  initialState,
-  minWidth = 320,
-  title = "Layer",
-  disabled,
-  onClose, // 新增
-}) => {
+function LayerInner({ children }: { children?: React.ReactNode }) {
   const {
-    size,
-    position,
-    isMaximized,
-    isMinimized,
+    minWidth,
+    title,
+    disabled,
+    className,
+    onClose,
+    state,
     isAnimating,
-    maxSize,
-    setSize,
-    setPosition,
+    layerId,
     handleMaximize,
     handleMinimize,
     handleFit,
-  } = useLayerPosition(initialState);
-
-  const { activeLayer, setActiveLayer } = useContext(ActiveLayerContext);
-
-  // 使用 useRef 保存唯一 id
-  const layerIdRef = useRef(id || `layer-${layerCounter++}`);
-  const layerId = layerIdRef.current;
-
-  const handleClick = useCallback(() => {
-    setActiveLayer(layerId);
-  }, [setActiveLayer, layerId]);
-
-  const handleDragStop: RndDragCallback = useCallback(
-    (_, d) => {
-      if (disabled) return;
-      setPosition({ x: d.x, y: d.y });
-    },
-    [disabled, setPosition]
-  );
-
-  const handleResize: RndResizeCallback = useCallback(
-    (_, __, ref, ___, position) => {
-      if (disabled) return;
-      setSize({
-        width: ref.offsetWidth,
-        height: ref.offsetHeight,
-      });
-      setPosition({ x: position.x, y: position.y });
-    },
-    [disabled, setSize, setPosition]
-  );
-
-  const handleClose = useCallback(() => {
-    if (onClose) {
-      onClose();
-    }
-  }, [onClose]);
+    handleClick,
+    handleDragStop,
+    handleResize,
+    activeLayer,
+  } = useContext(LayerContext)!;
 
   return (
     <Rnd
-      size={size}
-      position={position}
+      size={state.size}
+      position={state.position}
       onDragStop={handleDragStop}
       onResize={handleResize}
       minWidth={minWidth}
       minHeight={40}
-      maxWidth={maxSize.width}
-      maxHeight={maxSize.height}
+      maxWidth={state.maxSize.width}
+      maxHeight={state.maxSize.height}
       bounds="parent"
-      dragHandleClassName="draggable-handle"
+      dragHandleClassName={draggableHandleClassName}
       disableDragging={disabled}
       enableResizing={!disabled} // 添加这一行
-      className={`
-        shadow-2xl rounded-lg overflow-hidden
-        bg-gradient-to-br from-gray-200 to-gray-300
-        ${isMinimized ? "h-10" : ""}
-        ${isAnimating ? "transition-all duration-300 ease-in-out" : ""}
-        ${activeLayer === layerId ? "ring-2 ring-blue-500" : ""}
-      `}
+      className={clsx(
+        "shadow-2xl rounded-lg overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300",
+        {
+          ["h-10"]: state.isMaximized,
+          ["transition-all duration-300 ease-in-out"]: isAnimating,
+          ["ring-2 ring-blue-500"]: activeLayer === layerId,
+        }
+      )}
       data-testid="Layer"
       onClick={handleClick} // 添加点击事件
       style={{
-        display: "flex",
-        flexDirection: "column-reverse",
         zIndex: activeLayer === layerId ? 1000 : "auto",
       }} // 动态设置 z-index
     >
       <div
-        date-testid="LayerMain"
-        data-activelyayer={activeLayer === layerId}
-        className="relative w-full h-full flex flex-col bg-white bg-opacity-10 backdrop-blur-sm"
+        date-testid="LayerRoot"
+        // className="relative w-full flex flex-col bg-white bg-opacity-10 backdrop-blur-sm"
+        className="absolute inset-0"
         onContextMenu={(e) => e.stopPropagation()}
       >
-        {!disabled && (
+        <div
+          date-testid="LayerMain"
+          className="relative h-full flex flex-col"
+          data-activelyayer={activeLayer === layerId}
+        >
           <LayerHeader
+            className={draggableHandleClassName}
             onFit={handleFit}
             onMinimize={handleMinimize}
             onMaximize={handleMaximize}
-            onClose={handleClose} // 新增
-            isMinimized={isMinimized}
-            isMaximized={isMaximized}
+            onClose={onClose} // 新增
+            isMinimized={state.isMinimized}
+            isMaximized={state.isMaximized}
             title={title}
           />
-        )}
-        <div className={`max-h-full min-h-full ${isMinimized ? "hidden" : ""}`}>
-          {children}
+          <div
+            data-testid="LayerBdoy"
+            className={clsx("flex-1 overflow-y-auto", className, {
+              // ["hidden"]: isMaximized,
+            })}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </Rnd>
   );
-};
+}
 
-Layer.displayName = "Layer"; // 添加 displayName
-
-export default React.memo(Layer);
+export default function Layer({ children, ...props }: LayerProps) {
+  return (
+    <LayerProvider {...props}>
+      <LayerInner>{children}</LayerInner>
+    </LayerProvider>
+  );
+}

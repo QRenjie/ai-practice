@@ -6,29 +6,35 @@ import WorkspaceContext from "@/context/WorkspaceContext";
 import WorkspaceSandpackWrapper from "./WorkspaceSandpackWrapper";
 import WorkspaceLoadingSkeleton from "./WorkspaceLoadingSkeleton";
 import ResizablePanel from "@/components/common/ResizablePanel";
+import clsx from "clsx";
 
 const WorkspacePanel: React.FC = () => {
   const { state } = useContext(WorkspaceContext)!;
   const { isSandpackLoading } = state.config;
 
   return (
-    <WorkspaceSandpackWrapper>
+    <WorkspaceSandpackWrapper style={{ height: "100%" }} className="h-full">
       <div
         data-testid="WorkspacePanel"
-        className={`flex flex-col w-full h-full bg-gradient-to-br from-white to-gray-100 shadow-lg relative overflow-hidden ${
-          isSandpackLoading ? "pointer-events-none" : ""
-        }`}
+        className={clsx(
+          // 使用 w-full 和 h-full 替代 flex-1 以避免高度塌陷
+          "w-full h-full",
+          "flex flex-col bg-gradient-to-br from-white to-gray-100 shadow-lg",
+          {
+            ["pointer-events-none"]: isSandpackLoading,
+          }
+        )}
       >
         {/* 顶部操作区 */}
-        <div className="flex justify-between items-center bg-blue-200 p-2">
+        {/* <div className="flex justify-between items-center bg-blue-200 p-2">
           <h2 className="text-lg font-semibold">工作区</h2>
-        </div>
+        </div> */}
 
         <div
           data-testid="ResizablePanel"
-          className={`flex-1 flex overflow-hidden relative ${
-            isSandpackLoading ? "pointer-events-none" : ""
-          }`}
+          className={clsx("flex-1 flex overflow-hidden relative", {
+            ["pointer-events-none"]: isSandpackLoading,
+          })}
         >
           {/* 主要内容区 */}
           <ResizablePanel

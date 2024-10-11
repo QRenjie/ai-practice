@@ -59,21 +59,21 @@ export function ChatFooterActions({
     <div className="flex gap-1.5 text-md ml-auto">
       <WorkspaceMoreAction iconSize={size} />
       <IconButton
-        icon={<FiMessageSquare />}
+        children={<FiMessageSquare />}
         isActive={openPanel === "messages"}
         onClick={(e) => handleButtonClick(e, "messages")}
         title="聊天记录"
         size={size} // 使用 size 属性
       />
       <IconButton
-        icon={<FiSettings />}
+        children={<FiSettings />}
         isActive={openPanel === "config"}
         onClick={(e) => handleButtonClick(e, "config")}
         title="设置"
         size={size} // 使用 size 属性
       />
       <IconButton
-        icon={
+        children={
           isLoading ? (
             <FiLoader className="animate-spin" />
           ) : (

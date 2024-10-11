@@ -3,7 +3,7 @@ import WorkspaceContext from "@/context/WorkspaceContext";
 import { exportManager } from "@/utils/ExportManager";
 import { PreviewPublisher } from "@/utils/PreviewPublisher";
 import { workspaceManager } from "@/utils/WorkspaceManager";
-import { message, Dropdown } from "antd";
+import { message } from "antd";
 import { useContext } from "react";
 import {
   FiMoreVertical,
@@ -146,10 +146,11 @@ export function WorkspaceMoreAction({
       trigger={["click"]}
       onOpenChange={handlePopoverVisibleChange}
       noPadding
+      forceRender
     >
       <IconButton
         size={iconSize}
-        icon={<FiMoreVertical />}
+        children={<FiMoreVertical />}
         isActive={isActive}
         onClick={(e) => e.preventDefault()}
         title="更多操作"
