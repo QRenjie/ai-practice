@@ -18,14 +18,14 @@ interface ChatFooterProps {
 }
 
 export function CollapseChatFooterButton() {
-  const { state, toggleChatCollapse } = useContext(WorkspaceContext)!;
+  const { state, controller } = useContext(WorkspaceContext)!;
 
   return (
     <button
       className={`rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 flex items-center justify-center ${
         state.config.isChatCollapsed ? "w-6 h-6" : "w-7 h-7"
       }`}
-      onClick={toggleChatCollapse}
+      onClick={() => controller.toggleChatCollapse()}
       title={state.config.isChatCollapsed ? "展开聊天" : "折叠聊天"}
       type="button"
     >

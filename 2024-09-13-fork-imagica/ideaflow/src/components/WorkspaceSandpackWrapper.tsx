@@ -7,16 +7,16 @@ import { SandpackMessage } from "@codesandbox/sandpack-client";
 const WorkspaceSandpackWrapper: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { state, updateConfig } = useContext(WorkspaceContext)!;
+  const { state, controller } = useContext(WorkspaceContext)!;
 
   const onChangeMessage = useCallback(
     ({ type }: SandpackMessage) => {
       console.log("jj type", type);
       if (type === "done") {
-        updateConfig({ isSandpackLoading: false });
+        controller.updateConfig({ isSandpackLoading: false });
       }
     },
-    [updateConfig]
+    [controller]
   );
 
   return (

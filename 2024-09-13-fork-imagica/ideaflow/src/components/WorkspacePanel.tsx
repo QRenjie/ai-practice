@@ -8,10 +8,8 @@ import WorkspaceLoadingSkeleton from "./WorkspaceLoadingSkeleton";
 import { WorkspaceActions } from "./WorkspaceActions";
 
 const WorkspacePanel: React.FC = () => {
-  const { state, setActiveTab } = useContext(WorkspaceContext)!;
+  const { state, controller } = useContext(WorkspaceContext)!;
   const { isSandpackLoading } = state.config;
-
-  
 
   return (
     <WorkspaceSandpackWrapper>
@@ -26,14 +24,14 @@ const WorkspacePanel: React.FC = () => {
           <div className="flex border-b bg-blue-200">
             <TabButton
               active={state.ui.activeTab === "preview"}
-              onClick={() => setActiveTab("preview")}
+              onClick={() => controller.setActiveTab("preview")}
               disabled={isSandpackLoading}
             >
               预览
             </TabButton>
             <TabButton
               active={state.ui.activeTab === "codeHistory"}
-              onClick={() => setActiveTab("codeHistory")}
+              onClick={() => controller.setActiveTab("codeHistory")}
               disabled={isSandpackLoading}
             >
               代码
