@@ -3,7 +3,7 @@ import WorkspaceContext, { workspaceOptions } from "@/context/WorkspaceContext";
 import { WorkspaceType } from "@/types/workspace";
 
 const WorkspaceSelector: React.FC = () => {
-  const { resetState } = React.useContext(WorkspaceContext)!;
+  const { controller } = React.useContext(WorkspaceContext)!;
 
   return (
     <div className="flex items-center justify-center h-full">
@@ -14,7 +14,9 @@ const WorkspaceSelector: React.FC = () => {
             <button
               key={option.value}
               className="p-4 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onClick={() => resetState(option.value as WorkspaceType)}
+              onClick={() =>
+                controller.resetState(option.value as WorkspaceType)
+              }
             >
               {option.label}
             </button>

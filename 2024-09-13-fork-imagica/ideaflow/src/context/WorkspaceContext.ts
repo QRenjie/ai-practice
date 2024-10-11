@@ -1,13 +1,7 @@
 import React from "react";
-import { CodeBlock, Message } from "@/types/apiTypes";
-import workspaceConfig from "../../config/workspace.json"; // 新增这一行
-import {
-  CodeState,
-  ConfigState,
-  UIState,
-  WorkspaceState,
-  WorkspaceType,
-} from "@/types/workspace";
+import workspaceConfig from "../../config/workspace.json";
+import { WorkspaceState } from "@/types/workspace";
+import { WorkspaceController } from "@/controllers/workspaceController";
 
 export const workspaceOptions = Object.keys(workspaceConfig).map((key) => ({
   label: key,
@@ -16,15 +10,7 @@ export const workspaceOptions = Object.keys(workspaceConfig).map((key) => ({
 
 export interface WorkspaceContextType {
   state: WorkspaceState;
-  setActiveTab: (tab: UIState["activeTab"]) => void;
-  updateCodeFiles: (files: CodeState["files"], codeBlocks: CodeBlock[]) => void;
-  addChatMessage: (message: Message) => void;
-  updateMessages: (updater: (prev: Message[]) => Message[]) => void;
-  updateRecommendedKeywords: (keywords: string[]) => void;
-  toggleChatCollapse: () => void; // 新增这一行
-  updateConfig: (config: Partial<ConfigState>) => void;
-  resetState: (option: WorkspaceType) => void; // 新增这一行
-  toggleWindowed: () => void; // 新增这一行
+  controller: WorkspaceController;
 }
 
 const WorkspaceContext = React.createContext<WorkspaceContextType | null>(null);

@@ -1,9 +1,8 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { WorkspaceState, WorkspaceType } from "@/types/workspace";
+import React, { useState, useMemo, useEffect } from "react";
+import { WorkspaceState } from "@/types/workspace";
 import WorkspaceContext from "@/context/WorkspaceContext";
-import { CodeBlock, Message } from "@/types/apiTypes";
-import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
-import { merge } from "lodash-es";
+import { WorkspaceController } from "@/controllers/workspaceController";
+import { useCreation } from "ahooks";
 
 const WorkspacePovider: React.FC<{
   initialState: WorkspaceState;
@@ -11,140 +10,25 @@ const WorkspacePovider: React.FC<{
 }> = ({ initialState, children }) => {
   const [state, setState] = useState<WorkspaceState>(initialState);
 
+  const controller = useCreation(
+    () => new WorkspaceController(state, setState),
+    []
+  );
+
   useEffect(() => {
     setState(initialState);
   }, [initialState]);
 
-  const setActiveTab = useCallback((tab: WorkspaceState["ui"]["activeTab"]) => {
-    setState((prevState) => ({
-      ...prevState,
-      ui: { ...prevState.ui, activeTab: tab },
-    }));
-  }, []);
-
-  const updateCodeFiles = useCallback(
-    (files: WorkspaceState["code"]["files"], codeBlocks: CodeBlock[]) => {
-      setState((prevState) => ({
-        ...prevState,
-        code: {
-          ...prevState.code,
-          codeBlocks,
-          files: {
-            ...prevState.code.files,
-            ...files,
-          },
-        },
-      }));
-    },
-    []
-  );
-
-  const addChatMessage = useCallback((message: Message) => {
-    setState((prevState) => ({
-      ...prevState,
-      chat: {
-        ...prevState.chat,
-        messages: [...prevState.chat.messages, message],
-      },
-    }));
-  }, []);
-
-  const updateMessages = useCallback(
-    (updater: (prev: Message[]) => Message[]) => {
-      setState((prevState) => ({
-        ...prevState,
-        chat: {
-          ...prevState.chat,
-          messages: updater(prevState.chat.messages),
-        },
-      }));
-    },
-    []
-  );
-
-  const updateRecommendedKeywords = useCallback((keywords: string[]) => {
-    setState((prevState) => ({
-      ...prevState,
-      config: {
-        ...prevState.config,
-        recommendedKeywords: keywords,
-      },
-    }));
-  }, []);
-
-  const updateConfig = useCallback(
-    (config: Partial<WorkspaceState["config"]>) => {
-      setState((prevState) => ({
-        ...prevState,
-        config: {
-          ...prevState.config,
-          ...config,
-        },
-      }));
-    },
-    []
-  );
-
-  const toggleChatCollapse = useCallback(() => {
-    setState((prevState) => ({
-      ...prevState,
-      config: {
-        ...prevState.config,
-        isChatCollapsed: !prevState.config.isChatCollapsed,
-      },
-    }));
-  }, []);
-
-  const resetState = useCallback((option: WorkspaceType) => {
-    setState((prev) => {
-      const newState = workspaceStateCreator.create(option);
-
-      newState.ui.title = prev.ui.title;
-
-      return newState;
-    });
-  }, []);
-
-  const toggleWindowed = useCallback(() => {
-    setState((prevState) =>
-      merge({}, prevState, {
-        config: {
-          isWindowed: !prevState.config.isWindowed,
-        },
-        ui: {
-          size: prevState.config.isWindowed
-            ? { width: "100%", height: "100%" }
-            : undefined,
-        },
-      })
-    );
-  }, []);
+  useEffect(() => {
+    controller.state = state;
+  }, [controller, state]);
 
   const contextValue = useMemo(
     () => ({
       state,
-      setActiveTab,
-      updateCodeFiles,
-      addChatMessage,
-      updateMessages,
-      updateRecommendedKeywords,
-      toggleChatCollapse,
-      updateConfig,
-      resetState,
-      toggleWindowed,
+      controller,
     }),
-    [
-      state,
-      setActiveTab,
-      updateCodeFiles,
-      addChatMessage,
-      updateMessages,
-      updateRecommendedKeywords,
-      toggleChatCollapse,
-      updateConfig,
-      resetState,
-      toggleWindowed,
-    ]
+    [controller, state]
   );
 
   return (

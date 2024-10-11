@@ -27,17 +27,17 @@ const WorkspaceChat: React.FC = () => {
   );
 
   const chatController = useCreation(() => {
-    const controller = new ChatController(workspaceContext, setIsLoading);
-    controller.setInputRef(inputRef);
+    const chat = new ChatController(workspaceContext.controller, setIsLoading);
+    chat.setInputRef(inputRef);
     if (typeof window !== "undefined") {
-      controller.initRecommendedKeywords();
+      chat.initRecommendedKeywords();
     }
-    return controller;
+    return chat;
   }, []);
 
   useEffect(() => {
-    chatController.context = workspaceContext;
-  }, [chatController, state, workspaceContext]);
+    chatController.workspaceController = workspaceContext.controller;
+  }, [chatController, workspaceContext]);
 
   const handleTogglePanel = useCallback((panel: "messages" | "config") => {
     setOpenPanel((prev) => (prev === panel ? "none" : panel));
@@ -61,13 +61,16 @@ const WorkspaceChat: React.FC = () => {
     [handleSubmit]
   );
 
-  const handleKeywordSelect = useCallback((keyword: string) => {
-    if (inputRef.current) {
-      inputRef.current.value = keyword;
-      // handleTogglePanel("config");
-      chatController.handleSubmit();
-    }
-  }, [chatController]);
+  const handleKeywordSelect = useCallback(
+    (keyword: string) => {
+      if (inputRef.current) {
+        inputRef.current.value = keyword;
+        // handleTogglePanel("config");
+        chatController.handleSubmit();
+      }
+    },
+    [chatController]
+  );
 
   const handleOpenChange = useCallback((open: boolean) => {
     if (!open) {

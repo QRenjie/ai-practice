@@ -1,4 +1,4 @@
-import { WorkspaceContextType } from "./../context/WorkspaceContext";
+import { WorkspaceController } from "@/controllers/workspaceController";
 import { RefObject } from "react";
 import { AiChatResponse, CodeBlock, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
@@ -18,7 +18,7 @@ export class ChatController {
   private messageFactory: MessageFactory;
 
   constructor(
-    public context: WorkspaceContextType,
+    public workspaceController: WorkspaceController,
     private setIsLoading: (isLoading: boolean) => void
   ) {
     this.aIApiScheduler = aiApiScheduler
@@ -30,11 +30,11 @@ export class ChatController {
   }
 
   get state() {
-    return this.context.state;
+    return this.workspaceController.state;
   }
 
   get chatMessages() {
-    return this.context.state.chat.messages;
+    return this.workspaceController.state.chat.messages;
   }
 
   get previewAiMessage(): Message | undefined {
@@ -53,15 +53,15 @@ export class ChatController {
     this.setIsLoading(true);
     try {
       // 新增用户消息
-      this.context.addChatMessage(
+      this.workspaceController.addChatMessage(
         this.messageFactory.createUserMessage(message)
       );
 
       // 调用AI接口
       const aiResponse = await this.aIApiScheduler.callOpenAIStream(
         new ApiCommonParams({
-          model: this.context.state.config.selectedModel,
-          coderPrompt: this.context.state.config.coderPrompt,
+          model: this.workspaceController.state.config.selectedModel,
+          coderPrompt: this.workspaceController.state.config.coderPrompt,
           messages: [
             ...this.chatMessages,
             this.messageFactory.createUserMessage(message),
@@ -73,7 +73,7 @@ export class ChatController {
       const newMessage = this.createCodeBlockMessage(aiResponse);
 
       // 新增AI消息
-      this.context.addChatMessage(newMessage);
+      this.workspaceController.addChatMessage(newMessage);
 
       // 重新应用消息
       this.reapplyAiMessage(newMessage);
@@ -85,7 +85,7 @@ export class ChatController {
     } catch (error) {
       console.error("handleSubmit error", error);
       const errorMessage = this.messageFactory.createErrorMessage(error);
-      this.context.addChatMessage(errorMessage);
+      this.workspaceController.addChatMessage(errorMessage);
     } finally {
       this.setIsLoading(false);
       if (this.inputRef?.current) {
@@ -143,7 +143,7 @@ export class ChatController {
   };
 
   updatePreviewCodeBlocks(codeBlocks: CodeBlock[]) {
-    const result = cloneDeep(this.context.state.code.files || {});
+    const result = cloneDeep(this.workspaceController.state.code.files || {});
     codeBlocks.forEach((codeBlock) => {
       // 确保 fileName 以 "/" 开头
       const fileName = codeBlock.fileName.startsWith("/")
@@ -167,7 +167,7 @@ export class ChatController {
 
     console.log("更新预览代码块", result);
 
-    this.context.updateCodeFiles(result, codeBlocks);
+    this.workspaceController.updateCodeFiles(result, codeBlocks);
 
     // TODO: 自动刷新preivew
   }
@@ -189,13 +189,13 @@ export class ChatController {
             );
 
       const aiApiParams = new ApiCommonParams({
-        model: this.context.state.config.selectedModel,
+        model: this.workspaceController.state.config.selectedModel,
         messages: [this.messageFactory.createUserMessage(prompt)],
       });
 
       const response = await this.aIApiScheduler.getRecommendedKeywords(aiApiParams);
       if (response.keywords && response.keywords.length > 0) {
-        this.context.updateRecommendedKeywords(response.keywords);
+        this.workspaceController.updateRecommendedKeywords(response.keywords);
       } else {
         console.warn("未收到有效的关键词");
       }

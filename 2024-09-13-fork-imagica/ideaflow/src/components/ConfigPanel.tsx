@@ -7,7 +7,7 @@ interface ConfigPanelProps {
 }
 
 const ConfigPanel: React.FC<ConfigPanelProps> = ({ onKeywordSelect }) => {
-  const { state, toggleWindowed } = useContext(WorkspaceContext)!;
+  const { state, controller } = useContext(WorkspaceContext)!;
 
   return (
     <div className="flex flex-col gap-4">
@@ -19,7 +19,7 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ onKeywordSelect }) => {
             <span>启用窗口化</span>
             <Switch
               checked={state.config.isWindowed}
-              onChange={toggleWindowed}
+              onChange={() => controller.toggleWindowed()}
             />
           </div>
         </div>
