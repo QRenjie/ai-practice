@@ -8,6 +8,10 @@
   @apply h-full;
 }
 
+.noPadding :global(.ant-popover-inner) {
+  @apply p-0;
+}
+
 /* .customPopover :global(.ant-popover-arrow) {
   @apply hidden;
 } */

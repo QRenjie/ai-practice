@@ -9,10 +9,10 @@ const WorkspaceLoadingSkeleton: React.FC<
   WorkspaceLoadingSkeletonProps
 > = ({}) => {
   return (
-    <div className="absolute inset-0 bg-white bg-opacity-95 flex flex-col z-50 p-4">
-      <div className="text-2xl font-bold text-gray-700 mb-4">
+    <div className="absolute inset-0 bg-white  flex flex-col z-50 p-4">
+      {/* <div className="text-2xl font-bold text-gray-700 mb-4">
         Ready Environment...
-      </div>
+      </div> */}
       <div className="flex justify-between items-center mb-4">
         <Skeleton.Button
           active

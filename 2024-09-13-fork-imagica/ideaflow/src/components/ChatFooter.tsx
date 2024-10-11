@@ -6,8 +6,10 @@ import {
   FiCornerDownLeft,
   FiChevronUp,
   FiChevronDown,
-  FiLoader, // 引入 FiLoader 图标
+  FiLoader,
 } from "react-icons/fi";
+import IconButton from "./common/IconButton"; // 导入 IconButton 组件
+import { WorkspaceMoreAction } from "./WorkspaceMoreAction";
 
 interface ChatFooterProps {
   openPanel: "none" | "messages" | "config";
@@ -42,17 +44,7 @@ export function ChatFooterActions({
 }: ChatFooterProps) {
   const { state } = useContext(WorkspaceContext)!;
 
-  const sizeClass = state.config.isChatCollapsed ? "w-6 h-6" : "w-7 h-7";
-
-  const getButtonClass = (panel: "messages" | "config") => {
-    const baseClass =
-      "p-1.5 rounded-full transition-colors duration-200 focus:outline-none flex items-center justify-center";
-    const activeClass = "bg-blue-500 text-white hover:bg-blue-600";
-    const inactiveClass = "bg-gray-200 text-gray-700 hover:bg-gray-300";
-    return `${baseClass} ${
-      openPanel === panel ? activeClass : inactiveClass
-    } ${sizeClass}`;
-  };
+  const size = state.config.isChatCollapsed ? "sm" : "md"; // 使用 Tailwind 风格的尺寸
 
   const handleButtonClick = (
     e: React.MouseEvent,
@@ -62,41 +54,41 @@ export function ChatFooterActions({
     e.stopPropagation();
     handleTogglePanel(panel);
   };
+
   return (
     <div className="flex gap-1.5 text-md ml-auto">
-      <button
-        className={getButtonClass("messages")}
+      <WorkspaceMoreAction iconSize={size} />
+      <IconButton
+        icon={<FiMessageSquare />}
+        isActive={openPanel === "messages"}
         onClick={(e) => handleButtonClick(e, "messages")}
         title="聊天记录"
-        type="button"
-      >
-        <FiMessageSquare />
-      </button>
-      <button
-        className={getButtonClass("config")}
+        size={size} // 使用 size 属性
+      />
+      <IconButton
+        icon={<FiSettings />}
+        isActive={openPanel === "config"}
         onClick={(e) => handleButtonClick(e, "config")}
         title="设置"
-        type="button"
-      >
-        <FiSettings />
-      </button>
-
-      <button
-        className={`${sizeClass} rounded-full bg-blue-500 text-white hover:bg-blue-600 flex items-center justify-center`}
+        size={size} // 使用 size 属性
+      />
+      <IconButton
+        icon={
+          isLoading ? (
+            <FiLoader className="animate-spin" />
+          ) : (
+            <FiCornerDownLeft />
+          )
+        }
+        isActive={!isLoading}
         onClick={(e) => {
           e.preventDefault();
           handleSubmit(e);
         }}
-        disabled={isLoading}
         title="发送"
-        type="button"
-      >
-        {isLoading ? (
-          <FiLoader className="animate-spin" /> // 使用 FiLoader 图标并添加旋转动画
-        ) : (
-          <FiCornerDownLeft />
-        )}
-      </button>
+        disabled={isLoading}
+        size={size} // 使用 size 属性
+      />
       <CollapseChatFooterButton />
     </div>
   );

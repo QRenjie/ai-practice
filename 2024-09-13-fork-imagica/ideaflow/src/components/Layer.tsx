@@ -135,7 +135,7 @@ const Layer: React.FC<LayerProps> = ({
             title={title}
           />
         )}
-        <div className={`flex-1 ${isMinimized ? "hidden" : ""}`}>
+        <div className={`max-h-full min-h-full ${isMinimized ? "hidden" : ""}`}>
           {children}
         </div>
       </div>

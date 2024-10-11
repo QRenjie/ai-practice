@@ -1,14 +1,14 @@
 import React, { useContext } from "react";
 import WorkspacePreview from "./WorkspacePreview";
 import WorkspaceChat from "./WorkspaceChat";
-import WorkspaceCode from "./WorkspaceCode"; // 新增导入
+import WorkspaceCode from "./WorkspaceCode";
 import WorkspaceContext from "@/context/WorkspaceContext";
 import WorkspaceSandpackWrapper from "./WorkspaceSandpackWrapper";
 import WorkspaceLoadingSkeleton from "./WorkspaceLoadingSkeleton";
-import { WorkspaceActions } from "./WorkspaceActions";
+import ResizablePanel from "@/components/common/ResizablePanel";
 
 const WorkspacePanel: React.FC = () => {
-  const { state, controller } = useContext(WorkspaceContext)!;
+  const { state } = useContext(WorkspaceContext)!;
   const { isSandpackLoading } = state.config;
 
   return (
@@ -19,50 +19,30 @@ const WorkspacePanel: React.FC = () => {
           isSandpackLoading ? "pointer-events-none" : ""
         }`}
       >
-        {/* 主要区域 */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex border-b bg-blue-200">
-            <TabButton
-              active={state.ui.activeTab === "preview"}
-              onClick={() => controller.setActiveTab("preview")}
-              disabled={isSandpackLoading}
-            >
-              预览
-            </TabButton>
-            <TabButton
-              active={state.ui.activeTab === "codeHistory"}
-              onClick={() => controller.setActiveTab("codeHistory")}
-              disabled={isSandpackLoading}
-            >
-              代码
-            </TabButton>
-            <WorkspaceActions />
-          </div>
-          <div className="flex-1 overflow-hidden relative">
-            <div
-              className={`absolute inset-0 transition-opacity duration-300 ${
-                state.ui.activeTab === "preview"
-                  ? "opacity-100 z-10"
-                  : "opacity-0 z-0"
-              }`}
-            >
-              <WorkspacePreview />
-            </div>
-
-            <div
-              className={`absolute inset-0 transition-opacity duration-300 ${
-                state.ui.activeTab === "codeHistory"
-                  ? "opacity-100 z-10"
-                  : "opacity-0 z-0"
-              }`}
-            >
-              <WorkspaceCode />
-            </div>
-          </div>
+        {/* 顶部操作区 */}
+        <div className="flex justify-between items-center bg-blue-200 p-2">
+          <h2 className="text-lg font-semibold">工作区</h2>
         </div>
 
-        {/* 底部区域 */}
-        <div className={`border-t bg-blue-200 transition-all duration-300`}>
+        <div
+          data-testid="ResizablePanel"
+          className={`flex-1 flex overflow-hidden relative ${
+            isSandpackLoading ? "pointer-events-none" : ""
+          }`}
+        >
+          {/* 主要内容区 */}
+          <ResizablePanel
+            // 保持和骨架屏一致
+            size={{ width: "68%" }}
+            minSize={{ width: "10%" }}
+            rightComponent={<WorkspaceCode />}
+          >
+            <WorkspacePreview />
+          </ResizablePanel>
+        </div>
+
+        {/* 底部聊天区 */}
+        <div className="border-t bg-blue-200">
           <WorkspaceChat />
         </div>
 
@@ -71,29 +51,5 @@ const WorkspacePanel: React.FC = () => {
     </WorkspaceSandpackWrapper>
   );
 };
-
-interface TabButtonProps {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-  disabled?: boolean;
-}
-
-const TabButton: React.FC<TabButtonProps> = ({
-  active,
-  onClick,
-  children,
-  disabled,
-}) => (
-  <button
-    className={`px-4 py-2 transition-colors duration-300 ${
-      active ? "bg-white border-b-2 border-blue-500" : "hover:bg-blue-300"
-    } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
-    onClick={onClick}
-    disabled={disabled}
-  >
-    {children}
-  </button>
-);
 
 export default WorkspacePanel;
