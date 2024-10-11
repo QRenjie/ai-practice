@@ -8,6 +8,7 @@ import {
   FiChevronDown,
   FiLoader, // 引入 FiLoader 图标
 } from "react-icons/fi";
+import { useSliceStore } from "@qlover/slice-store-react";
 
 interface ChatFooterProps {
   openPanel: "none" | "messages" | "config";
@@ -18,18 +19,21 @@ interface ChatFooterProps {
 }
 
 export function CollapseChatFooterButton() {
-  const { state, controller } = useContext(WorkspaceContext)!;
-
+  const { controller } = useContext(WorkspaceContext)!;
+  const isChatCollapsed = useSliceStore(
+    controller.store,
+    controller.selector.isChatCollapsed
+  );
   return (
     <button
       className={`rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 flex items-center justify-center ${
-        state.config.isChatCollapsed ? "w-6 h-6" : "w-7 h-7"
+        isChatCollapsed ? "w-6 h-6" : "w-7 h-7"
       }`}
       onClick={() => controller.toggleChatCollapse()}
-      title={state.config.isChatCollapsed ? "展开聊天" : "折叠聊天"}
+      title={isChatCollapsed ? "展开聊天" : "折叠聊天"}
       type="button"
     >
-      {state.config.isChatCollapsed ? <FiChevronUp /> : <FiChevronDown />}
+      {isChatCollapsed ? <FiChevronUp /> : <FiChevronDown />}
     </button>
   );
 }
@@ -40,9 +44,12 @@ export function ChatFooterActions({
   handleSubmit,
   isLoading,
 }: ChatFooterProps) {
-  const { state } = useContext(WorkspaceContext)!;
-
-  const sizeClass = state.config.isChatCollapsed ? "w-6 h-6" : "w-7 h-7";
+  const { controller } = useContext(WorkspaceContext)!;
+  const isChatCollapsed = useSliceStore(
+    controller.store,
+    controller.selector.isChatCollapsed
+  );
+  const sizeClass = isChatCollapsed ? "w-6 h-6" : "w-7 h-7";
 
   const getButtonClass = (panel: "messages" | "config") => {
     const baseClass =

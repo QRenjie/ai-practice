@@ -10,10 +10,16 @@ import { useSliceStore } from "@qlover/slice-store-react";
 
 const WorkspacePanel: React.FC = () => {
   const { controller } = useContext(WorkspaceContext)!;
+  const isSandpackLoading = useSliceStore(
+    controller.store,
+    controller.selector.isSandpackLoading
+  );
+  const activeTab = useSliceStore(
+    controller.store,
+    controller.selector.activeTab
+  );
 
-  const state = useSliceStore(controller.store);
-  
-  const { isSandpackLoading } = state.config;
+  console.log("jj panel state", isSandpackLoading, activeTab);
 
   return (
     <WorkspaceSandpackWrapper>
@@ -27,14 +33,14 @@ const WorkspacePanel: React.FC = () => {
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="flex border-b bg-blue-200">
             <TabButton
-              active={state.ui.activeTab === "preview"}
+              active={activeTab === "preview"}
               onClick={() => controller.setActiveTab("preview")}
               disabled={isSandpackLoading}
             >
               预览
             </TabButton>
             <TabButton
-              active={state.ui.activeTab === "codeHistory"}
+              active={activeTab === "codeHistory"}
               onClick={() => controller.setActiveTab("codeHistory")}
               disabled={isSandpackLoading}
             >
@@ -45,9 +51,7 @@ const WorkspacePanel: React.FC = () => {
           <div className="flex-1 overflow-hidden relative">
             <div
               className={`absolute inset-0 transition-opacity duration-300 ${
-                state.ui.activeTab === "preview"
-                  ? "opacity-100 z-10"
-                  : "opacity-0 z-0"
+                activeTab === "preview" ? "opacity-100 z-10" : "opacity-0 z-0"
               }`}
             >
               <WorkspacePreview />
@@ -55,7 +59,7 @@ const WorkspacePanel: React.FC = () => {
 
             <div
               className={`absolute inset-0 transition-opacity duration-300 ${
-                state.ui.activeTab === "codeHistory"
+                activeTab === "codeHistory"
                   ? "opacity-100 z-10"
                   : "opacity-0 z-0"
               }`}

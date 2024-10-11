@@ -4,8 +4,18 @@ import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
 import { merge } from "lodash-es";
 import { WorkspaceStore } from "@/store/WorkspaceStore";
 
+class Selector {
+  isChatCollapsed = (state: WorkspaceState) => state.config.isChatCollapsed;
+  isSandpackLoading = (state: WorkspaceState) => state.config.isSandpackLoading;
+  activeTab = (state: WorkspaceState) => state.ui.activeTab;    
+}
+
 export class WorkspaceController {
-  constructor(public store: WorkspaceStore) {}
+  selector: Selector;
+
+  constructor(public store: WorkspaceStore) {
+    this.selector = new Selector();
+  }
 
   get state() {
     return this.store.state;

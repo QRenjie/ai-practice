@@ -16,12 +16,22 @@ import ChatFooter, {
 } from "./ChatFooter";
 import Popover from "./common/Popover";
 import { useCreation } from "ahooks";
+import { useSliceStore } from "@qlover/slice-store-react";
 
 const WorkspaceChat: React.FC = () => {
   const workspaceContext = useContext(WorkspaceContext)!;
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { state } = workspaceContext;
+  const chatState = useSliceStore(
+    workspaceContext.controller.store,
+    (state) => state.chat
+  );
+  const configState = useSliceStore(
+    workspaceContext.controller.store,
+    (state) => state.config
+  );
+  console.log("jj chat state", chatState, configState);
+
   const [openPanel, setOpenPanel] = useState<"none" | "messages" | "config">(
     "none"
   );
@@ -92,7 +102,7 @@ const WorkspaceChat: React.FC = () => {
         <div className="h-full overflow-y-auto">
           <MessageList
             open={openPanel === "messages"}
-            messages={state.chat.messages}
+            messages={chatState.messages}
             chatController={chatController}
           />
         </div>
@@ -100,7 +110,7 @@ const WorkspaceChat: React.FC = () => {
     }
 
     return null;
-  }, [chatController, handleKeywordSelect, openPanel, state.chat.messages]);
+  }, [chatController, handleKeywordSelect, openPanel, chatState.messages]);
 
   const chatProps = useMemo(() => {
     return {
@@ -131,7 +141,7 @@ const WorkspaceChat: React.FC = () => {
     >
       <div
         className={`bg-gray-100 focus-within:ring-0 transition-all duration-300 ${
-          state.config.isChatCollapsed ? "h-8 px-1" : "p-1"
+          configState.isChatCollapsed ? "h-8 px-1" : "p-1"
         }`}
       >
         <div className="w-full h-full flex items-center justify-normal">
@@ -140,7 +150,7 @@ const WorkspaceChat: React.FC = () => {
             name="chatInput"
             onKeyPress={handleKeyPress}
             className={`w-full p-1 overflow-y-auto resize-none text-sm text-gray-800 placeholder-gray-500 bg-gray-100 border-none focus:outline-none focus:ring-0 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-corner-neutral ${
-              state.config.isChatCollapsed
+              configState.isChatCollapsed
                 ? "h-6 leading-none"
                 : "h-10 leading-5"
             }`}
@@ -148,9 +158,9 @@ const WorkspaceChat: React.FC = () => {
             disabled={isLoading}
             rows={1}
           />
-          {state.config.isChatCollapsed && <ChatFooterActions {...chatProps} />}
+          {configState.isChatCollapsed && <ChatFooterActions {...chatProps} />}
         </div>
-        {!state.config.isChatCollapsed && <ChatFooter {...chatProps} />}
+        {!configState.isChatCollapsed && <ChatFooter {...chatProps} />}
       </div>
     </Popover>
   );
