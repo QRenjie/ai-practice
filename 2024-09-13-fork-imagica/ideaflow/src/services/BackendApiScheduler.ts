@@ -68,7 +68,7 @@ export default class BackendApiScheduler {
         "Content-Type": "application/json",
       },
       body: JSONUtil.stringify(state),
-    }).then((res) => res.json());
+    });
   }
 
   /**
