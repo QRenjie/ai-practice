@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { Rnd } from "react-rnd";
 
 type Size = { width?: number | string; height?: number | string };
@@ -24,31 +24,21 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
   maxSize,
   size,
 }) => {
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [panelWidth, setPanelWidth] = useState(size?.width || "50%");
-
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsSmallScreen(window.innerWidth < 768); // 假设小于 768px 为小屏幕
-      setPanelWidth(window.innerWidth < 768 ? "100%" : (size?.width || "50%"));
-    };
-
-    checkScreenSize();
-    window.addEventListener("resize", checkScreenSize);
-    return () => window.removeEventListener("resize", checkScreenSize);
-  }, [size]);
-
+  const [width, setWidth] = useState(size?.width || '100%');
   const maxWidth = maxSize?.width || "100%";
-  const enableResizing = useMemo(() => ({
-    bottom: false,
-    bottomLeft: false,
-    bottomRight: false,
-    left: false,
-    right: !isSmallScreen,
-    top: false,
-    topLeft: false,
-    topRight: false,
-  }), [isSmallScreen]);
+  const enableResizing = useMemo(
+    () => ({
+      bottom: false,
+      bottomLeft: false,
+      bottomRight: false,
+      left: false,
+      right: true,
+      top: false,
+      topLeft: false,
+      topRight: false,
+    }),
+    []
+  );
 
   const resizeHandleComponent = useMemo(() => {
     return {
@@ -58,32 +48,29 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
 
   return (
     <div data-testid="ResizablePanel" className="w-full flex">
-      {!isSmallScreen && leftComponent && (
+      {/* {!isSmallScreen && leftComponent && (
         <div className="overflow-auto h-full flex-1">{leftComponent}</div>
-      )}
+      )} */}
 
       <Rnd
-        default={{
-          x: 0,
-          y: 0,
-          height: "100%",
-          width: panelWidth,
-        }}
-        size={{ width: panelWidth, height: "100%" }}
-        minWidth={isSmallScreen ? "100%" : minSize?.width}
-        maxWidth={isSmallScreen ? "100%" : maxWidth}
+        size={{ width, height: "100%" }}
+        minWidth={minSize?.width}
+        maxWidth={maxWidth}
         enableResizing={enableResizing}
         disableDragging={true}
         className="overflow-hidden h-full"
         style={{ position: "relative" }}
         resizeHandleComponent={resizeHandleComponent}
+        onResizeStop={(e, direction, ref, delta, position) => {
+          setWidth(ref.style.width);
+        }}
       >
         <div className="h-full relative">{children}</div>
       </Rnd>
 
-      {!isSmallScreen && rightComponent && (
+      {/* {!isSmallScreen && rightComponent && (
         <div className="overflow-auto h-full flex-1">{rightComponent}</div>
-      )}
+      )} */}
     </div>
   );
 };
