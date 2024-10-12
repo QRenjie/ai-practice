@@ -10,12 +10,10 @@ import WorkspaceContext from "@/context/WorkspaceContext";
 import { ChatController } from "../services/chatService";
 import MessageList from "./MessageList";
 import ConfigPanel from "./ConfigPanel";
-import ChatFooter, {
-  ChatFooterActions,
-  // CollapseChatFooterButton, // 移除未使用的导入
-} from "./ChatFooter";
 import Popover from "./common/Popover";
 import { useCreation } from "ahooks";
+import { ChatFooterActions } from "./workspace/ChatFooterActions";
+import ChatFooter from "./ChatFooter";
 
 const WorkspaceChat: React.FC = () => {
   const workspaceContext = useContext(WorkspaceContext)!;

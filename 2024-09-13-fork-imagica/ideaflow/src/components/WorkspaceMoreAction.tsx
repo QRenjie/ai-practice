@@ -145,16 +145,16 @@ export function WorkspaceMoreAction({
       content={menu}
       trigger={["click"]}
       onOpenChange={handlePopoverVisibleChange}
-      noPadding
       forceRender
     >
       <IconButton
         size={iconSize}
-        children={<FiMoreVertical />}
         isActive={isActive}
         onClick={(e) => e.preventDefault()}
         title="更多操作"
-      />
+      >
+        <FiMoreVertical />
+      </IconButton>
     </Popover>
   );
 }
