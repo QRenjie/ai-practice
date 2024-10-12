@@ -1,12 +1,11 @@
 import React, { useContext } from "react";
-import WorkspacePreview from "./WorkspacePreview";
 import WorkspaceChat from "./WorkspaceChat";
-import WorkspaceCode from "./WorkspaceCode";
 import WorkspaceContext from "@/context/WorkspaceContext";
 import WorkspaceSandpackWrapper from "./WorkspaceSandpackWrapper";
 import WorkspaceLoadingSkeleton from "./WorkspaceLoadingSkeleton";
-import ResizablePanel from "@/components/common/ResizablePanel";
 import clsx from "clsx";
+import WorkspaceHeader from "./WorkspaceHeader";
+import WorkspaceContentArea from "./workspace/WorkspaceContentArea";
 
 const WorkspacePanel: React.FC = () => {
   const { state } = useContext(WorkspaceContext)!;
@@ -26,25 +25,14 @@ const WorkspacePanel: React.FC = () => {
         )}
       >
         {/* 顶部操作区 */}
-        {/* <div className="flex justify-between items-center bg-blue-200 p-2">
-          <h2 className="text-lg font-semibold">工作区</h2>
-        </div> */}
+        <WorkspaceHeader />
 
         <div
-          data-testid="ResizablePanel"
-          className={clsx("flex-1 flex overflow-hidden relative", {
+          className={clsx("flex-1 overflow-hidden relative", {
             ["pointer-events-none"]: isSandpackLoading,
           })}
         >
-          {/* 主要内容区 */}
-          <ResizablePanel
-            // 保持和骨架屏一致
-            size={{ width: "68%" }}
-            minSize={{ width: "10%" }}
-            rightComponent={<WorkspaceCode />}
-          >
-            <WorkspacePreview />
-          </ResizablePanel>
+          <WorkspaceContentArea className="flex h-full" />
         </div>
 
         {/* 底部聊天区 */}

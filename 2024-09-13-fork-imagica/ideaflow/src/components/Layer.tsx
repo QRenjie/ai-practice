@@ -19,7 +19,13 @@ export interface LayerState {
   maxSize: Size;
 }
 
-function LayerInner({ children }: { children?: React.ReactNode }) {
+function LayerInner({
+  renderHeader,
+  children,
+}: {
+  renderHeader?: () => React.ReactNode;
+  children?: React.ReactNode;
+}) {
   const {
     minWidth,
     disabled,
@@ -72,7 +78,12 @@ function LayerInner({ children }: { children?: React.ReactNode }) {
           className="relative h-full flex flex-col"
           data-activelyayer={activeLayer === layerId}
         >
-          <LayerHeader className={draggableHandleClassName} />
+          {renderHeader ? (
+            renderHeader()
+          ) : (
+            <LayerHeader className={draggableHandleClassName} />
+          )}
+
           <div
             data-testid="LayerBdoy"
             className={clsx("flex-1 overflow-y-auto", className, {
@@ -87,10 +98,14 @@ function LayerInner({ children }: { children?: React.ReactNode }) {
   );
 }
 
-export default function Layer({ children, ...props }: LayerProps) {
+export default function Layer({
+  children,
+  renderHeader,
+  ...props
+}: LayerProps & { renderHeader?: () => React.ReactNode }) {
   return (
     <LayerProvider {...props}>
-      <LayerInner>{children}</LayerInner>
+      <LayerInner renderHeader={renderHeader}>{children}</LayerInner>
     </LayerProvider>
   );
 }

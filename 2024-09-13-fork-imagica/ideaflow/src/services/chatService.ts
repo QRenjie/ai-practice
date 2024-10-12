@@ -21,7 +21,7 @@ export class ChatController {
     public workspaceController: WorkspaceController,
     private setIsLoading: (isLoading: boolean) => void
   ) {
-    this.aIApiScheduler = aiApiScheduler
+    this.aIApiScheduler = aiApiScheduler;
     this.messageFactory = new MessageFactory();
   }
 
@@ -193,7 +193,9 @@ export class ChatController {
         messages: [this.messageFactory.createUserMessage(prompt)],
       });
 
-      const response = await this.aIApiScheduler.getRecommendedKeywords(aiApiParams);
+      const response = await this.aIApiScheduler.getRecommendedKeywords(
+        aiApiParams
+      );
       if (response.keywords && response.keywords.length > 0) {
         this.workspaceController.updateRecommendedKeywords(response.keywords);
       } else {
@@ -205,6 +207,9 @@ export class ChatController {
   };
 
   initRecommendedKeywords() {
-    this.fetchNewRecommendedKeywords([]);
+    // 如果推荐关键词为空, 则获取推荐关键词
+    if (!this.workspaceController.state.config.recommendedKeywords.length) {
+      this.fetchNewRecommendedKeywords([]);
+    }
   }
 }

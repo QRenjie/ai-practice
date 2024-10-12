@@ -105,4 +105,14 @@ export class WorkspaceController {
       })
     );
   };
+
+  toggleArea = () => {
+    this.setState((prevState) => ({
+      ...prevState,
+      ui: {
+        ...prevState.ui,
+        activeTab: prevState.ui.activeTab === "preview" ? "code" : "preview",
+      },
+    }));
+  };
 }

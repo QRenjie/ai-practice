@@ -20,8 +20,26 @@ const IconButton: React.FC<{
   </button>
 );
 
+export const LayerHeaderActions: React.FC = () => {
+  const { state, handleMaximize, handleMinimize, onClose } =
+    useContext(LayerContext)!;
+  return (
+    <>
+      <IconButton onClick={handleMinimize}>
+        <FiMinus />
+      </IconButton>
+      <IconButton onClick={handleMaximize}>
+        {state?.isMaximized ? <FiMinimize2 /> : <FiMaximize2 />}
+      </IconButton>
+      <IconButton onClick={onClose}>
+        <FiX />
+      </IconButton>
+    </>
+  );
+};
+
 const LayerHeader: React.FC<LayerHeaderProps> = ({ className }) => {
-  const { state, handleFit, handleMaximize, handleMinimize, onClose } =
+  const { state, disabled, handleFit, handleMaximize } =
     useContext(LayerContext)!;
 
   const handleDoubleClick = () => {
@@ -36,23 +54,20 @@ const LayerHeader: React.FC<LayerHeaderProps> = ({ className }) => {
     <div
       data-testid="LayerHeader"
       className={clsx(
-        "draggable-handle cursor-move bg-gray-100 p-2 rounded-t-lg flex justify-between items-center",
+        "draggable-handle bg-gray-100 p-2 rounded-t-lg flex justify-between items-center",
+        {
+          "cursor-move": !disabled,
+        },
         className
       )}
       onDoubleClick={handleDoubleClick}
     >
       <span className="text-gray-700 font-semibold">{title}</span>
-      <div className="flex space-x-2">
-        <IconButton onClick={handleMinimize}>
-          <FiMinus />
-        </IconButton>
-        <IconButton onClick={handleMaximize}>
-          {state?.isMaximized ? <FiMinimize2 /> : <FiMaximize2 />}
-        </IconButton>
-        <IconButton onClick={onClose}>
-          <FiX />
-        </IconButton>
-      </div>
+      {!disabled && (
+        <div className="flex space-x-2">
+          <LayerHeaderActions />
+        </div>
+      )}
     </div>
   );
 };
