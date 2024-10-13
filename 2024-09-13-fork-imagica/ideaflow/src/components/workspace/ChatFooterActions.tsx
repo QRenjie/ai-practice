@@ -1,4 +1,4 @@
-import WorkspaceContext from "@/context/WorkspaceContext";
+import WorkspaceContext from "@/container/WorkspaceContext";
 import { useContext } from "react";
 import {
   FiMessageSquare,
@@ -8,7 +8,7 @@ import {
 } from "react-icons/fi";
 import { ChatFooterProps, CollapseChatFooterButton } from "../ChatFooter";
 import IconButton from "../common/IconButton";
-import { WorkspaceMoreAction } from "../WorkspaceMoreAction";
+import { WorkspaceMoreAction } from "./WorkspaceMoreAction";
 
 export function ChatFooterActions({
   openPanel,

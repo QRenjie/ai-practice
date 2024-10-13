@@ -5,7 +5,7 @@ import {
   LayerContext,
   LayerProps,
   LayerProvider,
-} from "../context/LayerContext"; // 更新导入路径
+} from "../container/LayerContext"; // 更新导入路径
 import clsx from "clsx";
 
 type Size = { width: number | string; height: number | string };

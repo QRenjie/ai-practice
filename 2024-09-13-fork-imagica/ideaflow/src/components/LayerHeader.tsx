@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { FiMaximize2, FiMinimize2, FiX, FiMinus } from "react-icons/fi";
 import clsx from "clsx";
-import { LayerContext } from "@/context/LayerContext";
+import { LayerContext } from "@/container/LayerContext";
 import { title } from "process";
 
 interface LayerHeaderProps {

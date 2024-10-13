@@ -1,10 +1,10 @@
-import WorkspaceContext from "@/context/WorkspaceContext";
+import WorkspaceContext from "@/container/WorkspaceContext";
 import { useContext } from "react";
-import WorkspaceCode from "../WorkspaceCode";
-import WorkspacePreview from "../WorkspacePreview";
+import WorkspaceCode from "./WorkspaceCode";
+import WorkspacePreview from "./WorkspacePreview";
 import clsx from "clsx";
 
-export default function WorkspaceContentArea({
+export default function WorkspaceMainContent({
   className,
 }: {
   className?: string;

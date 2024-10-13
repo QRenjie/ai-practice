@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import WorkspaceContext from "@/context/WorkspaceContext";
+import WorkspaceContext from "@/container/WorkspaceContext";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 import DropdownMenu from "./common/DropdownMenu";
 import modelsJson from "../../config/models.json";

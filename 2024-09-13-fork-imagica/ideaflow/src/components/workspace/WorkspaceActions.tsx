@@ -1,5 +1,5 @@
-import IconButton from "./common/IconButton";
-import { FiMaximize2, FiMinimize2, FiX, FiMinus } from "react-icons/fi";
+import IconButton from "@/components/common/IconButton";
+import { FiMinimize2, FiX, FiMinus } from "react-icons/fi";
 
 export default function WorkspaceActions() {
   return (

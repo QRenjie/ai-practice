@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ActiveLayerContext from "../context/ActiveLayerContext"; // 更新导入路径
+import ActiveLayerContext from "./ActiveLayerContext"; // 更新导入路径
 
 const LayerProvider: React.FC<{ children: React.ReactNode }> = ({
   children: chidren,

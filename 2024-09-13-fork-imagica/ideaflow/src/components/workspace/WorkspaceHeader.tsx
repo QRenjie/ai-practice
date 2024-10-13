@@ -1,7 +1,7 @@
-import WorkspaceContext from "@/context/WorkspaceContext";
+import WorkspaceContext from "@/container/WorkspaceContext";
 import { useContext } from "react";
-import { LayerHeaderActions } from "./LayerHeader";
-import IconButton from "./common/IconButton";
+import { LayerHeaderActions } from "../LayerHeader";
+import IconButton from "../common/IconButton";
 import { FiCode, FiEye } from "react-icons/fi";
 
 export default function WorkspaceHeader() {

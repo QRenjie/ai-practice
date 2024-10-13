@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import WorkspaceContext from "@/context/WorkspaceContext";
+import WorkspaceContext from "@/container/WorkspaceContext";
 import { exportManager } from "@/utils/ExportManager";
 import { PreviewPublisher } from "@/utils/PreviewPublisher";
 import { workspaceManager } from "@/utils/WorkspaceManager";
@@ -12,8 +12,8 @@ import {
   FiSave,
   FiLoader,
 } from "react-icons/fi";
-import IconButton, { IconButtonProps } from "./common/IconButton";
-import Popover from "./common/Popover";
+import IconButton, { IconButtonProps } from "../common/IconButton";
+import Popover from "../common/Popover";
 
 // 封装一个加载按钮组件
 const LoadingButton = ({

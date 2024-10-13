@@ -1,6 +1,6 @@
 'use client';
 import { WorkspaceState } from "@/types/workspace";
-import Workspace from "../Workspace";
+import Workspace from "../workspace/Workspace";
 
 export default function CreatorRoot({
   workspace,

@@ -25,8 +25,6 @@ export default class ApiCommonParams {
 
     // 处理提示词
     if (coderPrompt) {
-      console.log('jj coderPrompt', coderPrompt);
-      
       const messageFactory = new MessageFactory();
 
       this.messages = [

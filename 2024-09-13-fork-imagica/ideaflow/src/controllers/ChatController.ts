@@ -1,9 +1,9 @@
-import { WorkspaceController } from "@/controllers/workspaceController";
+import { WorkspaceController } from "@/controllers/WorkspaceController";
 import { RefObject } from "react";
 import { AiChatResponse, CodeBlock, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
-import AIApiScheduler, { aiApiScheduler } from "./AIApiScheduler";
-import { MessageFactory } from "./MessageFactory"; // 新增导入
+import AIApiScheduler, { aiApiScheduler } from "@/services/AIApiScheduler";
+import { MessageFactory } from "@/services/MessageFactory"; // 新增导入
 import { SandpackFile } from "@codesandbox/sandpack-react";
 import sandpackFile from "../../config/sandpackFile";
 import ApiCommonParams from "@/utils/ApiCommonParams";

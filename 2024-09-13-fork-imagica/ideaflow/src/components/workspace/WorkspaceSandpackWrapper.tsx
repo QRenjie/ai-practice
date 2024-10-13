@@ -1,7 +1,7 @@
-import WorkspaceContext from "@/context/WorkspaceContext";
+import WorkspaceContext from "@/container/WorkspaceContext";
 import { SandpackProvider } from "@codesandbox/sandpack-react";
 import { useCallback, useContext } from "react";
-import SandpackContent from "./SandpackContent";
+import SandpackContent from "../SandpackContent";
 import { SandpackMessage } from "@codesandbox/sandpack-client";
 
 const WorkspaceSandpackWrapper: React.FC<{
@@ -13,7 +13,6 @@ const WorkspaceSandpackWrapper: React.FC<{
 
   const onChangeMessage = useCallback(
     ({ type }: SandpackMessage) => {
-      console.log("jj type", type);
       if (type === "done") {
         controller.updateConfig({ isSandpackLoading: false });
       }

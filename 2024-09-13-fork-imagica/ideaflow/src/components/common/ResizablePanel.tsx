@@ -24,7 +24,7 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
   maxSize,
   size,
 }) => {
-  const [width, setWidth] = useState(size?.width || '100%');
+  const [width, setWidth] = useState(size?.width || "100%");
   const maxWidth = maxSize?.width || "100%";
   const enableResizing = useMemo(
     () => ({
@@ -48,9 +48,9 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
 
   return (
     <div data-testid="ResizablePanel" className="w-full flex">
-      {/* {!isSmallScreen && leftComponent && (
+      {leftComponent && (
         <div className="overflow-auto h-full flex-1">{leftComponent}</div>
-      )} */}
+      )}
 
       <Rnd
         size={{ width, height: "100%" }}
@@ -61,16 +61,16 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
         className="overflow-hidden h-full"
         style={{ position: "relative" }}
         resizeHandleComponent={resizeHandleComponent}
-        onResizeStop={(e, direction, ref, delta, position) => {
+        onResizeStop={(e, direction, ref) => {
           setWidth(ref.style.width);
         }}
       >
         <div className="h-full relative">{children}</div>
       </Rnd>
 
-      {/* {!isSmallScreen && rightComponent && (
+      {rightComponent && (
         <div className="overflow-auto h-full flex-1">{rightComponent}</div>
-      )} */}
+      )}
     </div>
   );
 };

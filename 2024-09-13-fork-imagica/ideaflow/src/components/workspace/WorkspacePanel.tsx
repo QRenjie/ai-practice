@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
-import WorkspaceChat from "./WorkspaceChat";
-import WorkspaceContext from "@/context/WorkspaceContext";
+import WorkspaceFooter from "./WorkspaceFooter";
+import WorkspaceContext from "@/container/WorkspaceContext";
 import WorkspaceSandpackWrapper from "./WorkspaceSandpackWrapper";
 import WorkspaceLoadingSkeleton from "./WorkspaceLoadingSkeleton";
 import clsx from "clsx";
 import WorkspaceHeader from "./WorkspaceHeader";
-import WorkspaceContentArea from "./workspace/WorkspaceContentArea";
+import WorkspaceMainContent from "./WorkspaceMainContent";
 
 const WorkspacePanel: React.FC = () => {
   const { state } = useContext(WorkspaceContext)!;
@@ -32,12 +32,12 @@ const WorkspacePanel: React.FC = () => {
             ["pointer-events-none"]: isSandpackLoading,
           })}
         >
-          <WorkspaceContentArea className="flex h-full" />
+          <WorkspaceMainContent className="flex h-full" />
         </div>
 
         {/* 底部聊天区 */}
         <div className="border-t bg-blue-200">
-          <WorkspaceChat />
+          <WorkspaceFooter />
         </div>
 
         {isSandpackLoading && <WorkspaceLoadingSkeleton />}

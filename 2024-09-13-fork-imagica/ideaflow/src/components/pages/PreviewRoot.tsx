@@ -12,7 +12,7 @@ import DynamicLoading from "../DynamicLoading";
 import styles from "./PreviewRoot.module.css";
 
 const WorkspaceLoadingSkeleton = dynamic(
-  () => import("@/components/WorkspaceLoadingSkeleton"),
+  () => import("@/components/workspace/WorkspaceLoadingSkeleton"),
   {
     loading: DynamicLoading,
   }
