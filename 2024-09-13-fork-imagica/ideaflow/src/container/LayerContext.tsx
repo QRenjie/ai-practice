@@ -33,6 +33,10 @@ export interface LayerContextType
   handleResize: RndResizeCallback;
   activeLayer: string | null;
   layerId: string;
+  /**
+   * 拖拽时，层级元素的类名
+   */
+  draggableHandleClassName: string;
 }
 
 export interface LayerProps {
@@ -69,8 +73,10 @@ export const LayerProvider: React.FC<LayerProps> = ({
   const [state, setState] = useState<LayerState>(initialState);
 
   // 使用 useRef 保存唯一 id
-  const layerIdRef = useRef(id || `layer-${layerCounter++}`);
-  const layerId = layerIdRef.current;
+  const layerId = useRef(id || `layer-${layerCounter++}`).current;
+  const draggableHandleClassName = useRef(
+    `draggable-handle-layer-${layerId}`
+  ).current;
 
   const setSize = useCallback((size: Size) => {
     setState((prevState) => ({ ...prevState, size }));
@@ -217,6 +223,7 @@ export const LayerProvider: React.FC<LayerProps> = ({
       handleResize,
       activeLayer,
       layerId,
+      draggableHandleClassName,
     }),
     [
       state,
@@ -239,6 +246,7 @@ export const LayerProvider: React.FC<LayerProps> = ({
       handleResize,
       activeLayer,
       layerId,
+      draggableHandleClassName,
     ]
   );
 

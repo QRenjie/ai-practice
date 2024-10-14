@@ -9,7 +9,6 @@ import {
 import clsx from "clsx";
 
 type Size = { width: number | string; height: number | string };
-const draggableHandleClassName = "draggable-handle";
 export interface LayerState {
   title: string;
   size: Size;
@@ -37,6 +36,7 @@ function LayerInner({
     handleDragStop,
     handleResize,
     activeLayer,
+    draggableHandleClassName,
   } = useContext(LayerContext)!;
 
   return (
