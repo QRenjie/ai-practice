@@ -17,7 +17,7 @@ type Size = { width: number | string; height: number | string };
 export interface LayerContextType
   extends Pick<
     LayerProps,
-    "id" | "minWidth" | "title" | "disabled" | "className" | "onClose"
+    "id" | "title" | "disabled" | "className" | "onClose"
   > {
   state: LayerState;
   isAnimating: boolean;
@@ -37,14 +37,14 @@ export interface LayerContextType
    * 拖拽时，层级元素的类名
    */
   draggableHandleClassName: string;
+  minSize: Size;
 }
 
 export interface LayerProps {
   id?: string; // 将 id 属性变为可选
   children?: React.ReactNode;
   initialState: LayerState;
-  minWidth?: number;
-  minHeight?: number;
+  minSize?: Size;
   active?: boolean;
   title?: string;
   disabled?: boolean;
@@ -56,11 +56,12 @@ export const LayerContext = createContext<LayerContextType | null>(null);
 
 // 静态计数器
 let layerCounter = 0;
+const DEFAULT_MIN_SIZE = { width: 200, height: 40 };
 
 export const LayerProvider: React.FC<LayerProps> = ({
   initialState,
   id,
-  minWidth,
+  minSize,
   title,
   disabled,
   className,
@@ -71,6 +72,13 @@ export const LayerProvider: React.FC<LayerProps> = ({
 
   const [isAnimating, setIsAnimating] = useState(false);
   const [state, setState] = useState<LayerState>(initialState);
+
+  const minSizeInner = useMemo(() => {
+    return {
+      width: minSize?.width || DEFAULT_MIN_SIZE.width,
+      height: minSize?.height || DEFAULT_MIN_SIZE.height,
+    };
+  }, [minSize]);
 
   // 使用 useRef 保存唯一 id
   const layerId = useRef(id || `layer-${layerCounter++}`).current;
@@ -148,13 +156,18 @@ export const LayerProvider: React.FC<LayerProps> = ({
     if (state.isMinimized) {
       setSize(initialState.size);
     } else {
-      setSize({ width: initialState.size.width, height: 40 });
+      // 使用 minWidth 和 minHeight 设置最小尺寸
+      setSize({
+        width: minSizeInner?.width || initialState.size.width,
+        height: minSizeInner?.height || 40, // 默认最小高度为40
+      });
     }
     setIsMinimized(!state.isMinimized);
     setIsMaximized(false);
   }, [
     state.isMinimized,
     initialState.size,
+    minSizeInner,
     setSize,
     setIsMinimized,
     setIsMaximized,
@@ -164,18 +177,30 @@ export const LayerProvider: React.FC<LayerProps> = ({
     setIsAnimating(true);
     setTimeout(() => setIsAnimating(false), 300);
 
-    setSize(initialState.size);
-    setPosition(initialState.position);
-    setIsMaximized(false);
+    // 获取当前窗口大小
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    if (state.isMaximized) {
+      // 当全屏时，将尺寸设置为适应屏幕的大小，居中显示
+      const margin = 50; // 设置一个边距
+      const newWidth = windowWidth - 2 * margin;
+      const newHeight = windowHeight - 2 * margin;
+
+      setSize({ width: newWidth, height: newHeight });
+      setPosition({
+        x: margin,
+        y: margin,
+      });
+    } else {
+      // 当没有全屏时，窗口全屏
+      setSize({ width: windowWidth, height: windowHeight });
+      setPosition({ x: 0, y: 0 });
+    }
+
+    setIsMaximized(!state.isMaximized);
     setIsMinimized(false);
-  }, [
-    initialState.size,
-    initialState.position,
-    setSize,
-    setPosition,
-    setIsMaximized,
-    setIsMinimized,
-  ]);
+  }, [state.isMaximized, setSize, setPosition, setIsMaximized, setIsMinimized]);
 
   const handleClick = useCallback(() => {
     setActiveLayer(layerId);
@@ -213,7 +238,7 @@ export const LayerProvider: React.FC<LayerProps> = ({
       handleMinimize,
       handleFit,
       id,
-      minWidth,
+      minSize: minSizeInner,
       title,
       disabled,
       className,
@@ -236,7 +261,7 @@ export const LayerProvider: React.FC<LayerProps> = ({
       handleMinimize,
       handleFit,
       id,
-      minWidth,
+      minSizeInner,
       title,
       disabled,
       className,

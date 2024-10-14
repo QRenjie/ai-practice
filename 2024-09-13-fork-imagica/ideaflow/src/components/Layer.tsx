@@ -26,7 +26,7 @@ function LayerInner({
   children?: React.ReactNode;
 }) {
   const {
-    minWidth,
+    minSize,
     disabled,
     className,
     state,
@@ -45,8 +45,8 @@ function LayerInner({
       position={state.position}
       onDragStop={handleDragStop}
       onResize={handleResize}
-      minWidth={minWidth}
-      minHeight={40}
+      minWidth={minSize.width}
+      minHeight={minSize.height}
       maxWidth={state.maxSize.width}
       maxHeight={state.maxSize.height}
       bounds="parent"

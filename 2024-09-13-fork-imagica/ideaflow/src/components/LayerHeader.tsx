@@ -1,8 +1,9 @@
 import React, { useContext } from "react";
-import { FiMaximize2, FiMinimize2, FiX, FiMinus } from "react-icons/fi";
+import { FiMaximize2, FiMinimize2, FiX, FiMinus, FiArrowUpRight, FiLayers, FiSquare } from "react-icons/fi";
 import clsx from "clsx";
 import { LayerContext } from "@/container/LayerContext";
 import { title } from "process";
+import { MdFilterNone } from "react-icons/md";
 
 interface LayerHeaderProps {
   className?: string;
@@ -21,15 +22,15 @@ const IconButton: React.FC<{
 );
 
 export const LayerHeaderActions: React.FC = () => {
-  const { state, handleMaximize, handleMinimize, onClose } =
+  const { state, handleFit, handleMinimize, onClose } =
     useContext(LayerContext)!;
   return (
     <>
       <IconButton onClick={handleMinimize}>
-        <FiMinus />
+        {state.isMinimized ? <FiMaximize2 /> : <FiMinus />}
       </IconButton>
-      <IconButton onClick={handleMaximize}>
-        {state?.isMaximized ? <FiMinimize2 /> : <FiMaximize2 />}
+      <IconButton onClick={handleFit}>
+        {state.isMaximized ? <MdFilterNone /> : <FiSquare />}
       </IconButton>
       <IconButton onClick={onClose}>
         <FiX />
