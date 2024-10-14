@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { Rnd } from "react-rnd";
 
 type Size = { width?: number | string; height?: number | string };
@@ -24,7 +24,7 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
   maxSize,
   size,
 }) => {
-  const [width, setWidth] = useState(size?.width || '100%');
+  const [width, setWidth] = useState(size?.width || "100%");
   const maxWidth = maxSize?.width || "100%";
   const enableResizing = useMemo(
     () => ({
@@ -61,7 +61,7 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
         className="overflow-hidden h-full"
         style={{ position: "relative" }}
         resizeHandleComponent={resizeHandleComponent}
-        onResizeStop={(e, direction, ref, delta, position) => {
+        onResizeStop={(e, direction, ref) => {
           setWidth(ref.style.width);
         }}
       >

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import WorkspaceContext from "../context/WorkspaceContext";
+import WorkspaceContext from "@/container/WorkspaceContext";
 import { Switch } from "antd";
 
 interface ConfigPanelProps {

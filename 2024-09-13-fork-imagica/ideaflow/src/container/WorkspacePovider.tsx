@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { WorkspaceState } from "@/types/workspace";
-import WorkspaceContext from "@/context/WorkspaceContext";
-import { WorkspaceController } from "@/controllers/workspaceController";
+import WorkspaceContext from "@/container/WorkspaceContext";
+import { WorkspaceController } from "@/controllers/WorkspaceController";
 import { useCreation } from "ahooks";
 
 const WorkspacePovider: React.FC<{

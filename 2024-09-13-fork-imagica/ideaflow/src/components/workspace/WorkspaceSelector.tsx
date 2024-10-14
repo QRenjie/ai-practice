@@ -1,5 +1,5 @@
 import React from "react";
-import WorkspaceContext, { workspaceOptions } from "@/context/WorkspaceContext";
+import WorkspaceContext, { workspaceOptions } from "@/container/WorkspaceContext";
 import { WorkspaceType } from "@/types/workspace";
 
 const WorkspaceSelector: React.FC = () => {

@@ -6,18 +6,16 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import WorkspaceContext from "@/context/WorkspaceContext";
-import { ChatController } from "../services/chatService";
-import MessageList from "./MessageList";
-import ConfigPanel from "./ConfigPanel";
-import ChatFooter, {
-  ChatFooterActions,
-  // CollapseChatFooterButton, // 移除未使用的导入
-} from "./ChatFooter";
-import Popover from "./common/Popover";
+import WorkspaceContext from "@/container/WorkspaceContext";
+import { ChatController } from "../../controllers/ChatController";
+import MessageList from "../MessageList";
+import ConfigPanel from "../ConfigPanel";
+import Popover from "../common/Popover";
 import { useCreation } from "ahooks";
+import { ChatFooterActions } from "./ChatFooterActions";
+import ChatFooter from "../ChatFooter";
 
-const WorkspaceChat: React.FC = () => {
+const WorkspaceFooter: React.FC = () => {
   const workspaceContext = useContext(WorkspaceContext)!;
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -156,4 +154,4 @@ const WorkspaceChat: React.FC = () => {
   );
 };
 
-export default WorkspaceChat;
+export default WorkspaceFooter;

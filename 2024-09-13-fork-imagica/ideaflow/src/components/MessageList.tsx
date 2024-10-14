@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, memo } from "react";
 import AIResponse from "./AIResponse";
-import { ChatController } from "../services/chatService";
+import { ChatController } from "../controllers/ChatController";
 import { Message } from "@/types/apiTypes";
 
 interface MessageListProps {

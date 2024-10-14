@@ -1,17 +1,12 @@
 import React, { useContext } from "react";
-import WorkspaceContext from "@/context/WorkspaceContext";
-import {
-  FiSettings,
-  FiMessageSquare,
-  FiCornerDownLeft,
-  FiChevronUp,
-  FiChevronDown,
-  FiLoader,
-} from "react-icons/fi";
-import IconButton from "./common/IconButton"; // 导入 IconButton 组件
-import { WorkspaceMoreAction } from "./WorkspaceMoreAction";
+import WorkspaceContext from "@/container/WorkspaceContext";
+import { FiChevronUp, FiChevronDown } from "react-icons/fi";
+import DropdownMenu from "./common/DropdownMenu";
+import modelsJson from "../../config/models.json";
+import { ChatFooterActions } from "./workspace/ChatFooterActions";
+import IconButton from "./common/IconButton";
 
-interface ChatFooterProps {
+export interface ChatFooterProps {
   openPanel: "none" | "messages" | "config";
   handleTogglePanel: (panel: "messages" | "config") => void;
   handleSubmit: (e: React.FormEvent) => void;
@@ -21,89 +16,38 @@ interface ChatFooterProps {
 
 export function CollapseChatFooterButton() {
   const { state, controller } = useContext(WorkspaceContext)!;
-
-  return (
-    <button
-      className={`rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 flex items-center justify-center ${
-        state.config.isChatCollapsed ? "w-6 h-6" : "w-7 h-7"
-      }`}
-      onClick={() => controller.toggleChatCollapse()}
-      title={state.config.isChatCollapsed ? "展开聊天" : "折叠聊天"}
-      type="button"
-    >
-      {state.config.isChatCollapsed ? <FiChevronUp /> : <FiChevronDown />}
-    </button>
-  );
-}
-
-export function ChatFooterActions({
-  openPanel,
-  handleTogglePanel,
-  handleSubmit,
-  isLoading,
-}: ChatFooterProps) {
-  const { state } = useContext(WorkspaceContext)!;
-
   const size = state.config.isChatCollapsed ? "sm" : "md"; // 使用 Tailwind 风格的尺寸
 
-  const handleButtonClick = (
-    e: React.MouseEvent,
-    panel: "messages" | "config"
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
-    handleTogglePanel(panel);
-  };
-
   return (
-    <div className="flex gap-1.5 text-md ml-auto">
-      <WorkspaceMoreAction iconSize={size} />
-      <IconButton
-        children={<FiMessageSquare />}
-        isActive={openPanel === "messages"}
-        onClick={(e) => handleButtonClick(e, "messages")}
-        title="聊天记录"
-        size={size} // 使用 size 属性
-      />
-      <IconButton
-        children={<FiSettings />}
-        isActive={openPanel === "config"}
-        onClick={(e) => handleButtonClick(e, "config")}
-        title="设置"
-        size={size} // 使用 size 属性
-      />
-      <IconButton
-        children={
-          isLoading ? (
-            <FiLoader className="animate-spin" />
-          ) : (
-            <FiCornerDownLeft />
-          )
-        }
-        isActive={!isLoading}
-        onClick={(e) => {
-          e.preventDefault();
-          handleSubmit(e);
-        }}
-        title="发送"
-        disabled={isLoading}
-        size={size} // 使用 size 属性
-      />
-      <CollapseChatFooterButton />
-    </div>
+    <IconButton
+      size={size}
+      onClick={() => controller.toggleChatCollapse()}
+      title={state.config.isChatCollapsed ? "展开聊天" : "折叠聊天"}
+    >
+      {state.config.isChatCollapsed ? <FiChevronUp /> : <FiChevronDown />}
+    </IconButton>
   );
 }
+
+const models = Object.entries(modelsJson).map(([, value]) => ({
+  value: value,
+  label: value,
+}));
 
 function ChatFooter(props: ChatFooterProps) {
   const { onKeywordSelect } = props;
-  const { state } = useContext(WorkspaceContext)!;
+  const { state, controller } = useContext(WorkspaceContext)!;
   const recommendedKeywords = state.config.recommendedKeywords;
 
   return (
     <div className={`w-full flex flex-col bg-gray-100 px-1`}>
       <div className="flex justify-between items-center gap-1">
         <div className="text-xs text-gray-400">
-          <span>{state.config.selectedModel}</span>
+          <DropdownMenu
+            trigger={<span>{state.config.selectedModel}</span>}
+            items={models}
+            onChange={(value) => controller.updateConfig({ selectedModel: value })}
+          />
         </div>
 
         {/* 显示推荐关键字 */}
