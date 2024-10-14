@@ -30,7 +30,8 @@ export function CollapseChatFooterButton() {
   );
 }
 
-const models = Object.entries(modelsJson).map(([, value]) => ({
+const models = Object.entries(modelsJson).map(([key, value]) => ({
+  key,
   value: value,
   label: value,
 }));

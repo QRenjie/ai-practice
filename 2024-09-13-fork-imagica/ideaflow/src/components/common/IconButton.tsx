@@ -1,9 +1,10 @@
 import React from "react";
+import DropdownMenu from "./DropdownMenu";
 
 export interface IconButtonProps {
   children?: React.ReactNode;
   isActive?: boolean;
-  onClick?: (e: React.MouseEvent) => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   title?: string;
   disabled?: boolean;
   size?: "xs" | "sm" | "md" | "lg"; // 使用 Tailwind 风格的尺寸
@@ -12,7 +13,10 @@ export interface IconButtonProps {
  * 需要加ref防止findDOMNode警告
  */
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ children, isActive, onClick, title, disabled = false, size = "md" }, ref) => {
+  (
+    { children, isActive, onClick, title, disabled = false, size = "md" },
+    ref
+  ) => {
     const baseButtonClass =
       "p-1.5 rounded-full transition-colors duration-200 flex items-center justify-center";
     const activeClass = "bg-blue-500 text-white hover:bg-blue-600";
@@ -27,18 +31,16 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     }[size];
 
     return (
-      <button
+      <DropdownMenu.Item
         ref={ref}
         className={`${baseButtonClass} ${
           isActive ? activeClass : inactiveClass
         } ${sizeClass}`}
         onClick={onClick}
         title={title}
-        type="button"
         disabled={disabled}
-      >
-        {children}
-      </button>
+        label={children}
+      />
     );
   }
 );
