@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Popover from "./Popover";
 
-interface DropdownMenuProps {
+export interface DropdownMenuProps {
   trigger: React.ReactNode;
   items: {
     value: string;
@@ -9,9 +9,18 @@ interface DropdownMenuProps {
     onClick?: () => void;
   }[];
   onChange?: (key: string) => void;
+  /**
+   * 该属性需要继承 Popover 组件
+   */
+  as?: React.ElementType; // 新增 as 属性
 }
 
-function DropdownMenu({ trigger, items, onChange }: DropdownMenuProps) {
+function DropdownMenu({
+  trigger,
+  items,
+  onChange,
+  as: Component = Popover,
+}: DropdownMenuProps) {
   const [open, setOpen] = useState(false);
 
   const content = (
@@ -33,7 +42,7 @@ function DropdownMenu({ trigger, items, onChange }: DropdownMenuProps) {
   );
 
   return (
-    <Popover
+    <Component
       content={content}
       trigger="click"
       open={open}
@@ -43,7 +52,7 @@ function DropdownMenu({ trigger, items, onChange }: DropdownMenuProps) {
       arrow={false}
     >
       {trigger}
-    </Popover>
+    </Component>
   );
 }
 

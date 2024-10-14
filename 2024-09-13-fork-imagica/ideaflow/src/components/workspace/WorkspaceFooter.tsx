@@ -10,10 +10,10 @@ import WorkspaceContext from "@/container/WorkspaceContext";
 import { ChatController } from "../../controllers/ChatController";
 import MessageList from "../MessageList";
 import ConfigPanel from "../ConfigPanel";
-import Popover from "../common/Popover";
 import { useCreation } from "ahooks";
 import { ChatFooterActions } from "./ChatFooterActions";
 import ChatFooter from "../ChatFooter";
+import WorkspacePopover from "./WorkspacePopover";
 
 const WorkspaceFooter: React.FC = () => {
   const workspaceContext = useContext(WorkspaceContext)!;
@@ -117,7 +117,7 @@ const WorkspaceFooter: React.FC = () => {
   ]);
 
   return (
-    <Popover
+    <WorkspacePopover
       overlayClassName="w-4/5 h-[60%] max-h-[66%]"
       relative
       placement="topRight"
@@ -125,7 +125,6 @@ const WorkspaceFooter: React.FC = () => {
       content={PopoverContent}
       onOpenChange={handleOpenChange}
       trigger="click"
-      forceRender
     >
       <div
         className={`bg-gray-100 focus-within:ring-0 transition-all duration-300 ${
@@ -150,7 +149,7 @@ const WorkspaceFooter: React.FC = () => {
         </div>
         {!state.config.isChatCollapsed && <ChatFooter {...chatProps} />}
       </div>
-    </Popover>
+    </WorkspacePopover>
   );
 };
 

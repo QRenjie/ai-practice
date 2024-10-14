@@ -31,7 +31,7 @@ export interface LayerContextType
   handleClick: () => void;
   handleDragStop: RndDragCallback;
   handleResize: RndResizeCallback;
-  activeLayer: string | null;
+  activeLayer?: string;
   layerId: string;
   /**
    * 拖拽时，层级元素的类名
@@ -226,6 +226,15 @@ export const LayerProvider: React.FC<LayerProps> = ({
     [disabled, setSize, setPosition]
   );
 
+  const disableInner = useMemo(() => {
+    return (
+      disabled ||
+      state.isMaximized ||
+      state.size.width === "100%" ||
+      state.size.height === "100%"
+    );
+  }, [disabled, state.isMaximized, state.size.width, state.size.height]);
+
   const contextValue = useMemo(
     () => ({
       state,
@@ -240,7 +249,7 @@ export const LayerProvider: React.FC<LayerProps> = ({
       id,
       minSize: minSizeInner,
       title,
-      disabled,
+      disabled: disableInner,
       className,
       onClose,
       handleClick,
@@ -263,7 +272,7 @@ export const LayerProvider: React.FC<LayerProps> = ({
       id,
       minSizeInner,
       title,
-      disabled,
+      disableInner,
       className,
       onClose,
       handleClick,

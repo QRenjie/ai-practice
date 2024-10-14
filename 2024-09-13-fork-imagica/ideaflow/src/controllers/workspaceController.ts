@@ -2,11 +2,17 @@ import { WorkspaceState, WorkspaceType } from "@/types/workspace";
 import { CodeBlock, Message } from "@/types/apiTypes";
 import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
 import { merge } from "lodash-es";
+import { WorkspaceLocalState } from "@/container/WorkspaceContext";
 
 export class WorkspaceController {
   constructor(
     public state: WorkspaceState,
-    private setState: React.Dispatch<React.SetStateAction<WorkspaceState>>
+    private setState: React.Dispatch<React.SetStateAction<WorkspaceState>>,
+
+    public localState: WorkspaceLocalState,
+    private setLocalState: React.Dispatch<
+      React.SetStateAction<WorkspaceLocalState>
+    >
   ) {}
 
   setActiveTab = (tab: WorkspaceState["ui"]["activeTab"]) => {
@@ -113,6 +119,13 @@ export class WorkspaceController {
         ...prevState.ui,
         activeTab: prevState.ui.activeTab === "preview" ? "code" : "preview",
       },
+    }));
+  };
+
+  togglePreviewMask = (show: boolean = false) => {
+    this.setLocalState((prevState) => ({
+      ...prevState,
+      stopPreviewMask: show,
     }));
   };
 }

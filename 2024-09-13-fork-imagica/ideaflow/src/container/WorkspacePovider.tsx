@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { WorkspaceState } from "@/types/workspace";
-import WorkspaceContext from "@/container/WorkspaceContext";
+import WorkspaceContext, {
+  WorkspaceLocalState,
+} from "@/container/WorkspaceContext";
 import { WorkspaceController } from "@/controllers/WorkspaceController";
 import { useCreation } from "ahooks";
 
@@ -10,8 +12,12 @@ const WorkspacePovider: React.FC<{
 }> = ({ initialState, children }) => {
   const [state, setState] = useState<WorkspaceState>(initialState);
 
+  const [localState, setLocalState] = useState<WorkspaceLocalState>({
+    stopPreviewMask: false,
+  });
+
   const controller = useCreation(
-    () => new WorkspaceController(state, setState),
+    () => new WorkspaceController(state, setState, localState, setLocalState),
     []
   );
 
@@ -21,14 +27,19 @@ const WorkspacePovider: React.FC<{
 
   useEffect(() => {
     controller.state = state;
-  }, [controller, state]);
+  }, [controller, state, localState]);
+
+  useEffect(() => {
+    controller.localState = localState;
+  }, [controller, localState]);
 
   const contextValue = useMemo(
     () => ({
       state,
       controller,
+      localState,
     }),
-    [controller, state]
+    [controller, state, localState]
   );
 
   return (

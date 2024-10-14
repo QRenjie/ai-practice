@@ -54,7 +54,9 @@ function LayerInner({
       disableDragging={disabled}
       enableResizing={!disabled} // 添加这一行
       className={clsx(
-        "overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300",
+        "bg-gradient-to-br from-gray-200 to-gray-300",
+        // 当内部元素被撑开时不隐藏， 解决错位问题，将内部元素溢出给到 layerRoot层
+        !state.isMaximized ? "overflow-visible" : "overflow-hidden",
         {
           ["shadow-2xl rounded-lg"]: !state.isMaximized,
           ["transition-all duration-300 ease-in-out"]: isAnimating,
@@ -71,7 +73,7 @@ function LayerInner({
       <div
         date-testid="LayerRoot"
         // className="relative w-full flex flex-col bg-white bg-opacity-10 backdrop-blur-sm"
-        className="absolute inset-0"
+        className="absolute overflow-hidden inset-0"
         onContextMenu={(e) => e.stopPropagation()}
       >
         <div

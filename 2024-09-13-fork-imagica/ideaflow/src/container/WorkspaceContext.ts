@@ -8,9 +8,14 @@ export const workspaceOptions = Object.keys(workspaceConfig).map((key) => ({
   value: key,
 }));
 
+export interface WorkspaceLocalState {
+  stopPreviewMask: boolean;
+}
+
 export interface WorkspaceContextType {
   state: WorkspaceState;
   controller: WorkspaceController;
+  localState: WorkspaceLocalState;
 }
 
 const WorkspaceContext = React.createContext<WorkspaceContextType | null>(null);

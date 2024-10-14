@@ -5,6 +5,7 @@ import DropdownMenu from "./common/DropdownMenu";
 import modelsJson from "../../config/models.json";
 import { ChatFooterActions } from "./workspace/ChatFooterActions";
 import IconButton from "./common/IconButton";
+import WorkspacePopover from "./workspace/WorkspacePopover";
 
 export interface ChatFooterProps {
   openPanel: "none" | "messages" | "config";
@@ -44,6 +45,7 @@ function ChatFooter(props: ChatFooterProps) {
       <div className="flex justify-between items-center gap-1">
         <div className="text-xs text-gray-400">
           <DropdownMenu
+            as={WorkspacePopover}
             trigger={<span>{state.config.selectedModel}</span>}
             items={models}
             onChange={(value) => controller.updateConfig({ selectedModel: value })}

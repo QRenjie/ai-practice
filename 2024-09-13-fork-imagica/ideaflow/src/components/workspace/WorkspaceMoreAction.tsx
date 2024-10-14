@@ -13,7 +13,7 @@ import {
   FiLoader,
 } from "react-icons/fi";
 import IconButton, { IconButtonProps } from "../common/IconButton";
-import Popover from "../common/Popover";
+import WorkspacePopover from "./WorkspacePopover";
 
 // 封装一个加载按钮组件
 const LoadingButton = ({
@@ -141,7 +141,8 @@ export function WorkspaceMoreAction({
   );
 
   return (
-    <Popover
+    <WorkspacePopover
+      open={isActive}
       content={menu}
       trigger={["click"]}
       onOpenChange={handlePopoverVisibleChange}
@@ -155,6 +156,6 @@ export function WorkspaceMoreAction({
       >
         <FiMoreVertical />
       </IconButton>
-    </Popover>
+    </WorkspacePopover>
   );
 }

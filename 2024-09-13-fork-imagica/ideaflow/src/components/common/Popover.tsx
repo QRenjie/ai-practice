@@ -4,7 +4,7 @@ import styles from "./Popover.module.css";
 import { identity } from "lodash-es";
 import clsx from "clsx";
 
-interface PopoverProps extends AntdPopoverProps {
+export interface PopoverProps extends AntdPopoverProps {
   children: React.ReactNode;
   content?: React.ReactNode;
   relative?: boolean;
