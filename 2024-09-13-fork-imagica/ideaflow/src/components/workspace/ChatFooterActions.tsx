@@ -33,6 +33,9 @@ export function ChatFooterActions({
     <div className="flex gap-1.5 text-md ml-auto">
       <WorkspaceMoreAction iconSize={size} />
       <IconButton
+        tooltipProps={{
+          title: openPanel === "messages" ? "聊天记录" : "聊天记录",
+        }}
         active={openPanel === "messages"}
         onClick={(e) => handleButtonClick(e, "messages")}
         title="聊天记录"
@@ -41,6 +44,9 @@ export function ChatFooterActions({
         <FiMessageSquare />
       </IconButton>
       <IconButton
+        tooltipProps={{
+          title: openPanel === "config" ? "设置" : "设置",
+        }}
         active={openPanel === "config"}
         onClick={(e) => handleButtonClick(e, "config")}
         title="设置"
@@ -49,6 +55,9 @@ export function ChatFooterActions({
         <FiSettings />
       </IconButton>
       <IconButton
+        tooltipProps={{
+          title: isLoading ? "发送中" : "发送",
+        }}
         active={!isLoading}
         onClick={(e) => {
           e.preventDefault();

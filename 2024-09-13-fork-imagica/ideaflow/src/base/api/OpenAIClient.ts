@@ -64,7 +64,7 @@ class OpenAIClient extends ApiClient {
         .filter(Boolean);
 
       return {
-        keywords: keywords.slice(0, 6),
+        keywords: keywords.slice(0, 10),
       };
     } catch (error) {
       const openAIError = error as OpenAIError;

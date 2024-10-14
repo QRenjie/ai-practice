@@ -33,7 +33,13 @@ export default function WorkspaceHeader() {
       <span className="text-gray-700 font-semibold">{state.ui.title}</span>
 
       <div className="flex items-center gap-2">
-        <IconButton onClick={() => controller.toggleArea()}>
+        <IconButton
+          tooltipProps={{
+            title:
+              state.ui.activeTab === "preview" ? "切换到编辑器" : "切换到预览",
+          }}
+          onClick={() => controller.toggleArea()}
+        >
           {state.ui.activeTab === "preview" ? <FiCode /> : <FiEye />}
         </IconButton>
 

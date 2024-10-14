@@ -17,11 +17,13 @@ export function CollapseChatFooterButton() {
   const { state, controller } = useContext(WorkspaceContext)!;
   const size = state.config.isChatCollapsed ? "sm" : "md"; // 使用 Tailwind 风格的尺寸
 
+  const title = state.config.isChatCollapsed ? "展开聊天" : "折叠聊天";
   return (
     <IconButton
+      tooltipProps={{ title }}
       size={size}
       onClick={() => controller.toggleChatCollapse()}
-      title={state.config.isChatCollapsed ? "展开聊天" : "折叠聊天"}
+      title={title}
     >
       {state.config.isChatCollapsed ? <FiChevronUp /> : <FiChevronDown />}
     </IconButton>

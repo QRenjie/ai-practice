@@ -1,6 +1,7 @@
 import React from "react";
 import { FiLoader } from "react-icons/fi";
 import clsx from "clsx";
+import { Tooltip, TooltipProps } from "antd";
 export interface IconButtonProps {
   children?: React.ReactNode;
   icon?: React.ReactNode;
@@ -11,6 +12,7 @@ export interface IconButtonProps {
   disabled?: boolean;
   loading?: boolean;
   size?: "xs" | "sm" | "md" | "lg"; // 使用 Tailwind 风格的尺寸
+  tooltipProps?: TooltipProps;
 }
 /**
  * 需要加ref防止findDOMNode警告
@@ -27,6 +29,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       size = "md",
       icon,
       className,
+      tooltipProps,
     } = props;
 
     const baseButtonClass =
@@ -42,7 +45,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       lg: "w-8 h-8",
     }[size];
 
-    return (
+    const Button = (
       <button
         ref={ref}
         className={clsx(
@@ -58,6 +61,12 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         {children}
       </button>
     );
+
+    if (tooltipProps) {
+      return <Tooltip {...tooltipProps}>{Button}</Tooltip>;
+    }
+
+    return Button;
   }
 );
 

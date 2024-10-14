@@ -23,3 +23,9 @@ ai 帮我提出了 sandpack 的建议, sandpack 和做到在线代码运行,并�
 - 修复导出功能
 - 优化preview和code工作区交互
 - 优化了代码结构
+
+
+## 1013
+
+- 增加 model 选择
+- 增加 tooltip 和 弹出组件样式
