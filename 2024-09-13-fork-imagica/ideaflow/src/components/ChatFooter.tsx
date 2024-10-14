@@ -31,7 +31,7 @@ export function CollapseChatFooterButton() {
 }
 
 const models = Object.entries(modelsJson).map(([key, value]) => ({
-  key,
+  key: value,
   value: value,
   label: value,
 }));
@@ -47,10 +47,13 @@ function ChatFooter(props: ChatFooterProps) {
         <div className="text-xs text-gray-400">
           <DropdownMenu
             as={WorkspacePopover}
-            trigger={<span>{state.config.selectedModel}</span>}
             items={models}
-            onChange={(value) => controller.updateConfig({ selectedModel: value })}
-          />
+            onChange={(value) =>
+              controller.updateConfig({ selectedModel: value.key })
+            }
+          >
+            <span>{state.config.selectedModel}</span>
+          </DropdownMenu>
         </div>
 
         {/* 显示推荐关键字 */}

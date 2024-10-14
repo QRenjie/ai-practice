@@ -1,11 +1,12 @@
 import React, { forwardRef, useCallback, useState } from "react";
-import Popover from "./Popover";
+import Popover, { PopoverProps } from "./Popover";
 import { FiLoader } from "react-icons/fi";
 import clsx from "clsx";
-export interface DropdownMenuProps {
-  trigger: React.ReactNode;
-  items: (DropdownMenuItemProps & { key: string })[];
-  onChange?: (key: string) => void;
+import { Menu, MenuProps } from "antd";
+export interface DropdownMenuProps extends PopoverProps {
+  children: React.ReactNode;
+  items: MenuProps["items"];
+  onChange?: MenuProps["onSelect"];
   /**
    * 该属性需要继承 Popover 组件
    */
@@ -20,84 +21,80 @@ export interface DropdownMenuItemProps {
   className?: string;
   icon?: React.ReactNode;
   label?: React.ReactNode;
+  children?: React.ReactNode;
   title?: string;
 }
 
-const DropdownMenuItem = forwardRef<HTMLButtonElement, DropdownMenuItemProps>(
-  ({ onClick, disabled, icon, label, className, title }, ref) => {
-    const [loading, setLoading] = useState(false);
+export const DropdownMenuItem = forwardRef<
+  HTMLButtonElement,
+  DropdownMenuItemProps
+>(({ onClick, disabled, icon, label, className, title, children }, ref) => {
+  const [loading, setLoading] = useState(false);
 
-    const handleClick = useCallback(
-      (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        if (!onClick) {
-          return;
-        }
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      if (!onClick) {
+        return;
+      }
 
-        setLoading(true);
+      setLoading(true);
 
-        const result = onClick(e);
+      const result = onClick(e);
 
-        // 根据 onClick 是否为 promise 是否开启loading
-        if (result instanceof Promise) {
-          result.finally(() => {
-            setLoading(false);
-          });
-          return;
-        }
+      // 根据 onClick 是否为 promise 是否开启loading
+      if (result instanceof Promise) {
+        result.finally(() => {
+          setLoading(false);
+        });
+        return;
+      }
 
-        setLoading(false);
-      },
-      [onClick]
-    );
+      setLoading(false);
+    },
+    [onClick]
+  );
 
-    return (
-      <button
-        ref={ref}
-        title={title}
-        onClick={onClick ? handleClick : undefined}
-        disabled={disabled || loading}
-        className={clsx(
-          className ||
-            "p-1.5 w-full transition-colors duration-200 flex items-center",
-          disabled || loading
-            ? "text-gray-400 cursor-not-allowed bg-gray-100"
-            : "text-gray-700 hover:bg-gray-200"
-        )}
-      >
-        {loading ? <FiLoader className="mr-2 animate-spin" /> : icon} {label}
-      </button>
-    );
-  }
-);
+  return (
+    <button
+      ref={ref}
+      title={title}
+      onClick={onClick ? handleClick : undefined}
+      disabled={disabled || loading}
+      className={clsx(
+        className ||
+          "p-1.5 w-full transition-colors duration-200 flex items-center",
+        disabled || loading
+          ? "text-gray-400 cursor-not-allowed bg-gray-100"
+          : "text-gray-700 hover:bg-gray-200"
+      )}
+    >
+      {loading ? <FiLoader className="mr-2 animate-spin" /> : icon}{" "}
+      {label || children}
+    </button>
+  );
+});
 
 function DropdownMenu({
-  trigger,
+  children,
   items,
   onChange,
   as: Component = Popover,
+  ...rest
 }: DropdownMenuProps) {
   const [open, setOpen] = useState(false);
 
-  const content = (
-    <div className="py-2 bg-white">
-      {items.map((item) => (
-        <DropdownMenuItem {...item} key={item.key} />
-      ))}
-    </div>
-  );
-  // className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-blue-100 hover:text-blue-900"
-
   return (
     <Component
-      content={content}
+      content={<Menu onSelect={onChange} items={items} />}
       trigger="click"
       open={open}
       onOpenChange={setOpen}
       placement="bottomLeft"
       arrow={false}
       noPadding
+      {...rest}
     >
-      {trigger}
+      {children}
     </Component>
   );
 }
