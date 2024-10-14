@@ -1,13 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
 import WorkspaceContext from "@/container/WorkspaceContext";
 import { exportManager } from "@/utils/ExportManager";
 import { PreviewPublisher } from "@/utils/PreviewPublisher";
 import { workspaceManager } from "@/utils/WorkspaceManager";
 import { message } from "antd";
 import { useContext } from "react";
-import { FiMoreVertical, FiUpload, FiDownload, FiSave } from "react-icons/fi";
-import IconButton, { IconButtonProps } from "../common/IconButton";
-import DropdownMenu, { DropdownMenuItem } from "../common/DropdownMenu";
+import IconButton, { IconButtonProps } from "@/components/common/IconButton";
+import {
+  FiMoreVertical,
+  FiUpload,
+  FiDownload,
+  FiSave,
+  FiLoader,
+} from "react-icons/fi";
+import WorkspacePopover from "./WorkspacePopover";
+
+// 封装一个加载按钮组件
+const LoadingButton = ({
+  onClick,
+  disabled,
+  icon,
+  children,
+}: {
+  onClick: () => Promise<void>;
+  disabled?: boolean;
+  icon?: React.ReactNode;
+  children?: React.ReactNode;
+}) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    setLoading(true);
+    try {
+      await onClick();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      disabled={disabled || loading}
+      className={`p-1.5 transition-colors duration-200 flex items-center justify-center ${
+        disabled || loading
+          ? "text-gray-400 cursor-not-allowed bg-gray-100"
+          : "text-gray-700 hover:bg-gray-200"
+      }`}
+    >
+      {loading ? <FiLoader className="mr-2 animate-spin" /> : icon} {children}
+    </button>
+  );
+};
 
 const PublishMenuItem = () => {
   const { state } = useContext(WorkspaceContext)!;
@@ -35,12 +79,9 @@ const PublishMenuItem = () => {
   };
 
   return (
-    <DropdownMenuItem
-      onClick={handlePublish}
-      icon={<FiUpload className="mr-2" />}
-    >
+    <LoadingButton onClick={handlePublish} icon={<FiUpload className="mr-2" />}>
       发布
-    </DropdownMenuItem>
+    </LoadingButton>
   );
 };
 
@@ -52,12 +93,12 @@ const ExportMenuItem = () => {
   };
 
   return (
-    <DropdownMenuItem
+    <LoadingButton
       onClick={handleExport}
       icon={<FiDownload className="mr-2" />}
     >
       导出
-    </DropdownMenuItem>
+    </LoadingButton>
   );
 };
 
@@ -74,9 +115,9 @@ const SaveMenuItem = () => {
   };
 
   return (
-    <DropdownMenuItem onClick={handleSave} icon={<FiSave className="mr-2" />}>
+    <LoadingButton onClick={handleSave} icon={<FiSave className="mr-2" />}>
       保存
-    </DropdownMenuItem>
+    </LoadingButton>
   );
 };
 
@@ -85,26 +126,33 @@ export function WorkspaceMoreAction({
 }: {
   iconSize?: IconButtonProps["size"];
 }) {
-  const items = [
-    {
-      key: "publish",
-      label: <PublishMenuItem />,
-    },
-    {
-      key: "export",
-      label: <ExportMenuItem />,
-    },
-    {
-      key: "save",
-      label: <SaveMenuItem />,
-    },
-  ];
+  const [isActive, setIsActive] = useState(false);
+
+  const handlePopoverVisibleChange = (visible: boolean) => {
+    setIsActive(visible);
+  };
+
+  const menu = (
+    <div className="flex flex-col">
+      <PublishMenuItem />
+      <ExportMenuItem />
+      <SaveMenuItem />
+    </div>
+  );
 
   return (
-    <DropdownMenu items={items}>
-      <IconButton size={iconSize} title="更多操作">
-        <FiMoreVertical />
-      </IconButton>
-    </DropdownMenu>
+    <WorkspacePopover
+      content={menu}
+      open={isActive}
+      onOpenChange={handlePopoverVisibleChange}
+      noPadding
+      forceRender
+    >
+      <span>
+        <IconButton size={iconSize} active={isActive} title="更多操作">
+          <FiMoreVertical />
+        </IconButton>
+      </span>
+    </WorkspacePopover>
   );
 }

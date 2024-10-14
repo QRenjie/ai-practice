@@ -33,7 +33,7 @@ export function ChatFooterActions({
     <div className="flex gap-1.5 text-md ml-auto">
       <WorkspaceMoreAction iconSize={size} />
       <IconButton
-        isActive={openPanel === "messages"}
+        active={openPanel === "messages"}
         onClick={(e) => handleButtonClick(e, "messages")}
         title="聊天记录"
         size={size} // 使用 size 属性
@@ -41,7 +41,7 @@ export function ChatFooterActions({
         <FiMessageSquare />
       </IconButton>
       <IconButton
-        isActive={openPanel === "config"}
+        active={openPanel === "config"}
         onClick={(e) => handleButtonClick(e, "config")}
         title="设置"
         size={size} // 使用 size 属性
@@ -49,7 +49,7 @@ export function ChatFooterActions({
         <FiSettings />
       </IconButton>
       <IconButton
-        isActive={!isLoading}
+        active={!isLoading}
         onClick={(e) => {
           e.preventDefault();
           handleSubmit(e);

@@ -1,11 +1,9 @@
 import React, { useContext } from "react";
 import WorkspaceContext from "@/container/WorkspaceContext";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
-import DropdownMenu from "./common/DropdownMenu";
-import modelsJson from "../../config/models.json";
 import { ChatFooterActions } from "./workspace/ChatFooterActions";
 import IconButton from "./common/IconButton";
-import WorkspacePopover from "./workspace/WorkspacePopover";
+import { WorkspaceModelSelect } from "./workspace/WorkspaceModelSelect";
 
 export interface ChatFooterProps {
   openPanel: "none" | "messages" | "config";
@@ -30,30 +28,16 @@ export function CollapseChatFooterButton() {
   );
 }
 
-const models = Object.entries(modelsJson).map(([key, value]) => ({
-  key: value,
-  value: value,
-  label: value,
-}));
-
 function ChatFooter(props: ChatFooterProps) {
   const { onKeywordSelect } = props;
-  const { state, controller } = useContext(WorkspaceContext)!;
+  const { state } = useContext(WorkspaceContext)!;
   const recommendedKeywords = state.config.recommendedKeywords;
 
   return (
     <div className={`w-full flex flex-col bg-gray-100 px-1`}>
       <div className="flex justify-between items-center gap-1">
         <div className="text-xs text-gray-400">
-          <DropdownMenu
-            as={WorkspacePopover}
-            items={models}
-            onChange={(value) =>
-              controller.updateConfig({ selectedModel: value.key })
-            }
-          >
-            <span>{state.config.selectedModel}</span>
-          </DropdownMenu>
+          <WorkspaceModelSelect />
         </div>
 
         {/* 显示推荐关键字 */}

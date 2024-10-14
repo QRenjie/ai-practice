@@ -1,22 +1,34 @@
 import React from "react";
-import DropdownMenu from "./DropdownMenu";
-
+import { FiLoader } from "react-icons/fi";
+import clsx from "clsx";
 export interface IconButtonProps {
   children?: React.ReactNode;
-  isActive?: boolean;
+  icon?: React.ReactNode;
+  active?: boolean;
   onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   title?: string;
+  className?: string;
   disabled?: boolean;
+  loading?: boolean;
   size?: "xs" | "sm" | "md" | "lg"; // 使用 Tailwind 风格的尺寸
 }
 /**
  * 需要加ref防止findDOMNode警告
  */
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
-  (
-    { children, isActive, onClick, title, disabled = false, size = "md" },
-    ref
-  ) => {
+  (props, ref) => {
+    const {
+      children,
+      active,
+      onClick,
+      title,
+      disabled = false,
+      loading = false,
+      size = "md",
+      icon,
+      className,
+    } = props;
+
     const baseButtonClass =
       "p-1.5 rounded-full transition-colors duration-200 flex items-center justify-center";
     const activeClass = "bg-blue-500 text-white hover:bg-blue-600";
@@ -31,16 +43,20 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     }[size];
 
     return (
-      <DropdownMenu.Item
+      <button
         ref={ref}
-        className={`${baseButtonClass} ${
-          isActive ? activeClass : inactiveClass
-        } ${sizeClass}`}
+        className={clsx(
+          className || baseButtonClass,
+          active ? activeClass : inactiveClass,
+          sizeClass
+        )}
         onClick={onClick}
         title={title}
         disabled={disabled}
-        label={children}
-      />
+      >
+        {loading ? <FiLoader className="mr-2 animate-spin" /> : icon}
+        {children}
+      </button>
     );
   }
 );
