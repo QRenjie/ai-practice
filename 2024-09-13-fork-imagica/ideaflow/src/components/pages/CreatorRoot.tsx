@@ -1,6 +1,7 @@
-'use client';
+"use client";
 import { WorkspaceState } from "@/types/workspace";
 import Workspace from "../workspace/Workspace";
+import { ActiveLayerProvider } from "@/container/ActiveLayerContext";
 
 export default function CreatorRoot({
   workspace,
@@ -8,8 +9,10 @@ export default function CreatorRoot({
   workspace: WorkspaceState;
 }) {
   return (
-    <div className="relative w-full h-full">
-      <Workspace key={workspace.id} index={0} state={workspace} />
-    </div>
+    <ActiveLayerProvider defaultActiveLayer={workspace.id}>
+      <div className="relative w-full h-full overflow-hidden">
+        <Workspace key={workspace.id} index={0} state={workspace} />
+      </div>
+    </ActiveLayerProvider>
   );
 }

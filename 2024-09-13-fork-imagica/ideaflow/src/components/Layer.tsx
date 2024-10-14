@@ -54,14 +54,15 @@ function LayerInner({
       disableDragging={disabled}
       enableResizing={!disabled} // 添加这一行
       className={clsx(
-        "shadow-2xl rounded-lg overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300",
+        "overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300",
         {
-          ["h-10"]: state.isMaximized,
+          ["shadow-2xl rounded-lg"]: !state.isMaximized,
           ["transition-all duration-300 ease-in-out"]: isAnimating,
           ["ring-2 ring-blue-500"]: activeLayer === layerId,
         }
       )}
       data-testid="Layer"
+      data-layerid={layerId}
       onClick={handleClick} // 添加点击事件
       style={{
         zIndex: activeLayer === layerId ? 1000 : "auto",
