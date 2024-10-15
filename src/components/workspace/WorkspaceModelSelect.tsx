@@ -16,7 +16,7 @@ export function WorkspaceModelSelect() {
 
   const handleModelChange = useCallback(
     (value: unknown) => {
-      controller.updateConfig({
+      controller.store.updateConfig({
         selectedModel: (value as (typeof models)[number]).key,
       });
       setOpen(false);

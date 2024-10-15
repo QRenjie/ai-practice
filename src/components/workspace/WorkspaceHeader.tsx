@@ -35,13 +35,11 @@ export default function WorkspaceHeader() {
       <div className="flex items-center gap-2">
         <EditableTitle />
         <IconButton
-          size="xs"
           tooltipProps={{
             title: state.meta.public ? "公开工作区" : "私有工作区",
           }}
           onClick={() => {
             controller.updateMeta({ public: !state.meta.public });
-            controller.saveNoCatch();
           }}
         >
           {state.meta.public ? <FiUnlock /> : <FiLock />}
@@ -54,7 +52,7 @@ export default function WorkspaceHeader() {
             title:
               state.ui.activeTab === "preview" ? "切换到编辑器" : "切换到预览",
           }}
-          onClick={() => controller.toggleArea()}
+          onClick={() => controller.store.toggleArea()}
         >
           {state.ui.activeTab === "preview" ? <FiCode /> : <FiEye />}
         </IconButton>

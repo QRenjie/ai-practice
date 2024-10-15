@@ -90,7 +90,6 @@ const EditableTitle: React.FC = () => {
   const handleSave = useCallback(
     (value: string) => {
       controller.updateTitle(value.trim());
-      controller.saveNoCatch();
       setIsEditing(false);
     },
     [controller]
@@ -123,7 +122,8 @@ const EditableTitle: React.FC = () => {
         {recommendedTitles.map((title, index) => (
           <li
             key={index}
-            onMouseDown={(e) => { // 使用 onMouseDown 而不是 onClick
+            onMouseDown={(e) => {
+              // 使用 onMouseDown 而不是 onClick
               handleSave(title);
               e.stopPropagation();
               e.preventDefault();
@@ -164,7 +164,6 @@ const EditableTitle: React.FC = () => {
               title: locales.get("locale:workspace.title.edit"),
             }}
             className="ml-2"
-            size="xs"
             icon={<FiEdit2 />}
             onClick={handleEdit}
           />

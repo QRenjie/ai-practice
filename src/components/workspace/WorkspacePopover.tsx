@@ -16,13 +16,13 @@ export default function WorkspacePopover(
   const { controller } = useContext(WorkspaceContext)!;
 
   useEffect(() => {
-    controller.togglePreviewMask(props.open);
+    controller.store.togglePreviewMask(props.open);
   }, [controller, props.open]);
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
       // 清除preview mask
-      controller.togglePreviewMask(open);
+      controller.store.togglePreviewMask(open);
 
       // 调用onVisibleChange和onOpenChangel
       (props.onVisibleChange || props.onOpenChange)?.(open);

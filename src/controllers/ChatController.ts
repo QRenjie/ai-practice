@@ -30,11 +30,11 @@ export class ChatController {
   }
 
   get state() {
-    return this.workspaceController.state;
+    return this.workspaceController.getState();
   }
 
   get chatMessages() {
-    return this.workspaceController.state.chat.messages;
+    return this.state.chat.messages;
   }
 
   get previewAiMessage(): Message | undefined {
@@ -53,15 +53,15 @@ export class ChatController {
     this.setIsLoading(true);
     try {
       // 新增用户消息
-      this.workspaceController.addChatMessage(
+      this.workspaceController.store.addChatMessage(
         this.messageFactory.createUserMessage(message)
       );
 
       // 调用AI接口
       const aiResponse = await this.aIApiScheduler.callOpenAIStream(
         new ApiCommonParams({
-          model: this.workspaceController.state.config.selectedModel,
-          coderPrompt: this.workspaceController.state.config.coderPrompt,
+          model: this.state.config.selectedModel,
+          coderPrompt: this.state.config.coderPrompt,
           messages: [
             ...this.chatMessages,
             this.messageFactory.createUserMessage(message),
@@ -73,7 +73,7 @@ export class ChatController {
       const newMessage = this.createCodeBlockMessage(aiResponse);
 
       // 新增AI消息
-      this.workspaceController.addChatMessage(newMessage);
+      this.workspaceController.store.addChatMessage(newMessage);
 
       // 重新应用消息
       this.reapplyAiMessage(newMessage);
@@ -85,7 +85,7 @@ export class ChatController {
     } catch (error) {
       console.error("handleSubmit error", error);
       const errorMessage = this.messageFactory.createErrorMessage(error);
-      this.workspaceController.addChatMessage(errorMessage);
+      this.workspaceController.store.addChatMessage(errorMessage);
     } finally {
       this.setIsLoading(false);
       if (this.inputRef?.current) {
@@ -143,7 +143,7 @@ export class ChatController {
   };
 
   updatePreviewCodeBlocks(codeBlocks: CodeBlock[]) {
-    const result = cloneDeep(this.workspaceController.state.code.files || {});
+    const result = cloneDeep(this.state.code.files || {});
     codeBlocks.forEach((codeBlock) => {
       // 确保 fileName 以 "/" 开头
       const fileName = codeBlock.fileName.startsWith("/")
@@ -167,7 +167,7 @@ export class ChatController {
 
     console.log("更新预览代码块", result);
 
-    this.workspaceController.updateCodeFiles(result, codeBlocks);
+    this.workspaceController.store.updateCodeFiles(result, codeBlocks);
 
     // TODO: 自动刷新preivew
   }
@@ -189,7 +189,7 @@ export class ChatController {
             );
 
       const aiApiParams = new ApiCommonParams({
-        model: this.workspaceController.state.config.selectedModel,
+        model: this.state.config.selectedModel,
         messages: [this.messageFactory.createUserMessage(prompt)],
       });
 
@@ -197,7 +197,9 @@ export class ChatController {
         aiApiParams
       );
       if (response.keywords && response.keywords.length > 0) {
-        this.workspaceController.updateRecommendedKeywords(response.keywords);
+        this.workspaceController.store.updateRecommendedKeywords(
+          response.keywords
+        );
       } else {
         console.warn("未收到有效的关键词");
       }
@@ -208,7 +210,9 @@ export class ChatController {
 
   initRecommendedKeywords() {
     // 如果推荐关键词为空, 则获取推荐关键词
-    if (!this.workspaceController.state.config.recommendedKeywords.length) {
+    if (
+      !this.workspaceController.store.state.config.recommendedKeywords.length
+    ) {
       this.fetchNewRecommendedKeywords([]);
     }
   }

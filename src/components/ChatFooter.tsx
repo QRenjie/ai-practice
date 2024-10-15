@@ -22,7 +22,7 @@ export function CollapseChatFooterButton() {
     <IconButton
       tooltipProps={{ title }}
       size={size}
-      onClick={() => controller.toggleChatCollapse()}
+      onClick={() => controller.store.toggleChatCollapse()}
       title={title}
     >
       {state.config.isChatCollapsed ? <FiChevronUp /> : <FiChevronDown />}

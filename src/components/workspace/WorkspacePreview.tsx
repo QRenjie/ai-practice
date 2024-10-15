@@ -8,7 +8,7 @@ const WorkspacePreview = memo(() => {
   const maskRef = useRef<HTMLDivElement>(null);
 
   const handleMaskClick = () => {
-    controller.togglePreviewMask(false);
+    controller.store.togglePreviewMask(false);
     maskRef.current?.classList.toggle("hidden");
   };
 

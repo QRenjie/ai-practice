@@ -19,7 +19,7 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ onKeywordSelect }) => {
             <span>启用窗口化</span>
             <Switch
               checked={state.config.isWindowed}
-              onChange={() => controller.toggleWindowed()}
+              onChange={() => controller.store.toggleWindowed()}
             />
           </div>
         </div>

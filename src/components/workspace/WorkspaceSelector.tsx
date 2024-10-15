@@ -15,7 +15,7 @@ const WorkspaceSelector: React.FC = () => {
               key={option.value}
               className="p-4 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onClick={() =>
-                controller.resetState(option.value as WorkspaceType)
+                controller.store.resetState(option.value as WorkspaceType)
               }
             >
               {option.label}

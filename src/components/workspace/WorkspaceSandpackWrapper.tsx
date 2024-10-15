@@ -14,7 +14,7 @@ const WorkspaceSandpackWrapper: React.FC<{
   const onChangeMessage = useCallback(
     ({ type }: SandpackMessage) => {
       if (type === "done") {
-        controller.updateConfig({ isSandpackLoading: false });
+        controller.store.updateConfig({ isSandpackLoading: false });
       }
     },
     [controller]
