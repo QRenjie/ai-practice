@@ -148,6 +148,15 @@ export class WorkspaceController {
     });
   };
 
+  updateMeta = (meta: Partial<WorkspaceState["meta"]>) => {
+    this.setState((prevState) => ({
+      ...prevState,
+      meta: { ...prevState.meta, ...meta },
+    }));
+
+    this.saveNoCatch();
+  };
+
   saveNoCatch = async () => {
     try {
       await this.save();
