@@ -1,0 +1,17 @@
+.popoverContent {
+  @apply p-4 bg-white shadow-lg rounded-lg border border-gray-200;
+}
+
+.customPopover :global(.ant-popover-content),
+.customPopover :global(.ant-popover-inner),
+.customPopover :global(.ant-popover-inner-content) {
+  @apply h-full;
+}
+
+.noPadding :global(.ant-popover-inner) {
+  @apply p-0;
+}
+
+/* .customPopover :global(.ant-popover-arrow) {
+  @apply hidden;
+} */

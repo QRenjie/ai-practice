@@ -1,0 +1,52 @@
+{
+  "name": "ideaflow",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "eslint": "eslint src --ext .ts,.tsx,.js,.jsx",
+    "gen:workspace": "node ./scripts/generateWorkspaceConfig.mjs"
+  },
+  "type": "module",
+  "dependencies": {
+    "@codesandbox/sandpack-react": "^2.19.9",
+    "@monaco-editor/react": "^4.6.0",
+    "@types/uuid": "^10.0.0",
+    "ahooks": "^3.8.1",
+    "antd": "^5.21.1",
+    "axios": "^1.7.7",
+    "lodash-es": "^4.17.21",
+    "lz-string": "^1.5.0",
+    "next": "14.2.11",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^5.3.0",
+    "react-markdown": "^9.0.1",
+    "react-rnd": "^10.4.12",
+    "react-syntax-highlighter": "^15.5.0",
+    "remark-gfm": "^4.0.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/archiver": "^6.0.2",
+    "@types/lodash-es": "^4.17.12",
+    "@types/next": "^9.0.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "archiver": "^7.0.1",
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^4.12.10",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.11",
+    "postcss": "^8.4.47",
+    "tailwind-scrollbar": "^3.1.0",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5",
+    "vite": "^5.4.8"
+  }
+}

@@ -1,0 +1,236 @@
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #f5f5f5;
+    --text-color: #333;
+    --card-bg: #fff;
+    --shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 0.5s ease-in-out;
+}
+
+/* 定义不同天气状况的背景 */
+body.sunny {
+    background-image: url('path/to/sunny-background.jpg');
+}
+
+body.cloudy {
+    background-image: url('path/to/cloudy-background.jpg');
+}
+
+body.rainy {
+    background-image: url('path/to/rainy-background.jpg');
+}
+
+body.snowy {
+    background-image: url('path/to/snowy-background.jpg');
+}
+
+body.night {
+    background-image: url('path/to/night-background.jpg');
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#city-input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+    width: 300px;
+}
+
+#search-btn, #location-btn, #clear-history-btn {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+
+#search-btn:hover, #location-btn:hover {
+    background-color: #3a7bc8;
+}
+
+#search-btn {
+    border-radius: 0 5px 5px 0;
+}
+
+#location-btn {
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+#clear-history-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+#clear-history-btn:hover {
+    background-color: #c0392b;
+}
+
+/* 为图标添加一些右边距 */
+#search-btn i, #location-btn i, #clear-history-btn i {
+    margin-right: 5px;
+}
+
+/* 如果图标没有加载，确保文字仍然居中 */
+#search-btn, #location-btn, #clear-history-btn {
+    justify-content: center;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.weather-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+#current-weather {
+    text-align: center;
+}
+
+.current-temp {
+    font-size: 3em;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.current-condition {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.details {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.forecast-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.forecast-item:last-child {
+    border-bottom: none;
+}
+
+aside {
+    margin-top: 30px;
+}
+
+#history-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#history-list li {
+    background-color: var(--card-bg);
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#history-list li:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#clear-history-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+#clear-history-btn:hover {
+    background-color: #c0392b;
+}
+
+#status-message {
+    text-align: center;
+    color: #e74c3c;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    main {
+        grid-template-columns: 1fr;
+    }
+
+    #city-input {
+        width: 60%;
+    }
+}
+
+.search-tip {
+    font-size: 0.9em;
+    color: #666;
+    text-align: center;
+    margin-top: 5px;
+}
