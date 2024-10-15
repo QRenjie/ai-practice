@@ -36,6 +36,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       "p-1.5 rounded-full transition-colors duration-200 flex items-center justify-center";
     const activeClass = "bg-blue-500 text-white hover:bg-blue-600";
     const inactiveClass = "bg-gray-200 text-gray-700 hover:bg-gray-300";
+    const disabledClass = "bg-gray-300 text-gray-400 cursor-not-allowed hover:bg-gray-300";
 
     // 根据 size 属性设置尺寸类
     const sizeClass = {
@@ -49,9 +50,11 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       <button
         ref={ref}
         className={clsx(
-          className || baseButtonClass,
+          baseButtonClass,
+          className,
           active ? activeClass : inactiveClass,
-          sizeClass
+          sizeClass,
+          disabled && disabledClass // 添加 disabled 样式
         )}
         onClick={onClick}
         title={title}

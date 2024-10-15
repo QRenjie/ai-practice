@@ -128,4 +128,11 @@ export class WorkspaceController {
       stopPreviewMask: show,
     }));
   };
+
+  updateTitle = (title: string) => {
+    this.setState((prevState) => ({
+      ...prevState,
+      ui: { ...prevState.ui, title },
+    }));
+  };
 }

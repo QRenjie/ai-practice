@@ -5,6 +5,8 @@ import IconButton from "../common/IconButton";
 import { FiCode, FiEye } from "react-icons/fi";
 import { LayerContext } from "@/container/LayerContext";
 import clsx from "clsx";
+import EditableTitle from "../common/EditableTitle";
+
 export default function WorkspaceHeader() {
   const { state, controller } = useContext(WorkspaceContext)!;
   const {
@@ -28,9 +30,9 @@ export default function WorkspaceHeader() {
         [draggableHandleClassName]: state.config.isWindowed,
         ["cursor-move"]: state.config.isWindowed,
       })}
-      onDoubleClick={handleDoubleClick}
+      onDoubleClick={state.config.isWindowed ? handleDoubleClick : undefined}
     >
-      <span className="text-gray-700 font-semibold">{state.ui.title}</span>
+      <EditableTitle />
 
       <div className="flex items-center gap-2">
         <IconButton
