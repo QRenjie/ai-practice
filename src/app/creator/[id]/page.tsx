@@ -39,7 +39,7 @@ export default async function CreatorDetailPage({
 
   return (
     <div
-      className="h-screen bg-gradient-to-r from-blue-100 to-blue-300 relative"
+      className="h-screen bg-gradient-to-r overflow-hidden from-blue-100 to-blue-300 relative"
       data-testid="CreatorDetailPage"
     >
       <CreatorRoot workspace={workspace} />
