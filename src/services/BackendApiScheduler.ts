@@ -56,6 +56,24 @@ export default class BackendApiScheduler {
     }
   }
 
+  async getRecommendedTitles(params: ApiCommonParams): Promise<{ titles: string[] }> {
+    try {
+      const result = await fetch("/api/recommended-titles", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSONUtil.stringify(params),
+      }).then((res) => res.json());
+
+      console.log("推荐的标题", result);
+      return result;
+    } catch (error) {
+      console.error("获取推荐标题错误:", error);
+      throw error;
+    }
+  }
+
   /**
    * 构建工作区
    * @param state

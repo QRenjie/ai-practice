@@ -5,6 +5,7 @@ import WorkspaceContext, {
 } from "@/container/WorkspaceContext";
 import { WorkspaceController } from "@/controllers/WorkspaceController";
 import { useCreation } from "ahooks";
+import { workspaceService } from "@/services/WorkspaceService";
 
 const WorkspacePovider: React.FC<{
   initialState: WorkspaceState;
@@ -17,7 +18,14 @@ const WorkspacePovider: React.FC<{
   });
 
   const controller = useCreation(
-    () => new WorkspaceController(state, setState, localState, setLocalState),
+    () =>
+      new WorkspaceController(
+        state,
+        setState,
+        localState,
+        setLocalState,
+        workspaceService
+      ),
     []
   );
 

@@ -4,6 +4,8 @@ import { FiEdit2, FiCheck } from "react-icons/fi";
 import IconButton from "./IconButton";
 import { Input, Tooltip } from "antd"; // 假设你有一个 Tooltip 组件
 import { locales } from "@/utils/Locales";
+import WorkspacePopover from "../workspace/WorkspacePopover";
+import { Recommender } from "@/utils/Recommender";
 
 const validateTitle = (newValue: string) => {
   if (!/^[a-zA-Z0-9\s]*$/.test(newValue)) {
@@ -58,6 +60,7 @@ const EditableInput: React.FC<{
       <Input
         value={title}
         status={error || !title ? "error" : undefined}
+        size="small"
         onChange={onChangeInner}
         onKeyDown={onKeyDown}
         onBlur={onBlur}
@@ -81,78 +84,94 @@ const EditableInput: React.FC<{
 const EditableTitle: React.FC = () => {
   const { state, controller } = useContext(WorkspaceContext)!;
   const [isEditing, setIsEditing] = useState(false);
+  const [recommendedTitles, setRecommendedTitles] = useState<string[]>([]);
+  const recommender = useMemo(() => new Recommender(), []);
 
-  const handleSave = (value: string) => {
-    controller.updateTitle(value);
-    setIsEditing(false);
-  };
-
-  const onBlur = () => {
-    setIsEditing(false);
-  };
-
-  return (
-    <div data-testid="editable-title" className="flex items-center">
-      {isEditing ? (
-        <EditableInput
-          value={state.ui.title}
-          onBlur={onBlur}
-          onChange={handleSave}
-        />
-      ) : (
-        <h2 className="text-lg text-gray-700 font-semibold">
-          {state.ui.title}
-        </h2>
-      )}
-
-      {!isEditing && (
-        <IconButton
-          tooltipProps={{
-            title: locales.get("locale:workspace.title.edit"),
-          }}
-          className="ml-2"
-          size="xs"
-          icon={<FiEdit2 />}
-          onClick={() => setIsEditing(true)}
-        />
-      )}
-    </div>
+  const handleSave = useCallback(
+    (value: string) => {
+      controller.updateTitle(value);
+      controller.saveNoCatch();
+      setIsEditing(false);
+    },
+    [controller]
   );
 
-  //   return isEditing ? (
-  //     <div className="flex items-center">
-  //       <input
-  //         className="text-gray-700 font-semibold border-b-2 border-blue-500 focus:outline-none"
-  //         value={title}
-  //         onChange={handleTitleChange}
-  //         onKeyDown={(e) => e.key === "Enter" && handleSave()}
-  //         autoFocus
-  //       />
-  //       <Tooltip title={error} open={!!error}>
-  //         <IconButton
-  //           className="ml-2"
-  //           size="sm"
-  //           icon={<FiCheck />}
-  //           onClick={handleSave}
-  //           disabled={!!error}
-  //         />
-  //       </Tooltip>
-  //     </div>
-  //   ) : (
-  //     <div
-  //       className="flex items-center text-gray-700 font-semibold cursor-pointer"
-  //       onClick={handleDoubleClick}
-  //       onDoubleClick={handleDoubleClick}
-  //     >
-  //       {title}
-  //       <IconButton
-  //         className="ml-2"
-  //         size="sm"
-  //         icon={<FiEdit2 />}
-  //         onClick={handleDoubleClick}
-  //       />
-  //     </div>
-  //   );
+  const onBlur = useCallback(() => {
+    setIsEditing(false);
+  }, [setIsEditing]);
+
+  const handleEdit = useCallback(() => {
+    setIsEditing(true);
+
+    if (recommender.ok()) {
+      recommender.staged();
+      // 获取推荐标题
+      controller
+        .getRecommendedTitles()
+        .then((titles) => {
+          setRecommendedTitles(titles); // 保存推荐标题
+        })
+        .catch((error) => {
+          console.error("获取推荐标题失败", error);
+        });
+    }
+  }, [controller, recommender]);
+
+  const TitleRecommend = useMemo(() => {
+    return (
+      <ul className="flex flex-1 p-1.5 flex-nowrap gap-2 text-[0.7rem] items-center overflow-x-auto no-scrollbar">
+        {recommendedTitles.map((title, index) => (
+          <li
+            key={index}
+            onMouseDown={(e) => { // 使用 onMouseDown 而不是 onClick
+              handleSave(title);
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+            className="cursor-pointer px-3 py-1 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors duration-200"
+          >
+            {title.endsWith("?") ? `${title}` : `#${title}`}
+          </li>
+        ))}
+      </ul>
+    );
+  }, [handleSave, recommendedTitles]);
+
+  return (
+    <WorkspacePopover
+      content={TitleRecommend}
+      open={isEditing && recommendedTitles.length > 0}
+      noPadding
+    >
+      <div data-testid="editable-title" className="flex items-center">
+        {isEditing ? (
+          <div className="flex flex-col">
+            <EditableInput
+              value={state.ui.title}
+              onBlur={onBlur}
+              onChange={handleSave}
+            />
+          </div>
+        ) : (
+          <h2 className="text-lg text-gray-700 font-semibold">
+            {state.ui.title}
+          </h2>
+        )}
+
+        {!isEditing && (
+          <IconButton
+            tooltipProps={{
+              title: locales.get("locale:workspace.title.edit"),
+            }}
+            className="ml-2"
+            size="xs"
+            icon={<FiEdit2 />}
+            onClick={handleEdit}
+          />
+        )}
+      </div>
+    </WorkspacePopover>
+  );
 };
 
 export default EditableTitle;

@@ -114,8 +114,20 @@ export default class AIApiScheduler {
     }
   }
 
-  async getWorkspaces(params: { type?: 'public' | 'my'| 'all' }): Promise<WorkspaceState[]> {
+  async getWorkspaces(params: {
+    type?: "public" | "my" | "all";
+  }): Promise<WorkspaceState[]> {
     return this.backendApi.getWorkspaces(params);
+  }
+
+  async getRecommendedTitles(
+    params: ApiCommonParams
+  ): Promise<{ titles: string[] }> {
+    if (this.useBackend) {
+      return this.backendApi.getRecommendedTitles(params);
+    } else {
+      return openAIClient.generateTitles(params);
+    }
   }
 }
 

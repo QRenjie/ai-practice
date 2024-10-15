@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import WorkspaceContext from "@/container/WorkspaceContext";
 import { exportManager } from "@/utils/ExportManager";
 import { PreviewPublisher } from "@/utils/PreviewPublisher";
-import { workspaceManager } from "@/utils/WorkspaceManager";
 import { message } from "antd";
 import { useContext } from "react";
 import IconButton, { IconButtonProps } from "@/components/common/IconButton";
@@ -103,11 +102,11 @@ const ExportMenuItem = () => {
 };
 
 const SaveMenuItem = () => {
-  const { state } = useContext(WorkspaceContext)!;
+  const { controller } = useContext(WorkspaceContext)!;
 
   const handleSave = async () => {
     try {
-      await workspaceManager.save(state);
+      await controller.save();
       message.success("工作区保存成功");
     } catch (error) {
       message.error("保存失败，请稍后重试。");

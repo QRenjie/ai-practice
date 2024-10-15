@@ -77,6 +77,31 @@ class OpenAIClient extends ApiClient {
       throw openAIError;
     }
   }
+
+  async generateTitles(
+    apiParams: ApiCommonParams
+  ): Promise<{ titles: string[] }> {
+    try {
+      const result = await this.postStream("/chat/completions", {
+        model: apiParams.model,
+        messages: apiParams.messages,
+        stream: apiParams.stream,
+      });
+
+      const titles = result.content
+        .split("\n")
+        .map((title) => title.trim())
+        .filter(Boolean);
+
+      return {
+        titles: titles.slice(0, 10),
+      };
+    } catch (error) {
+      const openAIError = error as OpenAIError;
+      console.error("OpenAI API错误:", openAIError);
+      throw openAIError;
+    }
+  }
 }
 
 // 创建OpenAI API客户端实例

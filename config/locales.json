@@ -10,7 +10,8 @@
     "contextPromptTemplate": "你是一个非常智能的AI助手，能够根据用户和AI之间的对话内容生成相关的关键词、短语或后续问题。以下是用户和AI的对话内容，请生成 5-10 个相关的关键词、短语或后续问题。这些内容可以是样式修改、功能增加等你认为当前项目可以迭代的方向。每行一个，不需要其他的描述内容也不带其他符号：{{chatHistory}}",
     "workspace.title.error.maxLength": "标题不能超过128个字符",
     "workspace.title.error.specialChar": "标题不能包含特殊字符",
-    "workspace.title.edit": "编辑"
+    "workspace.title.edit": "编辑",
+    "workspace.prompt.title.recommend": "请推荐2-4个标题名称，要求是中文，不能有特殊符号，一行一个"
   },
   "en": {
     "coderPrompt": {
@@ -23,6 +24,7 @@
     "contextPromptTemplate": "You are a very smart AI assistant that can generate related keywords, phrases, or follow-up questions based on the conversation between the user and AI. Below is the conversation content between the user and AI, please generate 5-10 related keywords, phrases, or follow-up questions. These contents can be styles modifications, functional enhancements, or any other directions you think the current project can be improved. Please generate one per line, without any other description or symbols: {{chatHistory}}",
     "workspace.title.error.maxLength": "Title cannot exceed 128 characters",
     "workspace.title.error.specialChar": "Title cannot contain special characters",
-    "workspace.title.edit": "Edit"
+    "workspace.title.edit": "Edit",
+    "workspace.prompt.title.recommend": "Please recommend 2-4 titles, in Chinese, no special symbols, one per line"
   }
 }
