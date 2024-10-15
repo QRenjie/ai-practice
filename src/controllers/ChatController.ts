@@ -3,26 +3,24 @@ import { RefObject } from "react";
 import { AiChatResponse, CodeBlock, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
 import AIApiScheduler, { aiApiScheduler } from "@/services/AIApiScheduler";
-import { MessageFactory } from "@/services/MessageFactory"; // 新增导入
 import { SandpackFile } from "@codesandbox/sandpack-react";
 import sandpackFile from "../../config/sandpackFile";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import { cloneDeep } from "lodash-es";
 import { locales } from "@/utils/Locales";
+import { AiMessageFactory } from "@/utils/AiMessageFactory";
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
 export class ChatController {
   private inputRef: RefObject<HTMLTextAreaElement> | null = null;
   aIApiScheduler: AIApiScheduler;
-  private messageFactory: MessageFactory;
 
   constructor(
     public workspaceController: WorkspaceController,
     private setIsLoading: (isLoading: boolean) => void
   ) {
     this.aIApiScheduler = aiApiScheduler;
-    this.messageFactory = new MessageFactory();
   }
 
   setInputRef(ref: RefObject<HTMLTextAreaElement>) {
@@ -54,7 +52,7 @@ export class ChatController {
     try {
       // 新增用户消息
       this.workspaceController.store.addChatMessage(
-        this.messageFactory.createUserMessage(message)
+        AiMessageFactory.createUserMessage(message)
       );
 
       // 调用AI接口
@@ -64,7 +62,7 @@ export class ChatController {
           coderPrompt: this.state.config.coderPrompt,
           messages: [
             ...this.chatMessages,
-            this.messageFactory.createUserMessage(message),
+            AiMessageFactory.createUserMessage(message),
           ],
         })
       );
@@ -84,7 +82,7 @@ export class ChatController {
       }
     } catch (error) {
       console.error("handleSubmit error", error);
-      const errorMessage = this.messageFactory.createErrorMessage(error);
+      const errorMessage = AiMessageFactory.createErrorMessage(error);
       this.workspaceController.store.addChatMessage(errorMessage);
     } finally {
       this.setIsLoading(false);
@@ -99,7 +97,7 @@ export class ChatController {
    * @param message
    */
   private createCodeBlockMessage(aiResponse: AiChatResponse): Message {
-    const message = this.messageFactory.createAssistantMessage(aiResponse);
+    const message = AiMessageFactory.createAssistantMessage(aiResponse);
 
     // 获取上一次的最后一条AI消息, 合并codeBlocks
     const blocks = CodeBlocks.mergeCodeBlocks(
@@ -183,14 +181,14 @@ export class ChatController {
           ? locales.get("locale:initRecommond")
           : locales.get("locale:contextPromptTemplate").replace(
               "{{chatHistory}}",
-              MessageFactory.toApiMessage(messages)
+              AiMessageFactory.toApiMessage(messages)
                 .map((msg) => msg.content)
                 .join("\n")
             );
 
       const aiApiParams = new ApiCommonParams({
         model: this.state.config.selectedModel,
-        messages: [this.messageFactory.createUserMessage(prompt)],
+        messages: [AiMessageFactory.createUserMessage(prompt)],
       });
 
       const response = await this.aIApiScheduler.getRecommendedKeywords(

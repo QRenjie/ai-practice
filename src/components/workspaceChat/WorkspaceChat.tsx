@@ -8,14 +8,14 @@ import React, {
 } from "react";
 import WorkspaceContext from "@/container/WorkspaceContext";
 import { ChatController } from "../../controllers/ChatController";
-import MessageList from "../MessageList";
-import ConfigPanel from "../ConfigPanel";
 import { useCreation } from "ahooks";
-import { ChatFooterActions } from "./ChatFooterActions";
-import ChatFooter from "../ChatFooter";
-import WorkspacePopover from "./WorkspacePopover";
+import MessageList from "../workspaceChat/MessageList";
+import ConfigPanel from "../workspaceChat/ConfigPanel";
+import ChatFooter from "../workspaceChat/ChatFooter";
+import { ChatFooterActions } from "../workspaceChat/ChatFooterActions";
+import WorkspacePopover from "../workspace/WorkspacePopover";
 
-const WorkspaceFooter: React.FC = () => {
+const WorkspaceChat: React.FC = () => {
   const workspaceContext = useContext(WorkspaceContext)!;
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -127,6 +127,7 @@ const WorkspaceFooter: React.FC = () => {
       trigger="click"
     >
       <div
+        data-testid="workspace-chat"
         className={`bg-gray-100 focus-within:ring-0 transition-all duration-300 ${
           state.config.isChatCollapsed ? "h-8 px-1" : "p-1"
         }`}
@@ -153,4 +154,4 @@ const WorkspaceFooter: React.FC = () => {
   );
 };
 
-export default WorkspaceFooter;
+export default WorkspaceChat;

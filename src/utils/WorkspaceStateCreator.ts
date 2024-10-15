@@ -1,9 +1,8 @@
 import { WorkspaceType, WorkspaceState } from "@/types/workspace";
 import { merge } from "lodash-es";
-import { v4 as uuidv4 } from "uuid";
 import workspaceConfig from "../../config/workspace.json"; // 新增这一行
 import { DeepPartial } from "@/types/common";
-
+import { Uid } from "./Uid";
 
 const workspaceKeys = Object.keys(workspaceConfig);
 
@@ -38,18 +37,21 @@ export class WorkspaceStateCreator {
     }
 
     return merge({}, config, source, {
-      id: source?.id || uuidv4(),
+      id: source?.id || Uid.generate(),
     });
   }
 
-
   /**
    * 判断是否是模板
-   * @param key 
-   * @returns 
+   * @param key
+   * @returns
    */
   isTemplate(key: string): key is WorkspaceType {
     return workspaceKeys.includes(key);
+  }
+
+  getOptions() {
+    return workspaceOptions;
   }
 }
 

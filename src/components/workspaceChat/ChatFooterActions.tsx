@@ -6,7 +6,10 @@ import {
   FiLoader,
   FiCornerDownLeft,
 } from "react-icons/fi";
-import { ChatFooterProps, CollapseChatFooterButton } from "../ChatFooter";
+import {
+  ChatFooterProps,
+  CollapseChatFooterButton,
+} from "../workspaceChat/ChatFooter";
 import IconButton from "../common/IconButton";
 import { WorkspaceMoreAction } from "./WorkspaceMoreAction";
 
@@ -30,7 +33,10 @@ export function ChatFooterActions({
   };
 
   return (
-    <div className="flex gap-1.5 text-md ml-auto">
+    <div
+      data-testid="chat-footer-actions"
+      className="flex gap-1.5 text-md ml-auto"
+    >
       <WorkspaceMoreAction iconSize={size} />
       <IconButton
         tooltipProps={{

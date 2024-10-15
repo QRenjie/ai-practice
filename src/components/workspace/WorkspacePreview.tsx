@@ -13,7 +13,10 @@ const WorkspacePreview = memo(() => {
   };
 
   return (
-    <div className="w-full h-full overflow-auto bg-white shadow-md flex items-center justify-center relative">
+    <div
+      data-testid="workspace-preview"
+      className="w-full h-full overflow-auto bg-white shadow-md flex items-center justify-center relative"
+    >
       <SandpackPreview
         className="h-full w-full"
         showRefreshButton={true}

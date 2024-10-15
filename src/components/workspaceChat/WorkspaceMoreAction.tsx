@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import WorkspaceContext from "@/container/WorkspaceContext";
-import { exportManager } from "@/utils/ExportManager";
-import { PreviewPublisher } from "@/utils/PreviewPublisher";
 import { message } from "antd";
 import { useContext } from "react";
 import IconButton, { IconButtonProps } from "@/components/common/IconButton";
+import WorkspacePopover from "../workspace/WorkspacePopover";
+import useButtonLoading from "@/hooks/useButtonLoading";
 import {
   FiMoreVertical,
   FiUpload,
@@ -12,7 +12,6 @@ import {
   FiSave,
   FiLoader,
 } from "react-icons/fi";
-import WorkspacePopover from "./WorkspacePopover";
 
 // 封装一个加载按钮组件
 const LoadingButton = ({
@@ -26,16 +25,7 @@ const LoadingButton = ({
   icon?: React.ReactNode;
   children?: React.ReactNode;
 }) => {
-  const [loading, setLoading] = useState(false);
-
-  const handleClick = async () => {
-    setLoading(true);
-    try {
-      await onClick();
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { loading, onClick: handleClick } = useButtonLoading(onClick);
 
   return (
     <button
@@ -53,10 +43,10 @@ const LoadingButton = ({
 };
 
 const PublishMenuItem = () => {
-  const { state } = useContext(WorkspaceContext)!;
+  const { state, controller } = useContext(WorkspaceContext)!;
 
-  const handlePublish = async () => {
-    const previewUrl = await PreviewPublisher.publish(state);
+  const handlePublish = useCallback(async () => {
+    const previewUrl = await controller.publish(state);
     if (previewUrl) {
       const fullUrl = `${window.location.origin}${previewUrl}`;
       message.success(
@@ -75,7 +65,7 @@ const PublishMenuItem = () => {
     } else {
       message.error("发布预览失败，请稍后重试。");
     }
-  };
+  }, [controller, state]);
 
   return (
     <LoadingButton onClick={handlePublish} icon={<FiUpload className="mr-2" />}>
@@ -85,11 +75,17 @@ const PublishMenuItem = () => {
 };
 
 const ExportMenuItem = () => {
-  const { state } = useContext(WorkspaceContext)!;
+  const { state, controller } = useContext(WorkspaceContext)!;
 
-  const handleExport = async () => {
-    await exportManager.exportProject(state.code);
-  };
+  const handleExport = useCallback(async () => {
+    try {
+      await controller.exportProject(state.code);
+      message.success("项目导出成功，请查看下载的 ZIP 文件。");
+    } catch (error) {
+      console.error("导出错误:", error);
+      message.error("导出失败，请稍后重试。");
+    }
+  }, [controller, state]);
 
   return (
     <LoadingButton
@@ -104,14 +100,14 @@ const ExportMenuItem = () => {
 const SaveMenuItem = () => {
   const { controller } = useContext(WorkspaceContext)!;
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     try {
       await controller.save();
       message.success("工作区保存成功");
     } catch (error) {
       message.error("保存失败，请稍后重试。");
     }
-  };
+  }, [controller]);
 
   return (
     <LoadingButton onClick={handleSave} icon={<FiSave className="mr-2" />}>
@@ -147,7 +143,7 @@ export function WorkspaceMoreAction({
       noPadding
       forceRender
     >
-      <span>
+      <span data-testid="workspace-more-action">
         <IconButton size={iconSize} active={isActive} title="更多操作">
           <FiMoreVertical />
         </IconButton>

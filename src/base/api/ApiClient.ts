@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { StreamApiProcessorType, streamProcessor } from "./StreamProcessor";
-import { v4 as uuidv4 } from "uuid";
 import JSONUtil from "@/utils/JSONUtil";
+import { Uid } from "@/utils/Uid";
 export default class ApiClient {
   private axiosInstance: AxiosInstance;
   token: string = "";
@@ -54,7 +54,7 @@ export default class ApiClient {
 
       const result = await streamProcessor.processStream(
         response,
-        uuidv4(),
+        Uid.generate(),
         onChunk
       );
 

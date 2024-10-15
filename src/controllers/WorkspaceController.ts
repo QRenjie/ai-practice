@@ -2,6 +2,7 @@ import { WorkspaceService } from "@/services/WorkspaceService";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import { WorkspaceStore } from "@/store/WorkspaceStore";
 import { WorkspaceState } from "@/types/workspace";
+import { FileDownloader } from "@/utils/ui/FileDownloader";
 
 export class WorkspaceController {
   constructor(
@@ -34,7 +35,11 @@ export class WorkspaceController {
 
   async save() {
     const state = await this.store.getState();
-    return this.workspaceService.save(state);
+    const result = await this.workspaceService.save(state);
+
+    // 如果当前没有保存过的项目,将路由地址跳转过去
+
+    return result;
   }
 
   getRecommendedTitles = async (): Promise<string[]> => {
@@ -53,4 +58,24 @@ export class WorkspaceController {
 
     return titles.titles;
   };
+
+  async exportProject(state: WorkspaceState["code"]) {
+    const { blob, fileName } = await this.workspaceService.exportProject(state);
+
+    FileDownloader.downloadFile(blob, fileName);
+  }
+
+  async publish(workspaceState: WorkspaceState): Promise<{
+    previewId: string;
+    encryptedContent: string;
+    url: string;
+  }> {
+    const { previewId, encryptedContent } = await this.workspaceService.publish(
+      workspaceState
+    );
+
+    const url = `/preview/${previewId}?data=${encryptedContent}`;
+
+    return { previewId, encryptedContent, url };
+  }
 }

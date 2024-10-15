@@ -1,29 +1,29 @@
-import { v4 as uuidv4 } from "uuid";
 import { AiChatResponse, ApiMessage, Message } from "@/types/apiTypes";
 import { pick } from "lodash-es";
+import { Uid } from "./Uid";
 
-export class MessageFactory {
+export class AiMessageFactory {
   static toApiMessage(messages: Message[]): ApiMessage[] {
     return messages.map((message) => pick(message, ["role", "content"]));
   }
 
-  createUserMessage(content: string): Message {
+  static createUserMessage(content: string): Message {
     return {
-      id: uuidv4(),
+      id: Uid.generate(),
       content,
       role: "user",
       type: "text",
     };
   }
 
-  createSystemApiMessage(content: string): ApiMessage {
+  static createSystemApiMessage(content: string): ApiMessage {
     return {
       content,
       role: "system",
     };
   }
 
-  createAssistantMessage(aiResponse: AiChatResponse): Message {
+  static createAssistantMessage(aiResponse: AiChatResponse): Message {
     return {
       id: aiResponse.id,
       content: aiResponse.content,
@@ -33,9 +33,9 @@ export class MessageFactory {
     };
   }
 
-  createErrorMessage(error: unknown): Message {
+  static createErrorMessage(error: unknown): Message {
     return {
-      id: uuidv4(),
+      id: Uid.generate(),
       content: `抱歉，发生了错误: ${
         error instanceof Error ? error.message : "未知错误"
       }`,

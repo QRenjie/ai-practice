@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, memo } from "react";
-import AIResponse from "./AIResponse";
-import { ChatController } from "../controllers/ChatController";
+import AIResponse from "../AIResponse";
+import { ChatController } from "../../controllers/ChatController";
 import { Message } from "@/types/apiTypes";
 
 interface MessageListProps {
@@ -50,7 +50,11 @@ const MessageList = forwardRef<HTMLDivElement, MessageListProps>(
     }, [messages, open]);
 
     return (
-      <div ref={ref} className="flex-1 overflow-y-auto">
+      <div
+        data-testid="message-list"
+        ref={ref}
+        className="flex-1 overflow-y-auto"
+      >
         <div className="space-y-4">
           {messages.map((message, index) => (
             <MessageItem

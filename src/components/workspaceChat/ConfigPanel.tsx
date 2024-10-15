@@ -10,7 +10,10 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({ onKeywordSelect }) => {
   const { state, controller } = useContext(WorkspaceContext)!;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div
+      data-testid="config-panel"
+      className="flex flex-col gap-4"
+    >
       <div>
         <h3 className="text-lg font-semibold mb-4">UI 配置</h3>
 

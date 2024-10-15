@@ -9,7 +9,10 @@ const WorkspaceLoadingSkeleton: React.FC<
   WorkspaceLoadingSkeletonProps
 > = ({}) => {
   return (
-    <div className="absolute inset-0 bg-white  flex flex-col z-50 p-4">
+    <div
+      data-testid="workspace-loading-skeleton"
+      className="absolute inset-0 bg-white  flex flex-col z-50 p-4"
+    >
       {/* <div className="text-2xl font-bold text-gray-700 mb-4">
         Ready Environment...
       </div> */}

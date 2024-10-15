@@ -26,6 +26,7 @@ export default function WorkspaceHeader() {
 
   return (
     <header
+      data-testid="workspace-header"
       className={clsx("flex justify-between items-center p-2", {
         [draggableHandleClassName]: state.config.isWindowed,
         ["cursor-move"]: state.config.isWindowed,

@@ -91,18 +91,6 @@ export default class AIApiScheduler {
     return response;
   }
 
-  // 修改 getFileNameFromResponse 方法
-  getFileNameFromResponse(response: Response): string {
-    const contentDisposition = response.headers.get("Content-Disposition");
-    if (contentDisposition) {
-      const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/i);
-      if (fileNameMatch) {
-        return fileNameMatch[1];
-      }
-    }
-    return "build.zip";
-  }
-
   async saveWorkspace(state: WorkspaceState): Promise<boolean> {
     try {
       await this.backendApi.saveWorkspace(state);

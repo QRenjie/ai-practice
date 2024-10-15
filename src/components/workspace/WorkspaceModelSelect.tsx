@@ -37,7 +37,10 @@ export function WorkspaceModelSelect() {
       onOpenChange={setOpen}
       noPadding
     >
-      <span className="text-sm cursor-pointer hover:text-primary">
+      <span
+        data-testid="workspace-model-select"
+        className="text-sm cursor-pointer hover:text-primary"
+      >
         {state.config.selectedModel}
       </span>
     </WorkspacePopover>

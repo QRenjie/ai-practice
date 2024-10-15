@@ -3,7 +3,10 @@ import { SandpackCodeEditor } from "@codesandbox/sandpack-react";
 
 const WorkspaceCode: React.FC = () => {
   return (
-    <div className="p-4 overflow-auto h-full bg-white rounded-lg shadow-md flex items-center justify-center">
+    <div
+      data-testid="workspace-code"
+      className="p-4 overflow-auto h-full bg-white rounded-lg shadow-md flex items-center justify-center"
+    >
       <div className="h-full w-full flex justify-between">
         {/* <SandpackFileExplorer /> */}
         {/* 替换为 sandpack 的编辑器 */}

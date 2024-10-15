@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import WorkspaceContext from "@/container/WorkspaceContext";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
-import { ChatFooterActions } from "./workspace/ChatFooterActions";
-import IconButton from "./common/IconButton";
-import { WorkspaceModelSelect } from "./workspace/WorkspaceModelSelect";
+import { ChatFooterActions } from "./ChatFooterActions";
+import IconButton from "../common/IconButton";
+import { WorkspaceModelSelect } from "../workspace/WorkspaceModelSelect";
 
 export interface ChatFooterProps {
   openPanel: "none" | "messages" | "config";
@@ -36,7 +36,10 @@ function ChatFooter(props: ChatFooterProps) {
   const recommendedKeywords = state.config.recommendedKeywords;
 
   return (
-    <div className={`w-full flex flex-col bg-gray-100 px-1`}>
+    <div
+      data-testid="chat-footer"
+      className={`w-full flex flex-col bg-gray-100 px-1`}
+    >
       <div className="flex justify-between items-center gap-1">
         <div className="text-xs text-gray-400">
           <WorkspaceModelSelect />

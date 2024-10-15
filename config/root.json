@@ -1,4 +1,5 @@
 {
   "name": "ideaflow",
-  "defaultLocale": "zh"
+  "defaultLocale": "zh",
+  "defaultModel": "gpt-3.5-turbo"
 }

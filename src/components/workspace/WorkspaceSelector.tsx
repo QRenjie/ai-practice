@@ -1,9 +1,14 @@
-import React from "react";
-import WorkspaceContext, { workspaceOptions } from "@/container/WorkspaceContext";
+import React, { useMemo } from "react";
+import WorkspaceContext from "@/container/WorkspaceContext";
 import { WorkspaceType } from "@/types/workspace";
+import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
 
 const WorkspaceSelector: React.FC = () => {
   const { controller } = React.useContext(WorkspaceContext)!;
+
+  const workspaceOptions = useMemo(() => {
+    return workspaceStateCreator.getOptions();
+  }, []);
 
   return (
     <div className="flex items-center justify-center h-full">
