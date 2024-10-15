@@ -8,7 +8,7 @@ import WorkspacePopover from "../workspace/WorkspacePopover";
 import { Recommender } from "@/utils/Recommender";
 
 const validateTitle = (newValue: string) => {
-  if (!/^[a-zA-Z0-9\s]*$/.test(newValue)) {
+  if (!/^[\u4e00-\u9fa5a-zA-Z0-9\s]*$/.test(newValue)) {
     return 1; //"标题不能包含特殊字符";
   }
   if (newValue.length > 128) {
@@ -89,7 +89,7 @@ const EditableTitle: React.FC = () => {
 
   const handleSave = useCallback(
     (value: string) => {
-      controller.updateTitle(value);
+      controller.updateTitle(value.trim());
       controller.saveNoCatch();
       setIsEditing(false);
     },
