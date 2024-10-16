@@ -4,16 +4,20 @@ import BackendApiScheduler from "./BackendApiScheduler";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import JSONUtil from "@/utils/JSONUtil";
 import { WorkspaceState } from "@/types/workspace";
+import { AiApiExecutor } from "./AiApiExecutor";
+import { RouteSaveWorkspace } from "@/types/routeApi";
 
 /**
  * 前端调用后台接口的中间层
  */
 export default class AIApiScheduler {
   backendApi: BackendApiScheduler;
+  aiApiExecutor: AiApiExecutor;
 
   // 新增参数，决定是否使用后端接口，默认前端直接发送请求
   constructor(public useBackend = true) {
     this.backendApi = new BackendApiScheduler();
+    this.aiApiExecutor = new AiApiExecutor();
   }
 
   /**
@@ -82,24 +86,11 @@ export default class AIApiScheduler {
 
   // 修改 buildPreview 方法
   async buildPreview(state: WorkspaceState["code"]): Promise<Response> {
-    const response = await this.backendApi.buildPreview(state);
-
-    if (!response.ok) {
-      throw new Error("构建失败");
-    }
-
-    return response;
+    return this.aiApiExecutor.exec(() => this.backendApi.buildPreview(state));
   }
 
-  async saveWorkspace(state: WorkspaceState): Promise<boolean> {
-    try {
-      await this.backendApi.saveWorkspace(state);
-
-      return true;
-    } catch (error) {
-      console.error("保存工作区时出错:", error);
-      return false;
-    }
+  async saveWorkspace(state: WorkspaceState): Promise<RouteSaveWorkspace["response"]> {
+    return this.aiApiExecutor.exec(() => this.backendApi.saveWorkspace(state));
   }
 
   async getWorkspaces(params: {

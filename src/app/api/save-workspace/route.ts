@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
 import { MetaState, WorkspaceState } from "@/types/workspace";
+import { RouteSaveWorkspace } from "@/types/routeApi";
 
 export async function POST(req: NextRequest) {
   const state = await req.json();
@@ -53,11 +54,17 @@ async function handleSaveWorkspace(state: WorkspaceState) {
 
     console.log("工作区已保存到:", filePath);
 
-    return NextResponse.json({ success: true, workspaceKey });
+    return NextResponse.json({
+      success: true,
+      workspaceKey,
+    } as RouteSaveWorkspace["response"]);
   } catch (error) {
     console.error("保存工作区时出错:", error);
     return NextResponse.json(
-      { error: (error as Error).message || "保存工作区失败" },
+      {
+        localeKey: "saveWorkspaceError",
+        error: (error as Error).message || "保存工作区失败",
+      } as RouteSaveWorkspace["response"],
       { status: 500 }
     );
   }

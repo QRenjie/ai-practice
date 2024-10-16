@@ -2,6 +2,7 @@ import { WorkspaceState } from "@/types/workspace";
 import { AiChatResponse, CodeBlock } from "@/types/apiTypes";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import JSONUtil from "@/utils/JSONUtil";
+import { RouteSaveWorkspace } from "@/types/routeApi";
 
 /**
  * 调用 Next.js 后台接口的实现类
@@ -56,7 +57,9 @@ export default class BackendApiScheduler {
     }
   }
 
-  async getRecommendedTitles(params: ApiCommonParams): Promise<{ titles: string[] }> {
+  async getRecommendedTitles(
+    params: ApiCommonParams
+  ): Promise<{ titles: string[] }> {
     try {
       const result = await fetch("/api/recommended-titles", {
         method: "POST",
@@ -94,7 +97,9 @@ export default class BackendApiScheduler {
    * @param state
    * @returns
    */
-  async saveWorkspace(state: WorkspaceState): Promise<void> {
+  async saveWorkspace(
+    state: RouteSaveWorkspace["request"]
+  ): Promise<RouteSaveWorkspace["response"]> {
     return fetch("/api/save-workspace", {
       method: "POST",
       headers: {
