@@ -6,7 +6,6 @@ import JSONUtil from "@/utils/JSONUtil";
 import { WorkspaceState } from "@/types/workspace";
 import { AiApiExecutor } from "./AiApiExecutor";
 import { RouteRecommendTitles, RouteSaveWorkspace } from "@/types/routeApi";
-import { ExecutorError } from "lib/executor";
 
 /**
  * 前端调用后台接口的中间层

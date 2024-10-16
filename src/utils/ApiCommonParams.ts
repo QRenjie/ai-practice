@@ -1,8 +1,8 @@
 import rootConfig from "config/root.json";
 import { AiMessageFactory } from "@/utils/AiMessageFactory";
 import { ApiMessage, Message } from "@/types/apiTypes";
-import { locales } from "./Locales";
 import { LocaleKey } from "@/types/workspace";
+import Locales from "./Locales";
 
 export default class ApiCommonParams {
   model: string;
@@ -16,12 +16,14 @@ export default class ApiCommonParams {
     messages,
     stream = true,
     coderPrompt,
+    locales,
   }: {
     model?: string;
     locale?: LocaleKey;
     messages?: Message[];
     stream?: boolean;
     coderPrompt?: string;
+    locales?: Locales;
   } = {}) {
     this.stream = stream;
     this.locale = locale || rootConfig.defaultLocale;
@@ -29,12 +31,9 @@ export default class ApiCommonParams {
     this.messages = messages ? AiMessageFactory.toApiMessage(messages) : [];
 
     // 处理提示词
-    if (coderPrompt) {
-
+    if (coderPrompt && locales) {
       this.messages = [
-        AiMessageFactory.createSystemApiMessage(
-          locales.get(coderPrompt, this.locale)
-        ),
+        AiMessageFactory.createSystemApiMessage(locales.get(coderPrompt)),
         ...this.messages,
       ];
     }

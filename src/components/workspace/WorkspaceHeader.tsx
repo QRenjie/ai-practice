@@ -6,6 +6,8 @@ import { FiCode, FiEye, FiLock, FiUnlock } from "react-icons/fi";
 import { LayerContext } from "@/container/LayerContext";
 import clsx from "clsx";
 import EditableTitle from "../common/EditableTitle";
+import { useLocales } from "@/container/LocalesPovider";
+import LanguageSwitcher from "../LanguageSwitcher";
 
 export default function WorkspaceHeader() {
   const { state, controller } = useContext(WorkspaceContext)!;
@@ -15,6 +17,8 @@ export default function WorkspaceHeader() {
     handleFit,
     handleMaximize,
   } = useContext(LayerContext)!;
+
+  const { t } = useLocales<"/creator">();
 
   const handleDoubleClick = useCallback(() => {
     if (layerState.isMaximized) {
@@ -37,7 +41,9 @@ export default function WorkspaceHeader() {
         <EditableTitle />
         <IconButton
           tooltipProps={{
-            title: state.meta.public ? "公开工作区" : "私有工作区",
+            title: state.meta.public
+              ? t["workspace.public"]
+              : t["workspace.private"],
           }}
           onClick={() => {
             controller.updateMeta({ public: !state.meta.public });
@@ -45,13 +51,17 @@ export default function WorkspaceHeader() {
         >
           {state.meta.public ? <FiUnlock /> : <FiLock />}
         </IconButton>
+
+        <LanguageSwitcher />
       </div>
 
       <div className="flex items-center gap-2">
         <IconButton
           tooltipProps={{
             title:
-              state.ui.activeTab === "preview" ? "切换到编辑器" : "切换到预览",
+              state.ui.activeTab === "preview"
+                ? t["workspace.editor"]
+                : t["workspace.preview"],
           }}
           onClick={() => controller.store.toggleArea()}
         >

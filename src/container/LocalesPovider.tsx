@@ -1,26 +1,39 @@
 import { createContext, useContext } from "react";
-import Locales from "@/utils/Locales";
+import Locales, { LocaleType, PageRoutes, Translations } from "@/utils/Locales";
 
-export const LocalesContext = createContext<Locales | null>(null);
+export const LocalesContext = createContext<Locales<
+  LocaleType,
+  PageRoutes
+> | null>(null);
 
 export default function LocalesProvider({
   children,
-  locales,
+  namespace,
+  locale,
+  source,
 }: {
   children: React.ReactNode;
-  locales: Locales;
+  namespace: PageRoutes;
+  locale: LocaleType;
+  source: Translations;
 }) {
+  console.log("jj local", source, locale, namespace);
+
   return (
-    <LocalesContext.Provider value={locales}>
+    <LocalesContext.Provider value={new Locales(source, locale, namespace)}>
       {children}
     </LocalesContext.Provider>
   );
 }
 
-export function useLocales() {
+export function useLocales<Namespace extends PageRoutes>() {
   const context = useContext(LocalesContext);
   if (!context) {
     throw new Error("useLocales must be used within a LocalesProvider");
   }
-  return context;
+
+  return {
+    locales: context as Locales<LocaleType, Namespace>,
+    t: context.t as Translations[Namespace],
+  };
 }

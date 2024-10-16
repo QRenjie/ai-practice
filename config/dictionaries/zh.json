@@ -1,12 +1,26 @@
 {
-  "name": "Ideaflow",
-  "public": "公开",
-  "my": "我的",
-  "explore": "探索",
-  "feedback": "反馈",
-  "newGeneration": "新生成",
-  "faq": "常见问题",
-  "terms": "条款",
-  "aiPolicy": "AI政策",
-  "privacy": "隐私"
+  "/": {
+    "name": "Ideaflow",
+    "public": "公开",
+    "my": "我的",
+    "explore": "探索",
+    "feedback": "反馈",
+    "newGeneration": "新生成",
+    "faq": "常见问题",
+    "terms": "条款",
+    "aiPolicy": "AI政策",
+    "privacy": "隐私"
+  },
+  "/creator": {
+    "workspace.public": "公开",
+    "workspace.private": "私有",
+    "workspace.preview": "预览",
+    "workspace.editor": "编辑器",
+    "initRecommond": "Please tell me some keywords, phrases, or follow-up questions in the format of 'Create xxx', 'Complete an xxx application', etc., where xxx can be any noun you think is achievable on the web, one per line, without any other description or symbols, and the order can be random.",
+    "contextPromptTemplate": "You are a very smart AI assistant that can generate related keywords, phrases, or follow-up questions based on the conversation between the user and AI. Below is the conversation content between the user and AI, please generate 5-10 related keywords, phrases, or follow-up questions. These contents can be styles modifications, functional enhancements, or any other directions you think the current project can be improved. Please generate one per line, without any other description or symbols: {{chatHistory}}",
+    "workspace.title.error.maxLength": "Title cannot exceed 128 characters",
+    "workspace.title.error.specialChar": "Title cannot contain special characters",
+    "workspace.title.edit": "Edit",
+    "workspace.prompt.title.recommend": "Please recommend 2-4 titles, in Chinese, no special symbols, one per line"
+  }
 }

@@ -3,9 +3,9 @@ import WorkspaceContext from "@/container/WorkspaceContext";
 import { FiEdit2, FiCheck } from "react-icons/fi";
 import IconButton from "./IconButton";
 import { Input, Tooltip } from "antd"; // 假设你有一个 Tooltip 组件
-import { locales } from "@/utils/Locales";
 import WorkspacePopover from "../workspace/WorkspacePopover";
 import { Recommender } from "@/utils/Recommender";
+import { useLocales } from "@/container/LocalesPovider";
 
 const validateTitle = (newValue: string) => {
   if (!/^[\u4e00-\u9fa5a-zA-Z0-9\s]*$/.test(newValue)) {
@@ -24,6 +24,7 @@ const EditableInput: React.FC<{
 }> = ({ value, onChange, onBlur }) => {
   const [title, setTitle] = useState(value);
   const [error, setError] = useState(0);
+  const { t } = useLocales<"/creator">();
 
   const onChangeInner = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,13 +48,13 @@ const EditableInput: React.FC<{
 
   const tip = useMemo(() => {
     if (error === 1) {
-      return locales.get("locale:workspace.title.error.specialChar");
+      return t["workspace.title.error.specialChar"];
     }
     if (error === 2) {
-      return locales.get("locale:workspace.title.error.maxLength");
+      return t["workspace.title.error.maxLength"];
     }
     return "";
-  }, [error]);
+  }, [error, t]);
 
   return (
     <Tooltip title={tip} open={!!error}>
@@ -83,6 +84,8 @@ const EditableInput: React.FC<{
 
 const EditableTitle: React.FC = () => {
   const { state, controller } = useContext(WorkspaceContext)!;
+  const { t } = useLocales<"/creator">();
+
   const [isEditing, setIsEditing] = useState(false);
   const [recommendedTitles, setRecommendedTitles] = useState<string[]>([]);
   const recommender = useMemo(() => new Recommender(), []);
@@ -161,7 +164,7 @@ const EditableTitle: React.FC = () => {
         {!isEditing && (
           <IconButton
             tooltipProps={{
-              title: locales.get("locale:workspace.title.edit"),
+              title: t["workspace.title.edit"],
             }}
             className="ml-2"
             icon={<FiEdit2 />}

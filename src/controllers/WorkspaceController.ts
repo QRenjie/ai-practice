@@ -3,11 +3,13 @@ import ApiCommonParams from "@/utils/ApiCommonParams";
 import { WorkspaceStore } from "@/store/WorkspaceStore";
 import { WorkspaceState } from "@/types/workspace";
 import { FileDownloader } from "@/utils/ui/FileDownloader";
+import Locales, { LocaleType } from "@/utils/Locales";
 
 export class WorkspaceController {
   constructor(
     public store: WorkspaceStore,
-    public workspaceService: WorkspaceService
+    public workspaceService: WorkspaceService,
+    public locales: Locales<LocaleType, '/creator'>
   ) {}
 
   getState = () => {

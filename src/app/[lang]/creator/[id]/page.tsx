@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import DataGetter from "@/utils/DataGetter";
 import LoadingSkeleton from "@/components/ssr/LoadingSkeleton";
 import dynamic from "next/dynamic";
+import { LocaleType } from "config/i18n";
+import { getLocales } from "@/utils/getLocales";
 
 const CreatorRoot = dynamic(() => import("@/components/pages/CreatorRoot"), {
   loading: LoadingSkeleton,
@@ -12,7 +14,7 @@ const CreatorRoot = dynamic(() => import("@/components/pages/CreatorRoot"), {
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: { id: string; lang: LocaleType };
 }): Promise<Metadata> {
   const workspace = await DataGetter.getWorkspaceById(params.id);
 
@@ -29,8 +31,9 @@ export async function generateMetadata({
 export default async function CreatorDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: { id: string; lang: LocaleType };
 }) {
+  const locales = await getLocales(params.lang, "/creator");
   const workspace = await DataGetter.getWorkspaceById(params.id);
 
   if (!workspace) {
@@ -42,7 +45,7 @@ export default async function CreatorDetailPage({
       className="h-screen bg-gradient-to-r overflow-hidden from-blue-100 to-blue-300 relative"
       data-testid="CreatorDetailPage"
     >
-      <CreatorRoot workspace={workspace} />
+      <CreatorRoot workspace={workspace} localesValue={locales.toObject()} />
     </div>
   );
 }
