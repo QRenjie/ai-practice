@@ -1,13 +1,12 @@
 import Link from "next/link";
 import DataGetter from "@/utils/DataGetter";
 import Tabs from "@/components/common/Tabs";
-
-// 定义一个异步函数来获取工作区数据
 import WorkspacesGallery from "@/components/ssr/WorkspacesGallery";
 import { getLocales } from "@/utils/getLocales";
 import { LocaleType } from "config/i18n";
+import LocaleLink from "@/components/common/LocaleLink";
 
-// 服务端渲染请求api没有源地址，所以直接访问静态资源
+// 定义一个异步函数来获取工作区数据
 async function getWorkspaces() {
   const publicWorkspaces = DataGetter.getWorkspaces("public");
   const myWorkspaces = DataGetter.getWorkspaces("my");
@@ -49,11 +48,11 @@ export default async function Home({
             {locales.t.name}
           </div>
           <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <Link href="/creator">
+            <LocaleLink href="/creator" locale={lang}>
               <button className="px-4 py-2 bg-black text-white rounded-full w-full sm:w-auto">
                 {locales.t.newGeneration}
               </button>
-            </Link>
+            </LocaleLink>
             <button className="w-full sm:w-auto">{locales.t.feedback}</button>
             <div className="w-8 h-8 bg-blue-500 rounded-full"></div>
           </div>
@@ -68,10 +67,10 @@ export default async function Home({
 
         <footer className="py-4 flex flex-col sm:flex-row justify-between items-center">
           <div className="flex flex-wrap justify-center sm:justify-start space-x-4 mb-4 sm:mb-0">
-            <Link href="/faq">{locales.t.faq}</Link>
-            <Link href="/terms">{locales.t.terms}</Link>
-            <Link href="/ai-policy">{locales.t.aiPolicy}</Link>
-            <Link href="/privacy">{locales.t.privacy}</Link>
+            <LocaleLink href="/faq" locale={lang}>{locales.t.faq}</LocaleLink>
+            <LocaleLink href="/terms" locale={lang}>{locales.t.terms}</LocaleLink>
+            <LocaleLink href="/ai-policy" locale={lang}>{locales.t.aiPolicy}</LocaleLink>
+            <LocaleLink href="/privacy" locale={lang}>{locales.t.privacy}</LocaleLink>
           </div>
         </footer>
       </div>
