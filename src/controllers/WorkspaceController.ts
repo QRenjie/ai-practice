@@ -29,7 +29,6 @@ export class WorkspaceController {
       await this.save();
     } catch (error) {
       console.error("保存工作区时出错:", error);
-      throw error;
     }
   };
 
@@ -38,6 +37,10 @@ export class WorkspaceController {
     const result = await this.workspaceService.save(state);
 
     // 如果当前没有保存过的项目,将路由地址跳转过去
+    if (result.success && result.workspaceKey) {
+      // 使用 replaceState 替换当前历史记录条目
+      window.history.replaceState(null, "", `/creator/${result.workspaceKey}`);
+    }
 
     return result;
   }

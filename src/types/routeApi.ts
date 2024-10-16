@@ -1,3 +1,4 @@
+import ApiCommonParams from "@/utils/ApiCommonParams";
 import { WorkspaceState } from "./workspace";
 
 export interface RouteApiResponse {
@@ -18,3 +19,9 @@ export interface RouteSaveWorkspace
     WorkspaceState,
     { success: boolean; workspaceKey: string }
   > {}
+
+/**
+ * @api /api/recommended-titles
+ */
+export interface RouteRecommendTitles
+  extends BaseRouteApi<ApiCommonParams, { titles: string[] }> {}

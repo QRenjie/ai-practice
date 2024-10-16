@@ -3,6 +3,7 @@ import ApiClient from "./ApiClient";
 import { CodeExtractor } from "@/utils/CodeExtractor";
 import models from "config/models.json";
 import ApiCommonParams from "@/utils/ApiCommonParams";
+import { RouteRecommendTitles } from "@/types/routeApi";
 
 export interface OpenAIError extends Error {
   response?: {
@@ -80,7 +81,7 @@ class OpenAIClient extends ApiClient {
 
   async generateTitles(
     apiParams: ApiCommonParams
-  ): Promise<{ titles: string[] }> {
+  ): Promise<RouteRecommendTitles["response"]> {
     try {
       const result = await this.postStream("/chat/completions", {
         model: apiParams.model,

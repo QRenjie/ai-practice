@@ -5,7 +5,8 @@ import ApiCommonParams from "@/utils/ApiCommonParams";
 import JSONUtil from "@/utils/JSONUtil";
 import { WorkspaceState } from "@/types/workspace";
 import { AiApiExecutor } from "./AiApiExecutor";
-import { RouteSaveWorkspace } from "@/types/routeApi";
+import { RouteRecommendTitles, RouteSaveWorkspace } from "@/types/routeApi";
+import { ExecutorError } from "lib/executor";
 
 /**
  * 前端调用后台接口的中间层
@@ -89,7 +90,9 @@ export default class AIApiScheduler {
     return this.aiApiExecutor.exec(() => this.backendApi.buildPreview(state));
   }
 
-  async saveWorkspace(state: WorkspaceState): Promise<RouteSaveWorkspace["response"]> {
+  async saveWorkspace(
+    state: WorkspaceState
+  ): Promise<RouteSaveWorkspace["response"]> {
     return this.aiApiExecutor.exec(() => this.backendApi.saveWorkspace(state));
   }
 
@@ -99,14 +102,21 @@ export default class AIApiScheduler {
     return this.backendApi.getWorkspaces(params);
   }
 
+  /**
+   * @throws {ExecutorError}
+   * @param params
+   * @returns
+   */
   async getRecommendedTitles(
     params: ApiCommonParams
-  ): Promise<{ titles: string[] }> {
+  ): Promise<RouteRecommendTitles["response"]> {
     if (this.useBackend) {
-      return this.backendApi.getRecommendedTitles(params);
-    } else {
-      return openAIClient.generateTitles(params);
+      return this.aiApiExecutor.exec(() =>
+        this.backendApi.getRecommendedTitles(params)
+      );
     }
+
+    return this.aiApiExecutor.exec(() => openAIClient.generateTitles(params));
   }
 }
 
