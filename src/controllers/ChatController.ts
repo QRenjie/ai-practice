@@ -4,7 +4,7 @@ import { AiChatResponse, CodeBlock, Message } from "@/types/apiTypes";
 import { CodeBlocks } from "@/utils/CodeBlocks";
 import AIApiScheduler, { aiApiScheduler } from "@/services/AIApiScheduler";
 import { SandpackFile } from "@codesandbox/sandpack-react";
-import sandpackFile from "../../config/sandpackFile";
+import sandpackFile from "config/sandpackFile";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import { cloneDeep } from "lodash-es";
 import { locales } from "@/utils/Locales";

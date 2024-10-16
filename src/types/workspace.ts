@@ -2,7 +2,7 @@ import type { LayerState } from "@/components/Layer";
 import { CodeBlock, Message } from "./apiTypes";
 import { SandpackProps } from "@codesandbox/sandpack-react";
 
-export type WorkspaceType = keyof typeof import("../../config/workspace.json");
+export type WorkspaceType = keyof typeof import("config/workspace.json");
 
 export type LocaleKey = string;
 

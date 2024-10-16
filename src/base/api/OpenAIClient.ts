@@ -1,7 +1,7 @@
 import { AiChatResponse, ApiMessage } from "@/types/apiTypes";
 import ApiClient from "./ApiClient";
 import { CodeExtractor } from "@/utils/CodeExtractor";
-import models from "../../../config/models.json";
+import models from "config/models.json";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 
 export interface OpenAIError extends Error {

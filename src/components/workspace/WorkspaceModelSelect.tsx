@@ -2,7 +2,7 @@ import { Menu } from "antd";
 import WorkspacePopover from "./WorkspacePopover";
 import WorkspaceContext from "@/container/WorkspaceContext";
 import { useCallback, useContext, useState } from "react";
-import modelsJson from "../../../config/models.json";
+import modelsJson from "config/models.json";
 
 const models = Object.entries(modelsJson).map(([, value]) => ({
   key: value,

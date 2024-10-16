@@ -1,6 +1,6 @@
 import { WorkspaceType, WorkspaceState } from "@/types/workspace";
 import { merge } from "lodash-es";
-import workspaceConfig from "../../config/workspace.json"; // 新增这一行
+import workspaceConfig from "config/workspace.json"; // 新增这一行
 import { DeepPartial } from "@/types/common";
 import { Uid } from "./Uid";
 

@@ -1,5 +1,5 @@
 import { get } from "lodash-es";
-import localesJson from "../../config/locales.json";
+import localesJson from "config/locales.json";
 
 type LanguageType = keyof typeof localesJson;
 export default class Locales {

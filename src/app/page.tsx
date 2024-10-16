@@ -1,5 +1,5 @@
 import Link from "next/link";
-import rootConfig from "../../config/root.json";
+import rootConfig from "config/root.json";
 import DataGetter from "@/utils/DataGetter";
 import Tabs from "@/components/common/Tabs";
 

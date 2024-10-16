@@ -1,4 +1,4 @@
-import rootConfig from "../../config/root.json";
+import rootConfig from "config/root.json";
 import { AiMessageFactory } from "@/utils/AiMessageFactory";
 import { ApiMessage, Message } from "@/types/apiTypes";
 import { locales } from "./Locales";
