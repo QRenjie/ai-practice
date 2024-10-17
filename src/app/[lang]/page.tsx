@@ -5,6 +5,7 @@ import { getLocales } from "@/utils/getLocales";
 import { LocaleType } from "config/i18n";
 import LocaleLink from "@/components/common/LocaleLink";
 import dynamic from "next/dynamic";
+import { Metadata } from "next";
 
 const LanguageSwitcher = dynamic(
   () => import("@/components/LanguageSwitcher"),
@@ -21,6 +22,19 @@ async function getWorkspaces() {
   return {
     publicWorkspaces,
     myWorkspaces,
+  };
+}
+
+export async function generateMetadata({
+  params: { lang },
+}: {
+  params: { lang: LocaleType };
+}): Promise<Metadata> {
+  const locales = await getLocales(lang, "/");
+
+  return {
+    title: locales.t["seo.title"],
+    description: locales.t["seo.description"],
   };
 }
 

@@ -1,5 +1,10 @@
 import { get } from "lodash-es";
-import { LocaleType, PageRoutes, Translations } from "config/i18n";
+import {
+  I18nTranslations,
+  LocaleType,
+  PageRoutes,
+  Translations,
+} from "config/i18n";
 
 export type { LocaleType, PageRoutes, Translations } from "config/i18n";
 
@@ -31,7 +36,7 @@ export default class Locales<
     };
   }
 
-  get t(): Translations[typeof this.namespace] {
+  get t(): I18nTranslations[Lang][Namespace] {
     return this.source[this.namespace];
   }
 

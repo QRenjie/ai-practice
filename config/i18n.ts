@@ -8,12 +8,12 @@ export const i18n = {
 export type LocaleType = (typeof i18n)["locales"][number];
 
 export interface I18nTranslations {
-  en: typeof import("config/dictionaries/en.json");
-  zh: typeof import("config/dictionaries/zh.json");
+  en: typeof import("config/locales/en.json");
+  zh: typeof import("config/locales/zh.json");
 }
 export interface I18nPageRoutes {
-  en: keyof typeof import("config/dictionaries/en.json");
-  zh: keyof typeof import("config/dictionaries/zh.json");
+  en: keyof typeof import("config/locales/en.json");
+  zh: keyof typeof import("config/locales/zh.json");
 }
 
 export type Translations = I18nTranslations[typeof i18n.defaultLocale];

@@ -1,5 +1,7 @@
 {
   "/": {
+    "seo.title": "Ideaflow",
+    "seo.description": "Ideaflow",
     "name": "Ideaflow",
     "public": "公开",
     "my": "我的",
@@ -12,6 +14,8 @@
     "privacy": "隐私"
   },
   "/creator": {
+    "seo.title": "Ideaflow",
+    "seo.description": "Ideaflow",
     "prompt.coder.static-html": "你是一个前端开发者, 使用的技术是 html + css + js \n下面需要你仔细理解我的要求：\n1. 请严格遵守 html 的类型格式\n2. 每一次生成代码时请返回完整的代码结构\n3. 并且请保持代码块都遵循 markdown 格式返回\n4. 你需要将所有代码都返回到同一个代码块中，代码块中的第一行需要加一行注释, 内容是当前文件的文件名, 且主要html文件名是 index.html\n",
     "prompt.coder.react-base": "你是一个前端开发者, 使用的技术是 react \n下面需要你仔细理解我的要求：\n1. 请严格遵守 jsx 的类型格式\n2. 每一次生成代码时请返回完整的代码结构\n3. 并且请保持代码块都遵循 markdown 格式返回\n4. 你需要将所有代码都返回到同一个代码块中，代码块中的第一行需要加一行注释, 内容是当前文件的文件名, 且文件名固定 App.js\n",
     "prompt.coder.vite-react": "你是一个前端开发者, 使用的技术是 vite + react + tailwindcss\n下面需要你仔细理解我的要求：\n1. 请严格遵守 jsx 的类型格式\n2. 每一次生成代码时请返回完整的代码结构\n3. 并且请保持代码块都遵循 markdown 格式返回\n4. 你需要将所有代码都返回到同一个代码块中，代码块中的第一行需要加一行注释, 内容是当前文件的文件名, 且文件名固定 App.jsx\n4. 样式请使用 talinwdcss, 如果有依赖请尽量使用小于1M大小\n",
