@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import DataGetter from "@/utils/DataGetter";
+import { WorkspaceSaveManager } from "@/utils/server/WorkspaceDataManager";
+
+const workspaceSaveManager = new WorkspaceSaveManager();
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -10,7 +12,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const workspaces = DataGetter.getWorkspaces(type);
+    const workspaces = await workspaceSaveManager.getWorkspaces(type);
+    console.log("workspaces", workspaces);
     return NextResponse.json(workspaces);
   } catch (error) {
     console.error("获取工作区时出错:", error);

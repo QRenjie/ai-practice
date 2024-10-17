@@ -1,4 +1,3 @@
-import DataGetter from "@/utils/DataGetter";
 import Tabs from "@/components/common/Tabs";
 import WorkspacesGallery from "@/components/ssr/WorkspacesGallery";
 import { getLocales } from "@/utils/getLocales";
@@ -6,6 +5,7 @@ import { LocaleType } from "config/i18n";
 import LocaleLink from "@/components/common/LocaleLink";
 import dynamic from "next/dynamic";
 import { Metadata } from "next";
+import { WorkspaceSaveManager } from "@/utils/server/WorkspaceDataManager";
 
 const LanguageSwitcher = dynamic(
   () => import("@/components/LanguageSwitcher"),
@@ -14,10 +14,12 @@ const LanguageSwitcher = dynamic(
   }
 );
 
+const workspaceSaveManager = new WorkspaceSaveManager();
+
 // 定义一个异步函数来获取工作区数据
 async function getWorkspaces() {
-  const publicWorkspaces = DataGetter.getWorkspaces("public");
-  const myWorkspaces = DataGetter.getWorkspaces("my");
+  const publicWorkspaces = await workspaceSaveManager.getWorkspaces("public");
+  const myWorkspaces = await workspaceSaveManager.getWorkspaces("my");
 
   return {
     publicWorkspaces,

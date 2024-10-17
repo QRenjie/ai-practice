@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 import dynamic from "next/dynamic";
-import { WorkspaceEncrypt } from "@/utils/WorkspaceEncrypt";
+// import { WorkspaceEncrypt } from "@/utils/WorkspaceEncrypt";
 import DynamicLoading from "@/components/DynamicLoading";
+// import DynamicLoading from "@/components/DynamicLoading";
 import { LocaleType } from "config/i18n";
 import { getLocales } from "@/utils/getLocales";
+import { WorkspacePublishManager } from "@/utils/server/WorkspaceDataManager";
 
 const PreviewRoot = dynamic(() => import("@/components/pages/PreviewRoot"), {
   loading: DynamicLoading,
@@ -35,28 +37,20 @@ const PreviewRoot = dynamic(() => import("@/components/pages/PreviewRoot"), {
 //   };
 // };
 
+const workspacePublishManager = new WorkspacePublishManager();
 export default async function PreviewPage({
   params: { lang, id },
-  searchParams,
 }: {
   params: { lang: LocaleType; id: string };
-  searchParams: { data: string };
 }) {
-  if (!searchParams.data) {
-    redirect("/404");
-  }
+  const publishToken = id;
 
   const locales = await getLocales(lang, "/preview");
-  const workspace = WorkspaceEncrypt.decrypt(searchParams.data);
+  const workspace = await workspacePublishManager.get(publishToken);
 
-  console.log("jj workspace", id, searchParams.data, workspace);
+  console.log("jj workspace", publishToken, workspace);
 
-  if (
-    !searchParams.data ||
-    !workspace ||
-    !workspace.code ||
-    !workspace.code.files
-  ) {
+  if (!workspace || !workspace.code || !workspace.code.files) {
     redirect("/404");
   }
 

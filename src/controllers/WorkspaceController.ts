@@ -4,6 +4,7 @@ import { WorkspaceStore } from "@/store/WorkspaceStore";
 import { WorkspaceState } from "@/types/workspace";
 import { FileDownloader } from "@/utils/ui/FileDownloader";
 import Locales, { LocaleType } from "@/utils/Locales";
+import { RoutePublish } from "@/types/routeApi";
 
 export class WorkspaceController {
   constructor(
@@ -70,16 +71,13 @@ export class WorkspaceController {
     FileDownloader.downloadFile(blob, fileName);
   }
 
-  async publish(workspaceState: WorkspaceState): Promise<{
-    previewId: string;
-    url: string;
-  }> {
-    const { previewId } = await this.workspaceService.publish(workspaceState);
+  async publish(
+    workspaceState: WorkspaceState
+  ): Promise<RoutePublish["response"] & { url: string }> {
+    const response = await this.workspaceService.publish(workspaceState);
 
-    const url = `/preview/${previewId}`;
-console.log('jj url', url);
+    const url = `/preview/${response.publishKey}`;
 
-    throw new Error("Not implemented");
-    return { previewId, url };
+    return { ...response, url };
   }
 }

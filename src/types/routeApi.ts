@@ -30,4 +30,7 @@ export interface RouteRecommendTitles
  * @api /api/publish
  */
 export interface RoutePublish
-  extends BaseRouteApi<WorkspaceState, { previewId: string }> {}
+  extends BaseRouteApi<
+    WorkspaceState,
+    { publishKey: string; token: string }
+  > {}

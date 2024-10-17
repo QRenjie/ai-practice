@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
 import { MetaState, WorkspaceState } from "@/types/workspace";
 import { RouteSaveWorkspace } from "@/types/routeApi";
+import { WorkspaceSaveManager } from "@/utils/server/WorkspaceDataManager";
+
+const workspaceSaveManager = new WorkspaceSaveManager();
 
 export async function POST(req: NextRequest) {
   const state = await req.json();
@@ -24,35 +25,7 @@ async function handleSaveWorkspace(state: WorkspaceState) {
     }
     state.meta.updatedAt = new Date().getTime();
 
-    // 定义保存路径
-    const savePath = path.join(process.cwd(), ".data");
-    const fileName = "workspaces.json";
-    const filePath = path.join(savePath, fileName);
-
-    // 确保保存目录存在
-    await fs.mkdir(savePath, { recursive: true });
-
-    // 读取现有的工作区数据（如果文件存在）
-    let existingWorkspaces: Record<string, WorkspaceState> = {};
-    try {
-      const fileContent = await fs.readFile(filePath, "utf-8");
-      existingWorkspaces = JSON.parse(fileContent);
-    } catch (error) {
-      // 如果文件不存在或解析失败，使用空对象
-      console.log("创建新的工作区文件");
-    }
-
-    // 添加新的工作区到现有数据中
-    existingWorkspaces[workspaceKey] = state;
-
-    // 将更新后的数据写入文件
-    await fs.writeFile(
-      filePath,
-      JSON.stringify(existingWorkspaces, null, 2),
-      "utf-8"
-    );
-
-    console.log("工作区已保存到:", filePath);
+    await workspaceSaveManager.set(workspaceKey, state);
 
     return NextResponse.json({
       success: true,
