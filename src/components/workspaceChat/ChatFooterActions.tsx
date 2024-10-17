@@ -12,6 +12,7 @@ import {
 } from "../workspaceChat/ChatFooter";
 import IconButton from "../common/IconButton";
 import { WorkspaceMoreAction } from "./WorkspaceMoreAction";
+import { useLocales } from "@/container/LocalesPovider";
 
 export function ChatFooterActions({
   openPanel,
@@ -20,6 +21,7 @@ export function ChatFooterActions({
   isLoading,
 }: ChatFooterProps) {
   const { state } = useContext(WorkspaceContext)!;
+  const { t } = useLocales<"/creator">();
 
   const size = state.config.isChatCollapsed ? "sm" : "md"; // 使用 Tailwind 风格的尺寸
 
@@ -40,36 +42,42 @@ export function ChatFooterActions({
       <WorkspaceMoreAction iconSize={size} />
       <IconButton
         tooltipProps={{
-          title: openPanel === "messages" ? "聊天记录" : "聊天记录",
+          title: t["workspace.actions.messages"],
         }}
         active={openPanel === "messages"}
         onClick={(e) => handleButtonClick(e, "messages")}
-        title="聊天记录"
+        title={t["workspace.actions.messages"]}
         size={size} // 使用 size 属性
       >
         <FiMessageSquare />
       </IconButton>
       <IconButton
         tooltipProps={{
-          title: openPanel === "config" ? "设置" : "设置",
+          title: t["workspace.actions.config"],
         }}
         active={openPanel === "config"}
         onClick={(e) => handleButtonClick(e, "config")}
-        title="设置"
+        title={t["workspace.actions.config"]}
         size={size} // 使用 size 属性
       >
         <FiSettings />
       </IconButton>
       <IconButton
         tooltipProps={{
-          title: isLoading ? "发送中" : "发送",
+          title: isLoading
+            ? t["workspace.actions.loading"]
+            : t["workspace.actions.send"],
         }}
         active={!isLoading}
         onClick={(e) => {
           e.preventDefault();
           handleSubmit(e);
         }}
-        title="发送"
+        title={
+          isLoading
+            ? t["workspace.actions.loading"]
+            : t["workspace.actions.send"]
+        }
         disabled={isLoading}
         size={size} // 使用 size 属性
       >

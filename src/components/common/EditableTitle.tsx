@@ -48,10 +48,10 @@ const EditableInput: React.FC<{
 
   const tip = useMemo(() => {
     if (error === 1) {
-      return t["workspace.title.error.specialChar"];
+      return t["workspace.tip.error.specialChar"];
     }
     if (error === 2) {
-      return t["workspace.title.error.maxLength"];
+      return t["workspace.tip.title.maxLength"];
     }
     return "";
   }, [error, t]);
@@ -164,7 +164,7 @@ const EditableTitle: React.FC = () => {
         {!isEditing && (
           <IconButton
             tooltipProps={{
-              title: t["workspace.title.edit"],
+              title: t["workspace.actions.edit"],
             }}
             className="ml-2"
             icon={<FiEdit2 />}

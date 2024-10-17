@@ -4,6 +4,7 @@ import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 import { ChatFooterActions } from "./ChatFooterActions";
 import IconButton from "../common/IconButton";
 import { WorkspaceModelSelect } from "../workspace/WorkspaceModelSelect";
+import { useLocales } from "@/container/LocalesPovider";
 
 export interface ChatFooterProps {
   openPanel: "none" | "messages" | "config";
@@ -15,9 +16,12 @@ export interface ChatFooterProps {
 
 export function CollapseChatFooterButton() {
   const { state, controller } = useContext(WorkspaceContext)!;
+  const { t } = useLocales<"/creator">();
   const size = state.config.isChatCollapsed ? "sm" : "md"; // 使用 Tailwind 风格的尺寸
 
-  const title = state.config.isChatCollapsed ? "展开聊天" : "折叠聊天";
+  const title = state.config.isChatCollapsed
+    ? t["workspace.actions.expand"]
+    : t["workspace.actions.collapse"];
   return (
     <IconButton
       tooltipProps={{ title }}

@@ -8,13 +8,14 @@ import { useCreation } from "ahooks";
 import { workspaceService } from "@/services/WorkspaceService";
 import { workspaceStateCreator } from "@/utils/WorkspaceStateCreator";
 import { WorkspaceStore } from "@/store/WorkspaceStore";
+import { useLocales } from "./LocalesPovider";
 
 const WorkspacePovider: React.FC<{
   initialState: WorkspaceState;
   children: React.ReactNode;
 }> = ({ initialState, children }) => {
   const [state, setState] = useState<WorkspaceState>(initialState);
-
+  const { locales } = useLocales<"/creator">();
   const [localState, setLocalState] = useState<WorkspaceLocalState>({
     stopPreviewMask: false,
   });
@@ -31,7 +32,7 @@ const WorkspacePovider: React.FC<{
     []
   );
   const controller = useCreation(
-    () => new WorkspaceController(store, workspaceService),
+    () => new WorkspaceController(store, workspaceService, locales),
     []
   );
 

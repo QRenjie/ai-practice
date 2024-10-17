@@ -17,8 +17,6 @@ export default function LocalesProvider({
   locale: LocaleType;
   source: Translations;
 }) {
-  console.log("jj local", source, locale, namespace);
-
   return (
     <LocalesContext.Provider value={new Locales(source, locale, namespace)}>
       {children}

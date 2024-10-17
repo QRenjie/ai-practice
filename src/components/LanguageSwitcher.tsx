@@ -12,13 +12,6 @@ export default function LanguageSwitcher() {
   const redirectedPathname = (locale: LocaleType) => {
     if (!pathname) return "/";
     const segments = pathname.split("/");
-    console.log('jj segments',segments);
-    
-    if (segments[1] === i18n.defaultLocale) {
-      console.log("jj redirectedPathname", segments);
-      segments.filter((segment) => segment !== i18n.defaultLocale);
-      return "/xxxxx"
-    }
     segments[1] = locale;
     return segments.join("/");
   };

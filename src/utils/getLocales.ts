@@ -6,9 +6,9 @@ import Locales from "./Locales";
 // We also get the default import for cleaner types
 const dictionaries = {
   zh: () =>
-    import("config/dictionaries/zh.json").then((module) => module.default),
+    import("config/locales/zh.json").then((module) => module.default),
   en: () =>
-    import("config/dictionaries/en.json").then((module) => module.default),
+    import("config/locales/en.json").then((module) => module.default),
 };
 
 export const getLocales = async <

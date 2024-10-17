@@ -15,7 +15,7 @@
     "isChatCollapsed": false,
     "isWindowed": false,
     "isSandpackLoading": true,
-    "coderPrompt": "locale:coderPrompt"
+    "coderPrompt": "locale:prompt.coder.react-base"
   },
   "ui": {
     "activeTab": "preview",

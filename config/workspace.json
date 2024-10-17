@@ -16,7 +16,7 @@
       "isChatCollapsed": false,
       "isWindowed": false,
       "isSandpackLoading": true,
-      "coderPrompt": "locale:coderPrompt:react-base"
+      "coderPrompt": "locale:prompt.coder.react-base"
     },
     "ui": {
       "activeTab": "preview",
@@ -95,7 +95,7 @@
       "isChatCollapsed": false,
       "isWindowed": false,
       "isSandpackLoading": true,
-      "coderPrompt": "locale:coderPrompt:static-html"
+      "coderPrompt": "locale:prompt.coder.static-html"
     },
     "ui": {
       "activeTab": "preview",
@@ -158,7 +158,7 @@
       "isChatCollapsed": false,
       "isWindowed": false,
       "isSandpackLoading": true,
-      "coderPrompt": "locale:coderPrompt:vite-react"
+      "coderPrompt": "locale:prompt.coder.vite-react"
     },
     "ui": {
       "activeTab": "preview",

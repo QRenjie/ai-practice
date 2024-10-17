@@ -14,11 +14,13 @@ import ConfigPanel from "../workspaceChat/ConfigPanel";
 import ChatFooter from "../workspaceChat/ChatFooter";
 import { ChatFooterActions } from "../workspaceChat/ChatFooterActions";
 import WorkspacePopover from "../workspace/WorkspacePopover";
+import { useLocales } from "@/container/LocalesPovider";
 
 const WorkspaceChat: React.FC = () => {
   const workspaceContext = useContext(WorkspaceContext)!;
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useLocales<"/creator">();
   const { state } = workspaceContext;
   const [openPanel, setOpenPanel] = useState<"none" | "messages" | "config">(
     "none"
@@ -142,7 +144,7 @@ const WorkspaceChat: React.FC = () => {
                 ? "h-6 leading-none"
                 : "h-10 leading-5"
             }`}
-            placeholder="输入你的问题或按回车提交"
+            placeholder={t["workspace.holder.chat.input"]}
             disabled={isLoading}
             rows={1}
           />

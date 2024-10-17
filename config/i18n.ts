@@ -1,5 +1,5 @@
 export const i18n = {
-  defaultLocale: "zh",
+  defaultLocale: "en",
   locales: ["zh", "en"],
   forceDefaultLocale: true,
   allowBrowserLanguageOverride: false,

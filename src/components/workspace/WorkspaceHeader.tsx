@@ -42,8 +42,8 @@ export default function WorkspaceHeader() {
         <IconButton
           tooltipProps={{
             title: state.meta.public
-              ? t["workspace.public"]
-              : t["workspace.private"],
+              ? t["workspace.actions.public"]
+              : t["workspace.actions.private"],
           }}
           onClick={() => {
             controller.updateMeta({ public: !state.meta.public });
@@ -60,8 +60,8 @@ export default function WorkspaceHeader() {
           tooltipProps={{
             title:
               state.ui.activeTab === "preview"
-                ? t["workspace.editor"]
-                : t["workspace.preview"],
+                ? t["workspace.actions.editor"]
+                : t["workspace.actions.preview"],
           }}
           onClick={() => controller.store.toggleArea()}
         >

@@ -7,7 +7,6 @@ import { SandpackFile } from "@codesandbox/sandpack-react";
 import sandpackFile from "config/sandpackFile";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import { cloneDeep } from "lodash-es";
-import { locales } from "@/utils/Locales";
 import { AiMessageFactory } from "@/utils/AiMessageFactory";
 
 export type ApplyData = { type: "html" | "python"; content: string };
@@ -178,12 +177,14 @@ export class ChatController {
     try {
       const prompt =
         messages.length === 0
-          ? locales.get("locale:initRecommond")
-          : locales.get("locale:contextPromptTemplate").replace(
-              "{{chatHistory}}",
-              AiMessageFactory.toApiMessage(messages)
-                .map((msg) => msg.content)
-                .join("\n")
+          ? this.workspaceController.locales.get("prompt.recommend.keywords")
+          : this.workspaceController.locales.format(
+              "prompt.recommend.keywords.hasMessages",
+              {
+                chatHistory: AiMessageFactory.toApiMessage(messages)
+                  .map((msg) => msg.content)
+                  .join("\n"),
+              }
             );
 
       const aiApiParams = new ApiCommonParams({

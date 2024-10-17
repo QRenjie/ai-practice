@@ -35,6 +35,16 @@ export default class Locales<
     return this.source[this.namespace];
   }
 
+  format(
+    key: keyof Translations[Namespace],
+    params?: Record<string, string>
+  ): string {
+    return this.get(key).replace(
+      /{{\s*([^{}\s]+)\s*}}/g,
+      (match, p1) => params?.[p1] || match
+    );
+  }
+
   get(key: keyof Translations[Namespace]): string {
     return get(this.source, key, "");
 
