@@ -25,3 +25,9 @@ export interface RouteSaveWorkspace
  */
 export interface RouteRecommendTitles
   extends BaseRouteApi<ApiCommonParams, { titles: string[] }> {}
+
+/**
+ * @api /api/publish
+ */
+export interface RoutePublish
+  extends BaseRouteApi<WorkspaceState, { previewId: string }> {}

@@ -52,5 +52,9 @@
     "workspace.title.configUi": "UI 配置",
     "workspace.title.configWindowed": "启用窗口化",
     "workspace.title.configKeywords": "您可能想发送的建议"
+  },
+  "/preview": {
+    "seo.title": "{{title}} | 预览页面 | Ideaflow",
+    "seo.description": "Ideaflow {{description}}"
   }
 }

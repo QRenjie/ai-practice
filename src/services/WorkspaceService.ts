@@ -1,9 +1,7 @@
 import { WorkspaceState } from "@/types/workspace";
 import AIApiScheduler, { aiApiScheduler } from "./AIApiScheduler";
 import ApiCommonParams from "@/utils/ApiCommonParams";
-import { WorkspaceEncrypt } from "@/utils/WorkspaceEncrypt";
-import { Uid } from "@/utils/Uid";
-import { RouteSaveWorkspace } from "@/types/routeApi";
+import { RoutePublish, RouteSaveWorkspace } from "@/types/routeApi";
 
 export class WorkspaceService {
   constructor(public readonly aiApiScheduler: AIApiScheduler) {}
@@ -40,14 +38,15 @@ export class WorkspaceService {
 
   async publish(
     workspaceState: WorkspaceState
-  ): Promise<{ previewId: string; encryptedContent: string }> {
-    const previewId = Uid.generate();
-    const encryptedContent = WorkspaceEncrypt.encrypt(workspaceState);
+  ): Promise<RoutePublish["response"]> {
+    return this.aiApiScheduler.publishWorkspace(workspaceState);
+    // const previewId = Uid.generate();
+    // const encryptedContent = WorkspaceEncrypt.encrypt(workspaceState);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // 返回包含加密内容的 URL
-    return { previewId, encryptedContent };
+    // // 返回包含加密内容的 URL
+    // return { previewId, encryptedContent };
   }
 }
 

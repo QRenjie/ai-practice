@@ -9,7 +9,7 @@ export class WorkspaceController {
   constructor(
     public store: WorkspaceStore,
     public workspaceService: WorkspaceService,
-    public locales: Locales<LocaleType, '/creator'>
+    public locales: Locales<LocaleType, "/creator">
   ) {}
 
   getState = () => {
@@ -72,15 +72,14 @@ export class WorkspaceController {
 
   async publish(workspaceState: WorkspaceState): Promise<{
     previewId: string;
-    encryptedContent: string;
     url: string;
   }> {
-    const { previewId, encryptedContent } = await this.workspaceService.publish(
-      workspaceState
-    );
+    const { previewId } = await this.workspaceService.publish(workspaceState);
 
-    const url = `/preview/${previewId}?data=${encryptedContent}`;
+    const url = `/preview/${previewId}`;
+console.log('jj url', url);
 
-    return { previewId, encryptedContent, url };
+    throw new Error("Not implemented");
+    return { previewId, url };
   }
 }

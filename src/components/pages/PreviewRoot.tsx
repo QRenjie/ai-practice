@@ -10,6 +10,8 @@ import DynamicLoading from "../DynamicLoading";
 
 // 添加这个导入
 import styles from "./PreviewRoot.module.css";
+import { LocalesValue } from "@/utils/Locales";
+import LocalesProvider from "@/container/LocalesPovider";
 
 const WorkspaceLoadingSkeleton = dynamic(
   () => import("@/components/workspace/WorkspaceLoadingSkeleton"),
@@ -17,7 +19,13 @@ const WorkspaceLoadingSkeleton = dynamic(
     loading: DynamicLoading,
   }
 );
-export default function PreviewRoot({ content }: { content: WorkspaceState }) {
+export default function PreviewRoot({
+  content,
+  localesValue,
+}: {
+  content: WorkspaceState;
+  localesValue: LocalesValue;
+}) {
   const [loading, setLoading] = useState(true);
 
   const onChangeMessage = useCallback((message: SandpackMessage) => {
@@ -27,26 +35,32 @@ export default function PreviewRoot({ content }: { content: WorkspaceState }) {
   }, []);
 
   return (
-    <SandpackProvider
-      files={content.code.files}
-      customSetup={content.code.customSetup}
-      template={content.code.template}
+    <LocalesProvider
+      namespace={localesValue.namespace}
+      locale={localesValue.locale}
+      source={localesValue.source}
     >
-      {loading && <WorkspaceLoadingSkeleton />}
-      <SandpackContent
-        onChangeMessage={onChangeMessage}
-        className="w-full h-screen"
+      <SandpackProvider
+        files={content.code.files}
+        customSetup={content.code.customSetup}
+        template={content.code.template}
       >
-        <SandpackPreview
-          style={{ width: "100%", height: "100%" }}
-          showOpenInCodeSandbox={false}
-          showNavigator={false}
-          showRestartButton={false}
-          showRefreshButton={false}
-          // 添加这个类名
-          className={styles.hiddenAddress}
-        />
-      </SandpackContent>
-    </SandpackProvider>
+        {loading && <WorkspaceLoadingSkeleton />}
+        <SandpackContent
+          onChangeMessage={onChangeMessage}
+          className="w-full h-screen"
+        >
+          <SandpackPreview
+            style={{ width: "100%", height: "100%" }}
+            showOpenInCodeSandbox={false}
+            showNavigator={false}
+            showRestartButton={false}
+            showRefreshButton={false}
+            // 添加这个类名
+            className={styles.hiddenAddress}
+          />
+        </SandpackContent>
+      </SandpackProvider>
+    </LocalesProvider>
   );
 }

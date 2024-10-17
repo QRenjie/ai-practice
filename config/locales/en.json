@@ -52,5 +52,9 @@
     "workspace.title.configUi": "UI Config",
     "workspace.title.configWindowed": "Enable Windowed",
     "workspace.title.configKeywords": "You may want to send suggestions"
+  },
+  "/preview": {
+    "seo.title": "{{title}} | Preview Page | Ideaflow",
+    "seo.description": "Ideaflow {{description}}"
   }
 }

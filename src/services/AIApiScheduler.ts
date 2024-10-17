@@ -5,7 +5,11 @@ import ApiCommonParams from "@/utils/ApiCommonParams";
 import JSONUtil from "@/utils/JSONUtil";
 import { WorkspaceState } from "@/types/workspace";
 import { AiApiExecutor } from "./AiApiExecutor";
-import { RouteRecommendTitles, RouteSaveWorkspace } from "@/types/routeApi";
+import {
+  RoutePublish,
+  RouteRecommendTitles,
+  RouteSaveWorkspace,
+} from "@/types/routeApi";
 
 /**
  * 前端调用后台接口的中间层
@@ -116,6 +120,14 @@ export default class AIApiScheduler {
     }
 
     return this.aiApiExecutor.exec(() => openAIClient.generateTitles(params));
+  }
+
+  async publishWorkspace(
+    workspaceState: WorkspaceState
+  ): Promise<RoutePublish["response"]> {
+    return this.aiApiExecutor.exec(() =>
+      this.backendApi.publish(workspaceState)
+    );
   }
 }
 

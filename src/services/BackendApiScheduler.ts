@@ -2,7 +2,7 @@ import { WorkspaceState } from "@/types/workspace";
 import { AiChatResponse, CodeBlock } from "@/types/apiTypes";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import JSONUtil from "@/utils/JSONUtil";
-import { RouteRecommendTitles, RouteSaveWorkspace } from "@/types/routeApi";
+import { RoutePublish, RouteRecommendTitles, RouteSaveWorkspace } from "@/types/routeApi";
 
 /**
  * 调用 Next.js 后台接口的实现类
@@ -117,5 +117,15 @@ export default class BackendApiScheduler {
     return fetch(`/api/get-workspaces${searchParams}`).then((res) =>
       res.json()
     );
+  }
+
+  async publish(workspaceState: WorkspaceState): Promise<RoutePublish['response']> {
+    return fetch("/api/publish", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSONUtil.stringify(workspaceState),
+    }).then((res) => res.json());
   }
 }

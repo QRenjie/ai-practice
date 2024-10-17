@@ -11,7 +11,11 @@ export default class JSONUtil {
     return JSON.stringify(value, customReplacer, space);
   }
 
-  static parse(text, reviver) {
-    return JSON.parse(text, reviver);
+  static parse(text, reviver, defaultValue = {}) {
+    try {
+      return JSON.parse(text, reviver);
+    } catch (error) {
+      return defaultValue;
+    }
   }
 }

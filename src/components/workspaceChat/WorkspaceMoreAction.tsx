@@ -47,9 +47,9 @@ const PublishMenuItem = () => {
   const { state, controller } = useContext(WorkspaceContext)!;
   const { t } = useLocales<"/creator">();
   const handlePublish = useCallback(async () => {
-    const previewUrl = await controller.publish(state);
-    if (previewUrl) {
-      const fullUrl = `${window.location.origin}${previewUrl}`;
+    const previewResult = await controller.publish(state);
+    if (previewResult.url) {
+      const fullUrl = `${window.location.origin}${previewResult.url}`;
       message.success(
         <span>
           {t["workspace.tip.publish.preview"]}
