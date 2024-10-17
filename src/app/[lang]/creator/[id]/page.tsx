@@ -12,19 +12,25 @@ const CreatorRoot = dynamic(() => import("@/components/pages/CreatorRoot"), {
 });
 
 export async function generateMetadata({
-  params,
+  params: { lang, id },
 }: {
   params: { id: string; lang: LocaleType };
 }): Promise<Metadata> {
-  const workspace = await DataGetter.getWorkspaceById(params.id);
+  const locales = await getLocales(lang, "/creator");
+
+  const workspace = await DataGetter.getWorkspaceById(id);
 
   if (!workspace) {
     notFound();
   }
 
   return {
-    title: `${workspace.ui.title} - 创作者页面`,
-    description: `查看 ${workspace.ui.title} 的创作者页面和作品`,
+    title: locales.format("seo.title", {
+      title: workspace.ui.title,
+    }),
+    description: locales.format("seo.description", {
+      description: workspace.ui.title,
+    }),
   };
 }
 

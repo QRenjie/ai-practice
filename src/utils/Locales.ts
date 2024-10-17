@@ -19,7 +19,7 @@ export default class Locales<
   Namespace extends PageRoutes
 > {
   constructor(
-    private readonly source: Translations,
+    private readonly source: I18nTranslations[Lang],
     public readonly locale: Lang,
     public readonly namespace: Namespace
   ) {
@@ -41,7 +41,7 @@ export default class Locales<
   }
 
   format(
-    key: keyof Translations[Namespace],
+    key: keyof I18nTranslations[Lang][Namespace],
     params?: Record<string, string>
   ): string {
     return this.get(key).replace(
@@ -50,8 +50,8 @@ export default class Locales<
     );
   }
 
-  get(key: keyof Translations[Namespace]): string {
-    return get(this.source, key, "");
+  get(key: keyof I18nTranslations[Lang][Namespace]): string {
+    return get(this.t, key, "") as string;
 
     // if (!key.startsWith("locale:")) {
     //   throw new Error("key must start with locale:");

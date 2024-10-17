@@ -11,6 +11,23 @@ const CreatorRoot = dynamic(() => import("@/components/pages/CreatorRoot"), {
   ssr: false,
 });
 
+export const generateMetadata = async ({
+  params: { lang },
+}: {
+  params: { lang: LocaleType };
+}) => {
+  const locales = await getLocales(lang, "/creator");
+
+  return {
+    title: locales.format("seo.title", {
+      title: locales.get("workspace.meta.untitle"),
+    }),
+    description: locales.format("seo.description", {
+      description: locales.get("workspace.meta.untitle"),
+    }),
+  };
+};
+
 export default async function Creator({
   params: { lang },
   searchParams,
@@ -40,10 +57,7 @@ export default async function Creator({
       className="h-screen bg-gradient-to-r from-blue-100 to-blue-300 relative"
       data-testid="CreatorPage"
     >
-      <CreatorRoot
-        workspace={workspace}
-        localesValue={locales.toObject()}
-      />
+      <CreatorRoot workspace={workspace} localesValue={locales.toObject()} />
     </div>
   );
 }
