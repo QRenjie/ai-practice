@@ -6,6 +6,7 @@ import DynamicLoading from "@/components/DynamicLoading";
 import { LocaleType } from "config/i18n";
 import { getLocales } from "@/utils/server/getLocales";
 import { WorkspacePublishManager } from "@/utils/server/WorkspaceDataManager";
+import { log } from "@/utils/log";
 
 const PreviewRoot = dynamic(() => import("@/components/pages/PreviewRoot"), {
   loading: DynamicLoading,
@@ -48,7 +49,7 @@ export default async function PreviewPage({
   const locales = await getLocales(lang, "/preview");
   const workspace = await workspacePublishManager.get(publishToken);
 
-  console.log("jj workspace", publishToken, workspace);
+  log.debug(workspace);
 
   if (!workspace || !workspace.code || !workspace.code.files) {
     redirect("/404");

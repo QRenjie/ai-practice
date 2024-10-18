@@ -6,6 +6,7 @@ import { Input, Tooltip } from "antd"; // 假设你有一个 Tooltip 组件
 import WorkspacePopover from "../workspace/WorkspacePopover";
 import { Recommender } from "@/utils/Recommender";
 import { useLocales } from "@/container/LocalesPovider";
+import { log } from "@/utils/log";
 
 const validateTitle = (newValue: string) => {
   if (!/^[\u4e00-\u9fa5a-zA-Z0-9\s]*$/.test(newValue)) {
@@ -114,7 +115,7 @@ const EditableTitle: React.FC = () => {
           setRecommendedTitles(titles); // 保存推荐标题
         })
         .catch((error) => {
-          console.error("获取推荐标题失败", error);
+          log.error("获取推荐标题失败", error);
         });
     }
   }, [controller, recommender]);

@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { log } from "../log";
 
 export class JsonDataStorage {
   private dataDir: string;
@@ -52,7 +53,7 @@ export class JsonDataStorage {
     const allData = await this.readAllData(); // 读取所有数据
     allData[key] = value; // 更新指定键的数据
     await this.writeAllData(allData); // 写入文件
-    console.log(`Data saved with key: ${key}`);
+    log.debug(`Data saved with key: ${key}`);
   }
 
   // 获取指定键的数据

@@ -4,6 +4,7 @@ import { CodeExtractor } from "@/utils/CodeExtractor";
 import models from "config/models.json";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import { RouteRecommendTitles } from "@/types/routeApi";
+import { log } from "@/utils/log";
 
 export interface OpenAIError extends Error {
   response?: {
@@ -43,7 +44,7 @@ class OpenAIClient extends ApiClient {
         codeBlocks: CodeExtractor.extract(result.content),
       } as AiChatResponse;
     } catch (error) {
-      console.error("Chat 请求出错:", error);
+      log.error("Chat 请求出错:", error);
       throw error;
     }
   }
@@ -69,7 +70,7 @@ class OpenAIClient extends ApiClient {
       };
     } catch (error) {
       const openAIError = error as OpenAIError;
-      console.error("OpenAI API错误:", openAIError);
+      log.error("OpenAI API错误:", openAIError);
       // if (retries > 0 && openAIError.response?.status === 409) {
       //   console.log(`重试生成关键词，剩余尝试次数: ${retries - 1}`);
       //   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -99,7 +100,7 @@ class OpenAIClient extends ApiClient {
       };
     } catch (error) {
       const openAIError = error as OpenAIError;
-      console.error("OpenAI API错误:", openAIError);
+      log.error("OpenAI API错误:", openAIError);
       throw openAIError;
     }
   }

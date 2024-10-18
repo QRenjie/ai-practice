@@ -3,6 +3,7 @@ import { AiChatResponse, CodeBlock } from "@/types/apiTypes";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import JSONUtil from "@/utils/JSONUtil";
 import { RoutePublish, RouteRecommendTitles, RouteSaveWorkspace } from "@/types/routeApi";
+import { log } from "@/utils/log";
 
 /**
  * 调用 Next.js 后台接口的实现类
@@ -18,10 +19,10 @@ export default class BackendApiScheduler {
         body: JSONUtil.stringify(params),
       }).then((res) => res.json());
 
-      console.log("response from backend", response);
+      log.log("response from backend", response);
       return response;
     } catch (error) {
-      console.error("AI响应错误:", error);
+      log.error("AI响应错误:", error);
       throw error;
     }
   }
@@ -49,10 +50,10 @@ export default class BackendApiScheduler {
         body: JSONUtil.stringify(params),
       }).then((res) => res.json());
 
-      console.log("result", result);
+      log.log("result", result);
       return result;
     } catch (error) {
-      console.error("获取关键词错误:", error);
+      log.error("获取关键词错误:", error);
       throw error;
     }
   }
@@ -69,10 +70,10 @@ export default class BackendApiScheduler {
         body: JSONUtil.stringify(params),
       }).then((res) => res.json());
 
-      console.log("推荐的标题", result);
+      log.log("推荐的标题", result);
       return result;
     } catch (error) {
-      console.error("获取推荐标题错误:", error);
+      log.error("获取推荐标题错误:", error);
       throw error;
     }
   }

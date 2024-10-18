@@ -4,6 +4,7 @@ import { SandpackFile } from "@codesandbox/sandpack-react";
 import archiver from "archiver";
 import workspaceConfig from "config/workspace.json";
 import { WorkspaceState } from "@/types/workspace";
+import { log } from "@/utils/log";
 
 // 添加模板名称到目录的映射
 const templateToDirectoryMap: Record<string, string> = {
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     // 合并文件，API 传来的文件覆盖或增加到基础文件中
     const mergedFiles = { ...baseFiles, ...workspaceCode.files };
-    console.log("mergedFiles", mergedFiles);
+    log.log("mergedFiles", mergedFiles);
 
     // 创建一个内存中的 ZIP 文件
     const archive = archiver("zip", { zlib: { level: 9 } });
@@ -84,7 +85,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("构建过程中出错:", error);
+    log.error("构建过程中出错:", error);
     return NextResponse.json({ message: "构建过程中出错" }, { status: 500 });
   }
 }

@@ -8,6 +8,7 @@ import sandpackFile from "config/sandpackFile";
 import ApiCommonParams from "@/utils/ApiCommonParams";
 import { cloneDeep } from "lodash-es";
 import { AiMessageFactory } from "@/utils/AiMessageFactory";
+import { log } from "@/utils/log";
 
 export type ApplyData = { type: "html" | "python"; content: string };
 
@@ -80,7 +81,7 @@ export class ChatController {
         this.fetchNewRecommendedKeywords([...this.chatMessages, newMessage]);
       }
     } catch (error) {
-      console.error("handleSubmit error", error);
+      log.error("handleSubmit error", error);
       const errorMessage = AiMessageFactory.createErrorMessage(error);
       this.workspaceController.store.addChatMessage(errorMessage);
     } finally {
@@ -120,7 +121,7 @@ export class ChatController {
     try {
       await navigator.clipboard.writeText(text);
     } catch (err) {
-      console.error("无法复制文本: ", err);
+      log.error("无法复制文本: ", err);
     }
   };
 
@@ -130,7 +131,7 @@ export class ChatController {
    */
   public reapplyAiMessage = async (message: Message): Promise<void> => {
     if (message.role === "user") {
-      console.warn("只能重新应用ai消息");
+      log.warn("只能重新应用ai消息");
       return;
     }
 
@@ -162,7 +163,7 @@ export class ChatController {
       }
     });
 
-    console.log("更新预览代码块", result);
+    log.log("更新预览代码块", result);
 
     this.workspaceController.store.updateCodeFiles(result, codeBlocks);
 
@@ -200,10 +201,10 @@ export class ChatController {
           response.keywords
         );
       } else {
-        console.warn("未收到有效的关键词");
+        log.warn("未收到有效的关键词");
       }
     } catch (error) {
-      console.error("获取推荐关键词失败:", error);
+      log.error("获取推荐关键词失败:", error);
     }
   };
 

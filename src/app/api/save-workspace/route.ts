@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { MetaState, WorkspaceState } from "@/types/workspace";
 import { RouteSaveWorkspace } from "@/types/routeApi";
 import { WorkspaceSaveManager } from "@/utils/server/WorkspaceDataManager";
+import { log } from "@/utils/log";
 
 const workspaceSaveManager = new WorkspaceSaveManager();
 
@@ -32,7 +33,7 @@ async function handleSaveWorkspace(state: WorkspaceState) {
       workspaceKey,
     } as RouteSaveWorkspace["response"]);
   } catch (error) {
-    console.error("保存工作区时出错:", error);
+    log.error("保存工作区时出错:", error);
     return NextResponse.json(
       {
         localeKey: "saveWorkspaceError",

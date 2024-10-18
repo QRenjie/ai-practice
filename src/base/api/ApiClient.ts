@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { StreamApiProcessorType, streamProcessor } from "./StreamProcessor";
 import JSONUtil from "@/utils/JSONUtil";
 import { Uid } from "@/utils/Uid";
+import { log } from "@/utils/log";
 export default class ApiClient {
   private axiosInstance: AxiosInstance;
   token: string = "";
@@ -23,7 +24,7 @@ export default class ApiClient {
     try {
       return await this.axiosInstance.post<T>(endpoint, data, config);
     } catch (error) {
-      console.error("API请求错误:", error);
+      log.error("API请求错误:", error);
       throw error;
     }
   }
@@ -60,7 +61,7 @@ export default class ApiClient {
 
       return result;
     } catch (error) {
-      console.error("API流式请求错误:", error);
+      log.error("API流式请求错误:", error);
       throw error;
     }
   }

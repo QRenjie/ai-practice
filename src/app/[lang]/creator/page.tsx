@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import LoadingSkeleton from "@/components/ssr/LoadingSkeleton";
 import { getLocales } from "@/utils/server/getLocales";
 import { LocaleType } from "config/i18n";
+import { log } from "@/utils/log";
 
 const CreatorRoot = dynamic(() => import("@/components/pages/CreatorRoot"), {
   loading: LoadingSkeleton,
@@ -48,7 +49,7 @@ export default async function Creator({
       ui: { title: "Untitled" },
     });
   } else {
-    console.warn("is not valid template:", workspaceType);
+    log.warn("is not valid template:", workspaceType);
     notFound();
   }
 

@@ -1,3 +1,5 @@
+import { log } from "./log";
+
 type Task<T> = () => Promise<T>;
 
 export default class PromiseQueue {
@@ -21,7 +23,7 @@ export default class PromiseQueue {
         try {
           await currentTask();
         } catch (error) {
-          console.error("任务执行出错:", error);
+          log.error("任务执行出错:", error);
         }
       }
     }

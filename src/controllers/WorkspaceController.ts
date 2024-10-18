@@ -5,6 +5,7 @@ import { WorkspaceState } from "@/types/workspace";
 import { FileDownloader } from "@/utils/ui/FileDownloader";
 import Locales, { LocaleType } from "@/utils/Locales";
 import { RoutePublish } from "@/types/routeApi";
+import { log } from "@/utils/log";
 
 export class WorkspaceController {
   constructor(
@@ -31,7 +32,7 @@ export class WorkspaceController {
     try {
       await this.save();
     } catch (error) {
-      console.error("保存工作区时出错:", error);
+      log.error("保存工作区时出错:", error);
     }
   };
 

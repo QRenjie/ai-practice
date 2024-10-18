@@ -10,6 +10,7 @@ import {
   RouteRecommendTitles,
   RouteSaveWorkspace,
 } from "@/types/routeApi";
+import { log } from "@/utils/log";
 
 /**
  * 前端调用后台接口的中间层
@@ -35,16 +36,16 @@ export default class AIApiScheduler {
         // 通过next后台 /api/ai-response 接口
         const response = await this.backendApi.callOpenAIStream(apiParams);
 
-        console.log("response from backend", response);
+        log.log("response from backend", response);
         return response;
       } else {
         const response = await openAIClient.generateCode(apiParams);
 
-        console.log("response from openAIClient", response);
+        log.log("response from openAIClient", response);
         return response;
       }
     } catch (error) {
-      console.error("AI响应错误:", error);
+      log.error("AI响应错误:", error);
       throw error;
     }
   }
@@ -75,11 +76,11 @@ export default class AIApiScheduler {
           apiParams
         );
 
-        console.log("response from backend", response);
+        log.log("response from backend", response);
         return response;
       } else {
         const result = await openAIClient.generateKeywords(apiParams);
-        console.log("response from openAIClient", result);
+        log.log("response from openAIClient", result);
 
         return result;
       }

@@ -13,6 +13,7 @@ import {
   FiLoader,
 } from "react-icons/fi";
 import { useLocales } from "@/container/LocalesPovider";
+import { log } from "@/utils/log";
 
 // 封装一个加载按钮组件
 const LoadingButton = ({
@@ -83,7 +84,7 @@ const ExportMenuItem = () => {
       await controller.exportProject(state.code);
       message.success(t["workspace.tip.export.success"]);
     } catch (error) {
-      console.error("导出错误:", error);
+      log.error("导出错误:", error);
       message.error(t["workspace.tip.export.error"]);
     }
   }, [controller, state, t]);

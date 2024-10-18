@@ -1,6 +1,7 @@
 import { openAIClient } from "@/base/api/OpenAIClient";
 import { RouteRecommendTitles } from "@/types/routeApi";
 import ApiCommonParams from "@/utils/ApiCommonParams";
+import { log } from "@/utils/log";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -15,7 +16,7 @@ export async function POST(req: NextRequest) {
       titles: [],
     } as RouteRecommendTitles["response"]);
   } catch (error) {
-    console.error("生成推荐标题时发生错误:", error);
+    log.error("生成推荐标题时发生错误:", error);
     return NextResponse.json(
       {
         titles: [],

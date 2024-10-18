@@ -1,5 +1,6 @@
 import { openAIClient } from "@/base/api/OpenAIClient";
 import ApiCommonParams from "@/utils/ApiCommonParams";
+import { log } from "@/utils/log";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -10,7 +11,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("OpenAI API错误:", error);
+    log.error("OpenAI API错误:", error);
     const errorResponse = { error: "处理请求时发生错误" };
     return NextResponse.json(errorResponse, { status: 500 });
   }

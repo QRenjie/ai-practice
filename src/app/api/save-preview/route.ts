@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
+import { log } from '@/utils/log';
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, previewUrl: `/previews/${id}.html` });
   } catch (error) {
-    console.error('保存预览时出错:', error);
+    log.error('保存预览时出错:', error);
     return NextResponse.json({ error: '保存预览失败' }, { status: 500 });
   }
 }
