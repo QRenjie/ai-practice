@@ -21,6 +21,9 @@ export interface AIResponseError {
 export type AIResponse = AiChatResponse | AIResponseError;
 
 export interface Message extends ApiMessage {
+  content: string;
+  role: "user" | "system" | "assistant";
+
   id: string;
   type: "text" | "code" | "markdown";
   codeBlocks?: CodeBlock[];

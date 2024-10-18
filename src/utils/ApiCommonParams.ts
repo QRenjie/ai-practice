@@ -1,14 +1,14 @@
 import rootConfig from "config/root.json";
-import { AiMessageFactory } from "@/utils/AiMessageFactory";
 import { ApiMessage, Message } from "@/types/apiTypes";
 import { LocaleKey } from "@/types/workspace";
 import Locales from "./Locales";
 import { i18n, LocaleType, PageRoutes } from "config/i18n";
+import { MessageCreator } from "./MessageCreator";
 
 export default class ApiCommonParams {
   model: string;
   locale: LocaleKey;
-  messages: ApiMessage[];
+  messages: ApiMessage[] = [];
   stream: boolean | undefined;
 
   constructor({
@@ -29,14 +29,17 @@ export default class ApiCommonParams {
     this.stream = stream;
     this.locale = locale || i18n.defaultLocale;
     this.model = model || rootConfig.defaultModel;
-    this.messages = messages ? AiMessageFactory.toApiMessage(messages) : [];
 
+    let apimessages = messages || [];
     // 处理提示词
     if (coderPrompt && locales) {
-      this.messages = [
-        AiMessageFactory.createSystemApiMessage(locales.getByLocaleString(coderPrompt)),
-        ...this.messages,
+      apimessages = [
+        MessageCreator.createSystemMessage(
+          locales.getByLocaleString(coderPrompt)
+        ),
+        ...apimessages,
       ];
     }
+    this.messages = MessageCreator.toApiMessage(apimessages);
   }
 }
