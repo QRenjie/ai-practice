@@ -12,7 +12,15 @@ export default function LanguageSwitcher() {
   const redirectedPathname = (locale: LocaleType) => {
     if (!pathname) return "/";
     const segments = pathname.split("/");
-    segments[1] = locale;
+    
+    // 检查第一个段是否是有效的语言代码
+    if (i18n.locales.includes(segments[1] as LocaleType)) {
+      segments[1] = locale;
+    } else {
+      // 如果第一个段不是语言代码，在开头插入新的语言代码
+      segments.splice(1, 0, locale);
+    }
+    
     return segments.join("/");
   };
 
