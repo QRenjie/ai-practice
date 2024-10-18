@@ -5,6 +5,8 @@ import {
   PageRoutes,
   Translations,
 } from "config/i18n";
+import { LocaleKey } from "@/types/workspace";
+import { log } from "./log";
 
 export type { LocaleType, PageRoutes, Translations } from "config/i18n";
 
@@ -51,13 +53,30 @@ export default class Locales<
   }
 
   get(key: keyof I18nTranslations[Lang][Namespace]): string {
-    return get(this.t, key, "") as string;
+    const value = get(this.t, key, "") as string;
 
-    // if (!key.startsWith("locale:")) {
-    //   throw new Error("key must start with locale:");
-    // }
+    if (!value) {
+      log.debug(value);
+    }
 
-    // const localeKey = key.split(":").slice(1);
-    // return get(this.source, page ? `${page}.${localeKey}` : localeKey, "");
+    return value;
+  }
+
+  /**
+   * 获取locale字符串
+   * @param key
+   * @returns
+   */
+  getByLocaleString(key: LocaleKey): string {
+    const localeKey = key.replace("locale:", "");
+    log.debug(localeKey);
+
+    const value = get(this.t, localeKey, "") as string;
+
+    if (!value) {
+      log.debug(value);
+    }
+
+    return value;
   }
 }

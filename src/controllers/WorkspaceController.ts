@@ -51,6 +51,7 @@ export class WorkspaceController {
 
   getRecommendedTitles = async (): Promise<string[]> => {
     const params = new ApiCommonParams({
+      locales: this.locales,
       messages: this.store.state.chat.messages,
       model: this.store.state.config.selectedModel,
       coderPrompt: "locale:workspace.prompt.title.recommend",

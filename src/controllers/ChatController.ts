@@ -54,10 +54,10 @@ export class ChatController {
       this.workspaceController.store.addChatMessage(
         AiMessageFactory.createUserMessage(message)
       );
-
       // 调用AI接口
       const aiResponse = await this.aIApiScheduler.callOpenAIStream(
         new ApiCommonParams({
+          locales: this.workspaceController.locales,
           model: this.state.config.selectedModel,
           coderPrompt: this.state.config.coderPrompt,
           messages: [
@@ -189,6 +189,7 @@ export class ChatController {
             );
 
       const aiApiParams = new ApiCommonParams({
+        locales: this.workspaceController.locales,
         model: this.state.config.selectedModel,
         messages: [AiMessageFactory.createUserMessage(prompt)],
       });
