@@ -1,6 +1,6 @@
 import "server-only";
 import { i18n, PageRoutes, type LocaleType } from "config/i18n";
-import Locales from "./Locales";
+import Locales from "../Locales";
 
 // We enumerate all dictionaries here for better linting and typescript support
 // We also get the default import for cleaner types

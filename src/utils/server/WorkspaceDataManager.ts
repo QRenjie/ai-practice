@@ -68,9 +68,7 @@ export class WorkspacePublishManager {
 
   async set(workspace: WorkspaceState) {
     // 加密 workspaceState
-    const workspaceToken = WorkspaceEncrypt.encrypt(
-      JSONUtil.stringify(workspace)
-    );
+    const workspaceToken = WorkspaceEncrypt.encrypt(workspace);
     const token = Uid.generate();
 
     await this.dataStorage.saveData(token, JSONUtil.stringify(workspaceToken));
@@ -85,8 +83,6 @@ export class WorkspacePublishManager {
       return null;
     }
 
-    return JSONUtil.parse(
-      WorkspaceEncrypt.decrypt(JSONUtil.parse(workspaceToken))
-    ) as WorkspaceState;
+    return WorkspaceEncrypt.decrypt(workspaceToken);
   }
 }

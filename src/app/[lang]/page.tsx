@@ -1,6 +1,6 @@
 import Tabs from "@/components/common/Tabs";
 import WorkspacesGallery from "@/components/ssr/WorkspacesGallery";
-import { getLocales } from "@/utils/getLocales";
+import { getLocales } from "@/utils/server/getLocales";
 import { LocaleType } from "config/i18n";
 import LocaleLink from "@/components/common/LocaleLink";
 import dynamic from "next/dynamic";

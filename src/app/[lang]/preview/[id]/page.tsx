@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import DynamicLoading from "@/components/DynamicLoading";
 // import DynamicLoading from "@/components/DynamicLoading";
 import { LocaleType } from "config/i18n";
-import { getLocales } from "@/utils/getLocales";
+import { getLocales } from "@/utils/server/getLocales";
 import { WorkspacePublishManager } from "@/utils/server/WorkspaceDataManager";
 
 const PreviewRoot = dynamic(() => import("@/components/pages/PreviewRoot"), {

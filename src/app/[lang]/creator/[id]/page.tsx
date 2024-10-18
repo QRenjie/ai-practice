@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import LoadingSkeleton from "@/components/ssr/LoadingSkeleton";
 import dynamic from "next/dynamic";
 import { LocaleType } from "config/i18n";
-import { getLocales } from "@/utils/getLocales";
+import { getLocales } from "@/utils/server/getLocales";
 import { WorkspaceSaveManager } from "@/utils/server/WorkspaceDataManager";
 
 const CreatorRoot = dynamic(() => import("@/components/pages/CreatorRoot"), {
