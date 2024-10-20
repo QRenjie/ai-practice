@@ -30,6 +30,7 @@ function getLocale(request: NextRequest): string {
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const searchParams = request.nextUrl.searchParams;
 
   // 检查路径是否以语言代码开头
   const pathnameIsMissingLocale = i18n.locales.every(
@@ -41,6 +42,12 @@ export function middleware(request: NextRequest) {
 
     // 对于所有语言，包括默认语言，都添加语言前缀
     const newUrl = new URL(`/${locale}${pathname}`, request.url);
+    
+    // 保留原始的查询参数
+    searchParams.forEach((value, key) => {
+      newUrl.searchParams.append(key, value);
+    });
+
     return NextResponse.rewrite(newUrl);
   }
 
