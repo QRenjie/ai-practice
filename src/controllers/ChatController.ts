@@ -1,12 +1,7 @@
 import { WorkspaceController } from "@/controllers/WorkspaceController";
 import { RefObject } from "react";
-import { AiChatResponse, CodeBlock, Message } from "@/types/apiTypes";
-import { CodeBlocks } from "@/utils/CodeBlocks";
+import { Message } from "@/types/apiTypes";
 import AIApiScheduler, { aiApiScheduler } from "@/services/AIApiScheduler";
-import { SandpackFile } from "@codesandbox/sandpack-react";
-import sandpackFile from "config/sandpackFile";
-import ApiCommonParams from "@/utils/ApiCommonParams";
-import { cloneDeep } from "lodash-es";
 import { log } from "@/utils/log";
 import { MessageCreator } from "@/utils/MessageCreator";
 import { ChatSubmiter } from "@/services/ChatSubmiter";
@@ -54,7 +49,7 @@ export class ChatController {
     // 新增AI消息
     this.workspaceController.store.addChatMessage(newMessage);
     // 应用消息
-    await this.reapplyAiMessage(newMessage);
+    await this.handleApplayMessage(newMessage);
 
     // 获取新的推荐关键词
     if (this.chatMessages.length >= 1) {
@@ -68,7 +63,7 @@ export class ChatController {
 
     this.setIsLoading(true);
     try {
-      await this.submit(message);
+      await this.submit(message.trim());
     } catch (error) {
       log.error("handleSubmit error", error);
       const errorMessage = MessageCreator.createErrorMessage(error);
@@ -97,10 +92,10 @@ export class ChatController {
   };
 
   /**
-   * 重新应用消息
+   * 应用消息
    * @param message
    */
-  public reapplyAiMessage = async (message: Message): Promise<void> => {
+  public handleApplayMessage = async (message: Message): Promise<void> => {
     return this.chatApply.apply(message);
   };
 
@@ -109,46 +104,12 @@ export class ChatController {
    * @param messages
    */
   fetchNewRecommendedKeywords = async (messages: Message[]) => {
-    try {
-      const prompt =
-        messages.length === 0
-          ? this.workspaceController.locales.get("prompt.recommend.keywords")
-          : this.workspaceController.locales.format(
-              "prompt.recommend.keywords.hasMessages",
-              {
-                chatHistory: MessageCreator.toApiMessage(messages)
-                  .map((msg) => msg.content)
-                  .join("\n"),
-              }
-            );
-
-      const aiApiParams = new ApiCommonParams({
-        locales: this.workspaceController.locales,
-        model: this.state.config.selectedModel,
-        messages: [MessageCreator.createUserMessage(prompt)],
-      });
-
-      const response = await this.aIApiScheduler.getRecommendedKeywords(
-        aiApiParams
-      );
-      if (response.keywords && response.keywords.length > 0) {
-        this.workspaceController.store.updateRecommendedKeywords(
-          response.keywords
-        );
-      } else {
-        log.warn("未收到有效的关键词");
-      }
-    } catch (error) {
-      log.error("获取推荐关键词失败:", error);
-    }
+    return this.workspaceController.workspaceRecommend.fetchNewRecommendedKeywords(
+      messages
+    );
   };
 
   initRecommendedKeywords() {
-    // 如果推荐关键词为空, 则获取推荐关键词
-    if (
-      !this.workspaceController.store.state.config.recommendedKeywords.length
-    ) {
-      this.fetchNewRecommendedKeywords([]);
-    }
+    return this.workspaceController.workspaceRecommend.initRecommendedKeywords();
   }
 }

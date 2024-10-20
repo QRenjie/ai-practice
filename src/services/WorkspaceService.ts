@@ -1,12 +1,18 @@
 import { WorkspaceState } from "@/types/workspace";
 import AIApiScheduler, { aiApiScheduler } from "./AIApiScheduler";
 import ApiCommonParams from "@/utils/ApiCommonParams";
-import { RoutePublish, RouteSaveWorkspace } from "@/types/routeApi";
+import {
+  RoutePublish,
+  RouteRecommendTitles,
+  RouteSaveWorkspace,
+} from "@/types/routeApi";
 
 export class WorkspaceService {
   constructor(public readonly aiApiScheduler: AIApiScheduler) {}
 
-  async getRecommendedTitles(params: ApiCommonParams) {
+  async getRecommendedTitles(
+    params: ApiCommonParams
+  ): Promise<RouteRecommendTitles["response"]> {
     return this.aiApiScheduler.getRecommendedTitles(params);
   }
 
@@ -40,13 +46,6 @@ export class WorkspaceService {
     workspaceState: WorkspaceState
   ): Promise<RoutePublish["response"]> {
     return this.aiApiScheduler.publishWorkspace(workspaceState);
-    // const previewId = Uid.generate();
-    // const encryptedContent = WorkspaceEncrypt.encrypt(workspaceState);
-
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // // 返回包含加密内容的 URL
-    // return { previewId, encryptedContent };
   }
 }
 

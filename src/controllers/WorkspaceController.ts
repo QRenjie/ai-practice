@@ -1,18 +1,26 @@
 import { WorkspaceService } from "@/services/WorkspaceService";
-import ApiCommonParams from "@/utils/ApiCommonParams";
 import { WorkspaceStore } from "@/store/WorkspaceStore";
 import { WorkspaceState } from "@/types/workspace";
 import { FileDownloader } from "@/utils/ui/FileDownloader";
 import Locales, { LocaleType } from "@/utils/Locales";
 import { RoutePublish } from "@/types/routeApi";
 import { log } from "@/utils/log";
+import { WorkspaceRecommend } from "@/services/WorkspaceRecommend";
 
 export class WorkspaceController {
+  workspaceRecommend: WorkspaceRecommend;
+
   constructor(
     public store: WorkspaceStore,
     public workspaceService: WorkspaceService,
     public locales: Locales<LocaleType, "/creator">
-  ) {}
+  ) {
+    this.workspaceRecommend = new WorkspaceRecommend(
+      store,
+      locales,
+      workspaceService
+    );
+  }
 
   getState = () => {
     return this.store.state;
@@ -50,21 +58,7 @@ export class WorkspaceController {
   }
 
   getRecommendedTitles = async (): Promise<string[]> => {
-    const params = new ApiCommonParams({
-      locales: this.locales,
-      messages: this.store.state.chat.messages,
-      model: this.store.state.config.selectedModel,
-      coderPrompt: "locale:workspace.prompt.title.recommend",
-    });
-
-    // 如果没有聊天内容，则不推荐
-    if (!this.store.hasMessages()) {
-      return [];
-    }
-
-    const titles = await this.workspaceService.getRecommendedTitles(params);
-
-    return titles.titles;
+    return this.workspaceRecommend.getRecommendedTitles();
   };
 
   async exportProject(state: WorkspaceState["code"]) {
