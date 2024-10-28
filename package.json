@@ -15,6 +15,7 @@
     "@codesandbox/sandpack-react": "^2.19.9",
     "@formatjs/intl-localematcher": "^0.5.5",
     "@monaco-editor/react": "^4.6.0",
+    "@qlover/fe-utils": "^1.0.2",
     "@types/uuid": "^10.0.0",
     "ahooks": "^3.8.1",
     "antd": "^5.21.1",

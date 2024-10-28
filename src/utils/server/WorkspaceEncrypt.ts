@@ -1,5 +1,4 @@
-import { StringEntrypt } from "lib/encrypt/StringEntrypt";
-import { StringZlibEncrypt } from "lib/encrypt/StringZlibEncrypt";
+import { StringEntrypt, StringZlibEncrypt } from "@qlover/fe-utils/server";
 import { WorkspaceState } from "@/types/workspace";
 import JSONUtil from "../JSONUtil";
 

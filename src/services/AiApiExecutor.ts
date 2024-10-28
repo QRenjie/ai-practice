@@ -1,7 +1,7 @@
 import { RouteSaveWorkspace } from "@/types/routeApi";
 import JSONUtil from "@/utils/JSONUtil";
 import { log } from "@/utils/log";
-import { AsyncExecutor, ExecutorPlugin, ExecutorError } from "lib/executor";
+import { AsyncExecutor, ExecutorPlugin, ExecutorError } from "@qlover/fe-utils";
 
 // Define a plugin that logs success and errors
 class LoggerPlugin<T = RouteSaveWorkspace["response"]> extends ExecutorPlugin<T> {

@@ -1,4 +1,4 @@
-import { Logger, LogLevel } from "lib/logger";
+import { Logger, LogLevel } from "@qlover/fe-utils";
 import chalk from "chalk";
 import { isArray } from "lodash-es";
 class ColorLogger extends Logger {
